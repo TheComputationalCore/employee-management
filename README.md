@@ -21,7 +21,7 @@ A Spring Boot application for managing employee information with a modern web in
 
 1. Clone the repository:
    ```bash
- git clone https://github.com/TheComputationalCore/employee-management.git
+      git clone https://github.com/TheComputationalCore/employee-management.git
    ```
 
 2. Configure MySQL:
