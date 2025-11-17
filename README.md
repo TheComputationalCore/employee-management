@@ -1,110 +1,180 @@
-# Employee Management System
+# 🚀 Employee Management System
 
-A Spring Boot application for managing employee information with a modern web interface using Thymeleaf, Bootstrap, and REST APIs.
+A complete Employee Management System built with **Spring Boot 3**, **Spring Data JPA**, **Thymeleaf**, **Bootstrap 5**, and **MySQL**.  
+Supports full CRUD operations, validation, REST APIs, and Swagger documentation.  
+Perfect as a portfolio project for full-stack Java & backend engineering roles.
 
-## Features
+---
 
-- Create, Read, Update, and Delete (CRUD) operations for employee records
-- Modern and responsive user interface using Bootstrap 5
-- Form validation (both client-side and server-side)
-- RESTful API endpoints with Swagger documentation
-- MySQL database integration
-- Clean and maintainable code structure
+## 🎥 Demo (Short Walkthrough)
 
-## Prerequisites
+📺 **YouTube Demo:**  
+https://youtu.be/TXTjFwRVCm0
 
-- Java 17 or higher
-- Maven 3.6 or higher
-- MySQL 8.0 or higher
+---
 
-## Setup
+## 🔥 Highlights
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd employee-management
-   ```
+- ✔️ Full CRUD — Create / Read / Update / Delete employees  
+- ✔️ Responsive UI using Bootstrap 5  
+- ✔️ REST API endpoints (JSON)  
+- ✔️ Swagger/OpenAPI documentation  
+- ✔️ Form validation (server + client)  
+- ✔️ MySQL database with Spring Data JPA  
+- ✔️ Clean MVC + service-layer architecture  
 
-2. Configure MySQL:
-   - Create a MySQL database (it will be created automatically if using the provided configuration)
-   - Update `src/main/resources/application.properties` with your MySQL credentials if different from the defaults
+---
 
-3. Build the project:
-   ```bash
-   mvn clean install
-   ```
+## 🧩 Tech Stack
 
-4. Run the application:
-   ```bash
-   mvn spring-boot:run
-   ```
+| Layer | Technology |
+|------|------------|
+| Backend | Spring Boot 3, Spring Data JPA |
+| Frontend | Thymeleaf, Bootstrap 5, jQuery |
+| Database | MySQL |
+| Build Tool | Maven |
+| API Docs | Swagger / OpenAPI 3 |
 
-5. Access the application:
-   - Web Interface: http://localhost:8080
-   - Swagger Documentation: http://localhost:8080/swagger-ui.html
+---
 
-## API Endpoints
+## 📁 Project Structure
 
-### Web Interface Endpoints
+```
+employee-management/
+├── src/
+│   ├── main/java/.../controller
+│   ├── main/java/.../service
+│   ├── main/java/.../repository
+│   ├── main/java/.../model
+│   └── main/resources/
+│       ├── templates/
+│       └── static/
+├── docs/
+│   └── screenshots/
+└── README.md
+```
 
-- `GET /` - Home page with employee list
-- `GET /employees/new` - Form to add new employee
-- `POST /employees/new` - Create new employee
-- `GET /employees/edit/{id}` - Form to edit employee
-- `POST /employees/edit/{id}` - Update employee
-- `GET /employees/delete/{id}` - Delete employee
+---
 
-### REST API Endpoints
+## ⚙️ Quickstart
 
-- `GET /api/employees` - Get all employees
-- `GET /api/employees/{id}` - Get employee by ID
-- `POST /api/employees` - Create new employee
-- `PUT /api/employees/{id}` - Update employee
-- `DELETE /api/employees/{id}` - Delete employee
-- `GET /api/employees/department/{department}` - Get employees by department
-- `GET /api/employees/job-title/{jobTitle}` - Get employees by job title
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/TheComputationalCore/employee-management.git
+cd employee-management
+```
 
-## Data Model
+### 2️⃣ Create MySQL Database
+```sql
+CREATE DATABASE employee_management;
+```
 
-The Employee entity includes the following fields:
+### 3️⃣ Configure Database Credentials  
+Edit:
 
-- `id` (Long) - Primary key
-- `firstName` (String) - Employee's first name
-- `lastName` (String) - Employee's last name
-- `email` (String) - Employee's email address (unique)
-- `phoneNumber` (String) - Employee's phone number
-- `dateOfBirth` (LocalDate) - Employee's date of birth
-- `hireDate` (LocalDate) - Employee's hire date
-- `jobTitle` (String) - Employee's job title
-- `salary` (Double) - Employee's salary
-- `department` (String) - Employee's department
-- `active` (boolean) - Employee's active status
+```
+src/main/resources/application.properties
+```
 
-## Validation Rules
+### 4️⃣ Build & Run
+```bash
+mvn clean install
+mvn spring-boot:run
+```
 
-- First name and last name: 2-50 characters
-- Email: Valid email format and unique
-- Phone number: Valid format (+1-234-567-8900)
-- Date of birth: Must be in the past and at least 18 years ago
-- Hire date: Must be in the past or present
-- Salary: Must be positive
+### 5️⃣ Access the Application
 
-## Technology Stack
+| Feature | URL |
+|---------|-----|
+| 🌐 Web UI | http://localhost:8080/web |
+| 📘 Swagger Docs | http://localhost:8080/swagger-ui/index.html |
 
-- Spring Boot 3.2.3
-- Spring Data JPA
-- Thymeleaf
-- MySQL
-- Bootstrap 5
-- jQuery
-- Swagger/OpenAPI
-- Maven
+---
 
-## Contributing
+## 📄 REST API Summary
 
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/employees` | Get all employees |
+| GET | `/api/v1/employees/{id}` | Get employee by ID |
+| POST | `/api/v1/employees` | Create employee |
+| PUT | `/api/v1/employees/{id}` | Update employee |
+| DELETE | `/api/v1/employees/{id}` | Delete employee |
+| GET | `/api/v1/employees/department/{department}` | Filter by department |
+| GET | `/api/v1/employees/position/{position}` | Filter by position |
 
+---
+
+## 🧬 Employee Model
+
+```
+id (Long)
+firstName (String)
+lastName (String)
+email (String, unique)
+phoneNumber (String)
+department (String)
+position (String)
+salary (Double)
+```
+
+---
+
+# 📸 Screenshots
+
+All screenshots are stored in:
+
+```
+docs/screenshots/
+```
+
+### 🖥️ Dashboard (Employee List)
+![Dashboard](docs/screenshots/Screenshot:dashboard.png)
+
+### ➕ Add Employee
+![Add Employee](docs/screenshots/Screenshot:add-employee.png)
+
+### ✏️ Edit Employee
+![Edit Employee](docs/screenshots/Screenshot:edit-employee.png)
+
+### 🗑️ Delete Employee Confirmation
+![Delete Employee](docs/screenshots/Screenshot:delte-employee.png)
+
+### 📘 API Documentation (Swagger UI)
+![Swagger](docs/screenshots/Screenshot:employee-management-api.png)
+
+### 🔍 API Testing (GET Employees)
+![API Testing](docs/screenshots/Screenshot:api-testing.png)
+
+### 🛢️ MySQL Table Data
+![MySQL](docs/screenshots/Screenshot:mysql.png)
+
+---
+
+## 🚀 Future Improvements
+
+- Pagination, search & filtering  
+- Role-based authentication (Spring Security)  
+- Unit + integration tests  
+- GitHub Actions CI pipeline  
+- Deployment (Railway / AWS / Azure)  
+
+---
+
+## 🤝 Contributing
+
+See **CONTRIBUTING.md** for contribution rules.
+
+---
+
+## 📜 License
+
+Licensed under the **MIT License** — see `LICENSE`.
+
+---
+
+## ✉️ Contact
+
+**Dinesh Chandra — TheComputationalCore**  
+- GitHub: https://github.com/TheComputationalCore  
+- YouTube: https://www.youtube.com/@TheComputationalCore  
