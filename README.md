@@ -1,5 +1,13 @@
 # 🚀 Employee Management System
 
+![Release](https://img.shields.io/github/v/release/TheComputationalCore/employee-management?color=brightgreen)
+![License](https://img.shields.io/github/license/TheComputationalCore/employee-management)
+![Stars](https://img.shields.io/github/stars/TheComputationalCore/employee-management?style=social)
+![Forks](https://img.shields.io/github/forks/TheComputationalCore/employee-management?style=social)
+![Issues](https://img.shields.io/github/issues/TheComputationalCore/employee-management)
+![Pull Requests](https://img.shields.io/github/issues-pr/TheComputationalCore/employee-management)
+![Last Commit](https://img.shields.io/github/last-commit/TheComputationalCore/employee-management)
+
 A complete Employee Management System built with **Spring Boot 3**, **Spring Data JPA**, **Thymeleaf**, **Bootstrap 5**, and **MySQL**.  
 Supports full CRUD operations, validation, REST APIs, and Swagger documentation.  
 Perfect as a portfolio project for full-stack Java & backend engineering roles.
@@ -122,7 +130,7 @@ salary (Double)
 
 # 📸 Screenshots
 
-All screenshots are stored in:
+Stored in:
 
 ```
 docs/screenshots/
