@@ -10,7 +10,6 @@
 
 A complete Employee Management System built with **Spring Boot 3**, **Spring Data JPA**, **Thymeleaf**, **Bootstrap 5**, and **MySQL**.  
 Supports full CRUD operations, validation, REST APIs, and Swagger documentation.  
-Perfect as a portfolio project for full-stack Java & backend engineering roles.
 
 ---
 
