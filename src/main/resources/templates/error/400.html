@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
+
+<th:block th:with="pageTitle='400 — Bad Request', content='this :: contentFragment'">
+
+<div th:fragment="contentFragment">
+
+    <div class="glass-card text-center p-5 mx-auto" style="max-width: 600px;">
+
+        <h1 class="display-4 fw-bold text-info">400</h1>
+        <p class="fs-5 mb-4" th:text="${message}"></p>
+
+        <img src="https://cdn-icons-png.flaticon.com/512/463/463612.png"
+             width="120" class="mb-4 opacity-75" />
+
+        <a th:href="@{/web/}" class="btn btn-primary px-4">Back to Dashboard</a>
+    </div>
+
+</div>
+
+</th:block>
+
+</html>
