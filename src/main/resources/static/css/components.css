@@ -1,225 +1,208 @@
 /* ==========================================================
-   COMPONENTS.CSS — Forms, Buttons, Glass Cards, Tables
-   Premium Edition (Matches layout.css)
+   COMPONENTS.CSS — Buttons, Floating Inputs, Cards, Tables
    ========================================================== */
 
-:root {
-    --radius: 16px;
-    --transition: 0.35s ease;
-
-    --primary: #4c6ef5;
-    --primary-dark: #3b5bdb;
-    --danger: #e03131;
-    --success: #2f9e44;
-
-    /* Light Mode */
-    --glass: rgba(255, 255, 255, 0.55);
-    --glass-border: rgba(255, 255, 255, 0.35);
-
-    /* Dark Mode */
-    --glass-dark: rgba(25,25,25,0.45);
-    --glass-border-dark: rgba(255,255,255,0.12);
-
-    --text-light: #222;
-    --text-dark: #eee;
-}
-
-/* ==========================================================
-   GLASS CARD
-   ========================================================== */
-
-.glass-card {
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius);
-    padding: 28px;
-    backdrop-filter: blur(14px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-    transition: var(--transition);
-}
-
-html.dark-mode .glass-card {
-    background: var(--glass-dark);
-    border-color: var(--glass-border-dark);
-}
-
-/* Hover Elevation */
-.glass-card:hover {
-    transform: translateY(-3px);
-}
-
-/* ==========================================================
-   FLOATING INPUTS
-   ========================================================== */
+/* ---------------------------- */
+/* Floating Label Inputs        */
+/* ---------------------------- */
 
 .form-floating .form-control.floating-input {
-    border-radius: var(--radius);
-    background: rgba(255,255,255,0.70);
-    border: 1px solid rgba(150,150,150,0.25);
-    font-weight: 500;
-    padding-left: 16px;
-    transition: var(--transition);
-    height: 58px;
+    background: rgba(255,255,255,0.65);
+    border: 1px solid rgba(150,150,150,0.3);
+    backdrop-filter: blur(12px);
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: all 0.25s ease;
+    font-weight: 500;
+}
+
+.form-floating .form-control.floating-input:focus {
+    border-color: #6d5dfc;
+    box-shadow: 0 0 0 2px rgba(109, 93, 252, 0.25);
+}
+
+/* floating label animation */
+.form-floating .form-control:not(:placeholder-shown) + label,
+.floating-input.has-value + label {
+    opacity: 0.9;
+    transform: translateY(-12px) scale(0.85);
+}
+
+/* Label Style */
+.form-floating > label {
+    color: #444;
+    font-weight: 500;
+    transition: all 0.25s ease;
+}
+
+html.dark-mode .form-floating > label {
+    color: #ccc;
 }
 
 html.dark-mode .form-floating .form-control.floating-input {
-    background: rgba(30,30,30,0.6);
-    border-color: rgba(255,255,255,0.12);
-    color: var(--text-dark);
+    background: rgba(40,40,40,0.35);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #eee;
 }
 
-.form-floating .form-control:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(76,110,245,0.25);
+/* ---------------------------- */
+/* Glass Panel Card             */
+/* ---------------------------- */
+
+.glass-card {
+    background: rgba(255,255,255,0.55);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.35);
+    backdrop-filter: blur(16px);
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: 0.2s;
 }
 
-.form-floating > label {
-    padding-left: 16px;
-    font-weight: 500;
-    transition: var(--transition);
+.glass-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(0,0,0,0.12);
 }
 
-.form-control.floating-input.has-value + label,
-.form-control:not(:placeholder-shown) + label {
-    opacity: 0.9;
-    transform: translateY(-12px) scale(0.9);
+/* Dark Mode */
+html.dark-mode .glass-card {
+    background: rgba(25,25,25,0.65);
+    border-color: rgba(255,255,255,0.1);
 }
 
-/* ==========================================================
-   BUTTONS
-   ========================================================== */
+/* ---------------------------- */
+/* Buttons                      */
+/* ---------------------------- */
 
-.btn {
-    border-radius: var(--radius);
-    font-weight: 600;
-    padding: 10px 20px;
-    transition: var(--transition);
-}
-
-/* Primary Button */
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary), #7950f2);
+    background: linear-gradient(135deg, #4c6ef5, #8b5cf6);
     border: none;
-    color: #fff;
+    color: white;
+    font-weight: 600;
+    transition: all 0.25s ease;
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    opacity: 0.92;
+    opacity: 0.9;
+    transform: translateY(-1px);
 }
 
-/* Outline Button */
 .btn-outline-secondary {
-    border-radius: var(--radius);
+    border-radius: 8px;
 }
 
 .btn-outline-secondary:hover {
-    background: rgba(150,150,150,0.08);
+    background: rgba(150,150,150,0.1);
 }
 
-/* Danger Button */
-.btn-outline-danger {
-    border-radius: var(--radius);
-    color: #e03131;
-    border-color: #e03131;
+html.dark-mode .btn-primary {
+    background: linear-gradient(135deg, #6b78ff, #926bff);
 }
 
-.btn-outline-danger:hover {
-    background: rgba(224,49,49,0.1);
+html.dark-mode .btn-outline-secondary {
+    color: #ddd;
+    border-color: #666;
 }
 
-/* ==========================================================
-   TABLE (Glass Table)
-   ========================================================== */
+/* ---------------------------- */
+/* Glass Table                  */
+/* ---------------------------- */
 
 .glass-table {
     background: rgba(255,255,255,0.45);
-    border-radius: var(--radius);
-    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.3);
     backdrop-filter: blur(12px);
-    padding: 10px;
-    transition: var(--transition);
 }
 
 html.dark-mode .glass-table {
-    background: rgba(25,25,25,0.35);
-    border-color: rgba(255,255,255,0.08);
+    background: rgba(40,40,40,0.5);
+    border-color: rgba(255,255,255,0.1);
 }
 
 .glass-table table thead {
-    background: rgba(255,255,255,0.65);
-    border-radius: var(--radius);
+    background: rgba(255,255,255,0.55);
     font-weight: 600;
 }
 
 html.dark-mode .glass-table table thead {
-    background: rgba(40,40,40,0.55);
-}
-
-.glass-table tbody tr {
-    transition: var(--transition);
+    background: rgba(40,40,40,0.6);
 }
 
 .glass-table tbody tr:hover {
-    background: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.45);
     backdrop-filter: blur(8px);
 }
 
 html.dark-mode .glass-table tbody tr:hover {
-    background: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.07);
 }
 
-/* ==========================================================
-   SEARCH INPUT
-   ========================================================== */
+/* ---------------------------- */
+/* Search Bar                   */
+/* ---------------------------- */
 
 .search-input {
-    background: rgba(255,255,255,0.7);
-    border: 1px solid rgba(150,150,150,0.25);
-    height: 52px;
-    padding-left: 16px;
-    border-radius: var(--radius);
-    transition: var(--transition);
-}
-
-html.dark-mode .search-input {
-    background: rgba(30,30,30,0.55);
-    border-color: rgba(255,255,255,0.15);
-    color: var(--text-dark);
+    background: rgba(255,255,255,0.75);
+    border: 1px solid rgba(150,150,150,0.3);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    height: 50px;
+    padding-left: 14px;
+    transition: box-shadow 0.25s ease;
 }
 
 .search-input:focus {
-    box-shadow: 0 0 0 3px rgba(76,110,245,0.25);
+    box-shadow: 0 0 0 2px rgba(109, 93, 252, 0.2);
 }
 
-/* ==========================================================
-   ALERTS / TOASTS
-   ========================================================== */
+html.dark-mode .search-input {
+    background: rgba(40,40,40,0.4);
+    color: white;
+}
+
+/* ---------------------------- */
+/* Pagination                   */
+/* ---------------------------- */
+
+.pagination .page-link {
+    border-radius: 8px;
+    margin: 0 4px;
+    color: #4c6ef5;
+    border: none;
+}
+
+.pagination .active .page-link {
+    background: #4c6ef5;
+    color: #fff;
+}
+
+html.dark-mode .pagination .page-link {
+    background: rgba(255,255,255,0.1);
+    color: #aaa;
+}
+
+html.dark-mode .pagination .active .page-link {
+    background: #6b78ff;
+    color: white;
+}
+
+/* ---------------------------- */
+/* Alerts                       */
+/* ---------------------------- */
 
 .alert {
-    border-radius: var(--radius);
-    padding: 14px 18px;
-    font-size: 0.95rem;
+    border-radius: 10px;
     border: none;
+    font-size: 0.95rem;
     box-shadow: 0 4px 10px rgba(0,0,0,0.07);
-    transition: var(--transition);
 }
 
-/* Toasts Framework */
-.toast {
-    border-radius: var(--radius);
-    padding: 10px 14px;
+html.dark-mode .alert-success {
+    background: rgba(50,205,50,0.15);
+    color: #7dff7d;
 }
 
-/* ==========================================================
-   FORMS — Validation
-   ========================================================== */
-
-.was-validated .form-control:invalid {
-    border-color: var(--danger);
-}
-
-.was-validated .form-control:valid {
-    border-color: var(--success);
+html.dark-mode .alert-danger {
+    background: rgba(255,0,0,0.15);
+    color: #ff7d7d;
 }
