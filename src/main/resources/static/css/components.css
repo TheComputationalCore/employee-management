@@ -5,10 +5,9 @@
 /* ---------------------------- */
 /* Floating Label Inputs        */
 /* ---------------------------- */
-
 .form-floating .form-control.floating-input {
-    background: rgba(255,255,255,0.65);
-    border: 1px solid rgba(150,150,150,0.3);
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(150, 150, 150, 0.3);
     backdrop-filter: blur(12px);
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     transition: all 0.25s ease;
@@ -16,63 +15,38 @@
 }
 
 .form-floating .form-control.floating-input:focus {
-    border-color: #6d5dfc;
-    box-shadow: 0 0 0 2px rgba(109, 93, 252, 0.25);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(89, 86, 233, 0.25);
 }
 
-/* floating label animation */
-.form-floating .form-control:not(:placeholder-shown) + label,
-.floating-input.has-value + label {
+/* Force label animation when input has value */
+.floating-input.has-value + label,
+.form-floating .form-control:not(:placeholder-shown) + label {
     opacity: 0.9;
     transform: translateY(-12px) scale(0.85);
 }
 
 /* Label Style */
 .form-floating > label {
-    color: #444;
+    color: #555;
     font-weight: 500;
     transition: all 0.25s ease;
-}
-
-html.dark-mode .form-floating > label {
-    color: #ccc;
-}
-
-html.dark-mode .form-floating .form-control.floating-input {
-    background: rgba(40,40,40,0.35);
-    border: 1px solid rgba(255,255,255,0.15);
-    color: #eee;
 }
 
 /* ---------------------------- */
 /* Glass Panel Card             */
 /* ---------------------------- */
-
 .glass-card {
-    background: rgba(255,255,255,0.55);
+    background: rgba(255, 255, 255, 0.55);
     border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.35);
+    border: 1px solid rgba(255,255,255,0.4);
     backdrop-filter: blur(16px);
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    transition: 0.2s;
-}
-
-.glass-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 32px rgba(0,0,0,0.12);
-}
-
-/* Dark Mode */
-html.dark-mode .glass-card {
-    background: rgba(25,25,25,0.65);
-    border-color: rgba(255,255,255,0.1);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
 }
 
 /* ---------------------------- */
 /* Buttons                      */
 /* ---------------------------- */
-
 .btn-primary {
     background: linear-gradient(135deg, #4c6ef5, #8b5cf6);
     border: none;
@@ -86,27 +60,13 @@ html.dark-mode .glass-card {
     transform: translateY(-1px);
 }
 
-.btn-outline-secondary {
-    border-radius: 8px;
-}
-
 .btn-outline-secondary:hover {
     background: rgba(150,150,150,0.1);
-}
-
-html.dark-mode .btn-primary {
-    background: linear-gradient(135deg, #6b78ff, #926bff);
-}
-
-html.dark-mode .btn-outline-secondary {
-    color: #ddd;
-    border-color: #666;
 }
 
 /* ---------------------------- */
 /* Glass Table                  */
 /* ---------------------------- */
-
 .glass-table {
     background: rgba(255,255,255,0.45);
     border-radius: 12px;
@@ -114,82 +74,36 @@ html.dark-mode .btn-outline-secondary {
     backdrop-filter: blur(12px);
 }
 
-html.dark-mode .glass-table {
-    background: rgba(40,40,40,0.5);
-    border-color: rgba(255,255,255,0.1);
-}
-
 .glass-table table thead {
-    background: rgba(255,255,255,0.55);
+    background: rgba(255,255,255,0.6);
     font-weight: 600;
 }
 
-html.dark-mode .glass-table table thead {
-    background: rgba(40,40,40,0.6);
-}
-
 .glass-table tbody tr:hover {
-    background: rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.5);
     backdrop-filter: blur(8px);
-}
-
-html.dark-mode .glass-table tbody tr:hover {
-    background: rgba(255,255,255,0.07);
 }
 
 /* ---------------------------- */
 /* Search Bar                   */
 /* ---------------------------- */
-
 .search-input {
-    background: rgba(255,255,255,0.75);
+    background: rgba(255,255,255,0.7);
     border: 1px solid rgba(150,150,150,0.3);
     backdrop-filter: blur(10px);
-    border-radius: 10px;
-    height: 50px;
     padding-left: 14px;
+    height: 50px;
+    border-radius: 10px;
     transition: box-shadow 0.25s ease;
 }
 
 .search-input:focus {
-    box-shadow: 0 0 0 2px rgba(109, 93, 252, 0.2);
-}
-
-html.dark-mode .search-input {
-    background: rgba(40,40,40,0.4);
-    color: white;
-}
-
-/* ---------------------------- */
-/* Pagination                   */
-/* ---------------------------- */
-
-.pagination .page-link {
-    border-radius: 8px;
-    margin: 0 4px;
-    color: #4c6ef5;
-    border: none;
-}
-
-.pagination .active .page-link {
-    background: #4c6ef5;
-    color: #fff;
-}
-
-html.dark-mode .pagination .page-link {
-    background: rgba(255,255,255,0.1);
-    color: #aaa;
-}
-
-html.dark-mode .pagination .active .page-link {
-    background: #6b78ff;
-    color: white;
+    box-shadow: 0 0 0 2px rgba(89, 86, 233, 0.25);
 }
 
 /* ---------------------------- */
 /* Alerts                       */
 /* ---------------------------- */
-
 .alert {
     border-radius: 10px;
     border: none;
@@ -197,216 +111,63 @@ html.dark-mode .pagination .active .page-link {
     box-shadow: 0 4px 10px rgba(0,0,0,0.07);
 }
 
-html.dark-mode .alert-success {
-    background: rgba(50,205,50,0.15);
-    color: #7dff7d;
+/* ==========================================================
+   PREMIUM MULTICOLOR GLASS PAGINATION (B4)
+   ========================================================== */
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+    margin-bottom: 10px;
 }
 
-html.dark-mode .alert-danger {
-    background: rgba(255,0,0,0.15);
-    color: #ff7d7d;
-}
-
-/* Profile Avatar */
-.profile-avatar {
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 4px solid rgba(255,255,255,0.6);
-    backdrop-filter: blur(10px);
-}
-
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-}
-
-/* Profile Info List */
-.profile-info-list .list-group-item {
-    background: transparent;
-    padding: 12px 0;
-    border: none;
-    font-size: 1rem;
-}
-
-/* Timeline */
-.timeline {
+.pagination {
+    display: flex;
+    gap: 10px;
     list-style: none;
-    padding-left: 0;
-    position: relative;
+    padding: 0;
 }
 
-.timeline::before {
-    content: "";
-    position: absolute;
-    width: 3px;
-    left: 20px;
-    top: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.1);
+.pagination li {
+    display: inline-block;
 }
 
-.timeline li {
-    position: relative;
-    margin-left: 50px;
-    padding-bottom: 25px;
-}
-
-.timeline-icon {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    position: absolute;
-    left: -33px;
-    top: 4px;
-}
-
-.timeline-content h6 {
-    margin-bottom: 4px;
+.pagination a,
+.pagination span {
+    padding: 10px 18px;
+    border-radius: 50px;
     font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+
+    background: rgba(255, 255, 255, 0.30);
+    backdrop-filter: blur(12px);
+
+    border: 2px solid transparent;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.25), rgba(255,255,255,0.25)),
+        linear-gradient(135deg, #ff7eb3, #ff758c, #ffb199, #ff9a76);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+
+    transition: all 0.25s ease;
 }
 
-.table-sort-link {
-    text-decoration: none;
-    font-weight: 600;
-    color: #444;
-    transition: 0.2s;
+.pagination a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
 }
 
-.table-sort-link:hover {
-    color: var(--primary-color);
-}
-.pagination .page-link {
-    border: none;
-    margin: 0 4px;
-    border-radius: 8px;
-    padding: 8px 14px;
-    background: rgba(255,255,255,0.7);
-    backdrop-filter: blur(10px);
-    transition: 0.25s ease;
-}
-
-.pagination .page-item.active .page-link {
-    background: linear-gradient(135deg, #4c6ef5, #8b5cf6);
+.pagination .active span {
+    background-image: linear-gradient(135deg, #7b2ff7, #f107a3);
     color: white;
-    border: none;
-    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(241, 7, 163, 0.5);
+    transform: translateY(-2px);
 }
 
-.pagination .page-link:hover {
-    background: rgba(255,255,255,0.9);
+.pagination .disabled span {
+    opacity: 0.4;
+    cursor: not-allowed;
+    backdrop-filter: blur(6px);
 }
-
-/* ============================ */
-/* Premium Split Layout         */
-/* ============================ */
-
-.split-container {
-    display: flex;
-    min-height: 85vh;
-    gap: 0;
-}
-
-/* LEFT PANEL */
-.split-left {
-    width: 40%;
-    padding: 50px;
-    color: white;
-    display: flex;
-    align-items: center;
-}
-
-.info-content {
-    max-width: 400px;
-}
-
-/* RIGHT PANEL */
-.split-right {
-    width: 60%;
-    padding: 40px;
-    display: flex;
-    align-items: center;
-}
-
-@media (max-width: 992px) {
-    .split-container {
-        flex-direction: column;
-    }
-
-    .split-left,
-    .split-right {
-        width: 100%;
-        padding: 30px;
-        text-align: center;
-    }
-}
-
-/* =====================================================
-   PREMIUM SPLIT VIEW
-===================================================== */
-
-.split-container {
-    display: flex;
-    gap: 25px;
-    margin-top: 20px;
-}
-
-/* Left: Form */
-.split-left {
-    flex: 0 0 60%;
-}
-
-/* Right: Preview */
-.split-right {
-    flex: 0 0 40%;
-    display: flex;
-    align-items: center;
-}
-
-/* Preview Card */
-.preview-card {
-    width: 100%;
-    border-radius: 18px;
-    text-align: center;
-    background: rgba(255,255,255,0.55);
-    backdrop-filter: blur(16px);
-    padding: 25px;
-}
-
-.preview-avatar i {
-    font-size: 4rem;
-    color: #6c63ff;
-    opacity: 0.85;
-}
-
-.preview-info .badge {
-    margin: 5px;
-    padding: 8px 12px;
-    font-size: 0.85rem;
-    border-radius: 12px;
-}
-
-/* Soft Badge Colors */
-.bg-primary-soft {
-    background: rgba(76,110,245,0.15);
-    color: #4c6ef5;
-}
-
-.bg-purple-soft {
-    background: rgba(139,92,246,0.15);
-    color: #8b5cf6;
-}
-
-.bg-green-soft {
-    background: rgba(16,185,129,0.15);
-    color: #059669;
-}
-
-/* Responsive */
-@media (max-width: 960px) {
-    .split-container {
-        flex-direction: column;
-    }
-}
-
