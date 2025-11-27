@@ -12,17 +12,10 @@
 
     <div class="container-fluid px-4">
 
-        <!-- ========================= -->
-        <!-- Dashboard Title -->
-        <!-- ========================= -->
         <h2 class="mb-4 fw-bold text-dark">Dashboard</h2>
 
-        <!-- ========================= -->
-        <!-- Dashboard Metrics -->
-        <!-- ========================= -->
-        <div class="row g-4 mb-4">
+        <div class="row g-4">
 
-            <!-- Total Employees -->
             <div class="col-xl-4 col-md-6">
                 <div class="dashboard-card gradient-blue text-white">
                     <h5>Total Employees</h5>
@@ -31,7 +24,6 @@
                 </div>
             </div>
 
-            <!-- Departments -->
             <div class="col-xl-4 col-md-6">
                 <div class="dashboard-card gradient-purple text-white">
                     <h5>Departments</h5>
@@ -40,7 +32,6 @@
                 </div>
             </div>
 
-            <!-- Positions -->
             <div class="col-xl-4 col-md-6">
                 <div class="dashboard-card gradient-green text-white">
                     <h5>Positions</h5>
@@ -51,18 +42,10 @@
 
         </div>
 
-        <!-- ========================= -->
-        <!-- Search + Add Employee -->
-        <!-- ========================= -->
-        <div class="row align-items-center mb-4">
+        <div class="row align-items-center mt-5 mb-3">
             <div class="col-md-6">
-                <form method="get" th:action="@{/web/}">
-                    <input type="text" name="keyword" th:value="${keyword}"
-                           class="form-control search-input"
-                           placeholder="Search employees...">
-                </form>
+                <input id="searchInput" type="text" class="form-control search-input" placeholder="Search employees...">
             </div>
-
             <div class="col-md-6 text-md-end mt-3 mt-md-0">
                 <a th:href="@{/web/employees/new}" class="btn btn-primary px-4">
                     <i class="bi bi-plus-circle me-1"></i>
@@ -71,10 +54,7 @@
             </div>
         </div>
 
-        <!-- ========================= -->
-        <!-- Employees Table -->
-        <!-- ========================= -->
-        <div class="glass-table p-3 rounded mb-4">
+        <div class="glass-table p-3 rounded">
             <div class="table-responsive">
                 <table class="table align-middle table-hover mb-0">
                     <thead>
@@ -88,8 +68,7 @@
                             <th class="text-end">Actions</th>
                         </tr>
                     </thead>
-
-                    <tbody>
+                    <tbody id="employeeTable">
                         <tr th:each="employee : ${employees}">
                             <td th:text="${employee.id}"></td>
                             <td th:text="${employee.firstName + ' ' + employee.lastName}"></td>
@@ -97,7 +76,6 @@
                             <td th:text="${employee.department}"></td>
                             <td th:text="${employee.position}"></td>
                             <td th:text="'$' + ${#numbers.formatDecimal(employee.salary, 0, 'COMMA', 2, 'POINT')}"></td>
-
                             <td class="text-end">
                                 <a th:href="@{/web/employees/edit/{id}(id=${employee.id})}"
                                    class="btn btn-sm btn-outline-warning me-2">
@@ -111,8 +89,7 @@
                             </td>
                         </tr>
 
-                        <!-- Empty State -->
-                        <tr th:if="${#lists.isEmpty(employees)}">
+                        <tr th:if="${employees.size() == 0}">
                             <td colspan="7" class="text-center py-4">
                                 <i class="bi bi-person-x fs-3 d-block mb-2"></i>
                                 No employees found.
@@ -124,43 +101,53 @@
             </div>
         </div>
 
-        <!-- ========================= -->
         <!-- Pagination -->
-        <!-- ========================= -->
-        <div class="d-flex justify-content-center">
-            <nav th:if="${totalPages > 1}">
-                <ul class="pagination">
+        <div class="pagination-container">
+            <ul class="pagination">
+                <li th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a th:if="${currentPage > 1}"
+                       th:href="@{/web(page=${currentPage - 1}, size=${pageSize})}">
+                        ‹ Prev
+                    </a>
+                    <span th:if="${currentPage == 1}">‹ Prev</span>
+                </li>
 
-                    <!-- Previous -->
-                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                        <a class="page-link"
-                           th:href="@{/web/(page=${currentPage - 1},keyword=${keyword})}">
-                            Prev
-                        </a>
-                    </li>
+                <li th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
+                    th:classappend="${pageNum == currentPage} ? 'active'">
+                    <a th:if="${pageNum != currentPage}"
+                       th:href="@{/web(page=${pageNum}, size=${pageSize})}"
+                       th:text="${pageNum}"></a>
+                    <span th:if="${pageNum == currentPage}"
+                          th:text="${pageNum}"></span>
+                </li>
 
-                    <!-- Page Numbers -->
-                    <li class="page-item"
-                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                        th:classappend="${i == currentPage} ? 'active'">
-                        <a class="page-link"
-                           th:href="@{/web/(page=${i},keyword=${keyword})}"
-                           th:text="${i + 1}"></a>
-                    </li>
+                <li th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a th:if="${currentPage < totalPages}"
+                       th:href="@{/web(page=${currentPage + 1}, size=${pageSize})}">
+                        Next ›
+                    </a>
+                    <span th:if="${currentPage == totalPages}">Next ›</span>
+                </li>
 
-                    <!-- Next -->
-                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                        <a class="page-link"
-                           th:href="@{/web/(page=${currentPage + 1},keyword=${keyword})}">
-                            Next
-                        </a>
-                    </li>
-
-                </ul>
-            </nav>
+            </ul>
         </div>
 
     </div>
+
+    <script>
+        const searchInput = document.getElementById("searchInput");
+        const tableRows = document.querySelectorAll("#employeeTable tr");
+
+        searchInput.addEventListener("keyup", function () {
+            let text = this.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(text)
+                    ? ""
+                    : "none";
+            });
+        });
+    </script>
 
 </div>
 
