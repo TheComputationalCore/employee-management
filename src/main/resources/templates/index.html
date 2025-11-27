@@ -1,92 +1,144 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="layout :: layout(~{::title}, ~{::content})">
 
-<th:block th:with="pageTitle='Dashboard', content='this :: contentFragment'">
+<head>
+    <title>Dashboard</title>
+</head>
 
-    <div th:fragment="contentFragment">
+<body>
 
-        <!-- ======================= DASHBOARD CARDS ======================= -->
+<div th:fragment="content">
+
+    <!-- ===================== -->
+    <!-- Dashboard Header      -->
+    <!-- ===================== -->
+    <div class="container-fluid px-4">
+        <h2 class="mb-4 fw-bold text-dark">Dashboard</h2>
+
+        <!-- ===================== -->
+        <!-- Dashboard Cards       -->
+        <!-- ===================== -->
         <div class="row g-4">
-            <div class="col-md-4">
-                <div class="dashboard-card gradient-blue">
+
+            <!-- Total Employees -->
+            <div class="col-xl-4 col-md-6">
+                <div class="dashboard-card gradient-blue text-white">
                     <h5>Total Employees</h5>
-                    <h2 th:text="${employees.size()}"></h2>
-                    <i class="bi bi-people"></i>
+                    <h2 th:text="${totalEmployees}">0</h2>
+                    <i class="bi bi-people-fill"></i>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="dashboard-card gradient-purple">
+            <!-- Departments -->
+            <div class="col-xl-4 col-md-6">
+                <div class="dashboard-card gradient-purple text-white">
                     <h5>Departments</h5>
-                    <h2 th:text="${departmentsCount}"></h2>
-                    <i class="bi bi-building"></i>
+                    <h2 th:text="${departmentsCount}">0</h2>
+                    <i class="bi bi-diagram-3-fill"></i>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="dashboard-card gradient-green">
+            <!-- Positions -->
+            <div class="col-xl-4 col-md-6">
+                <div class="dashboard-card gradient-green text-white">
                     <h5>Positions</h5>
-                    <h2 th:text="${positionsCount}"></h2>
-                    <i class="bi bi-briefcase"></i>
+                    <h2 th:text="${positionsCount}">0</h2>
+                    <i class="bi bi-briefcase-fill"></i>
                 </div>
             </div>
+
         </div>
 
-        <!-- ======================= SEARCH BAR ======================= -->
-        <div class="row mt-5 mb-3">
+        <!-- ===================== -->
+        <!-- Search Bar + Add Btn  -->
+        <!-- ===================== -->
+        <div class="row align-items-center mt-5 mb-3">
             <div class="col-md-6">
-                <input id="searchInput" type="text" class="form-control form-control-lg shadow-sm search-input"
-                       placeholder="Search employees...">
+                <input id="searchInput" type="text" class="form-control search-input" placeholder="Search employees...">
             </div>
-
-            <div class="col-md-6 text-end">
-                <a th:href="@{/web/employees/new}" class="btn btn-primary btn-lg shadow">
-                    <i class="bi bi-plus-lg me-1"></i> Add Employee
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <a th:href="@{/web/employees/new}" class="btn btn-primary px-4">
+                    <i class="bi bi-plus-circle me-1"></i>
+                    Add Employee
                 </a>
             </div>
         </div>
 
-        <!-- ======================= EMPLOYEE TABLE ======================= -->
-        <div class="table-responsive glass-table shadow-sm">
-            <table class="table align-middle">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Department</th>
-                    <th>Position</th>
-                    <th>Salary</th>
-                    <th style="width:140px;">Actions</th>
-                </tr>
-                </thead>
+        <!-- ===================== -->
+        <!-- Employee Table        -->
+        <!-- ===================== -->
+        <div class="glass-table p-3 rounded">
+            <div class="table-responsive">
+                <table class="table align-middle table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Employee</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Position</th>
+                            <th>Salary</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeTable">
+                        <tr th:each="employee : ${employees}">
+                            <td th:text="${employee.id}"></td>
+                            <td th:text="${employee.firstName + ' ' + employee.lastName}"></td>
+                            <td th:text="${employee.email}"></td>
+                            <td th:text="${employee.department}"></td>
+                            <td th:text="${employee.position}"></td>
 
-                <tbody id="employeeTable">
-                <tr th:each="e : ${employees}">
-                    <td th:text="${e.id}"></td>
-                    <td th:text="${e.firstName + ' ' + e.lastName}"></td>
-                    <td th:text="${e.email}"></td>
-                    <td th:text="${e.department}"></td>
-                    <td th:text="${e.position}"></td>
-                    <td th:text="${#numbers.formatDecimal(e.salary, 0, 'COMMA', 2, 'POINT')}"></td>
+                            <!-- Salary formatted -->
+                            <td th:text="'$' + ${#numbers.formatDecimal(employee.salary, 0, 'COMMA', 2, 'POINT')}"></td>
 
-                    <td>
-                        <a th:href="@{/web/employees/edit/{id}(id=${e.id})}" class="btn btn-sm btn-warning me-1">
-                            <i class="bi bi-pencil-square"></i>
-                        </a>
+                            <td class="text-end">
+                                <a th:href="@{/web/employees/edit/{id}(id=${employee.id})}" 
+                                   class="btn btn-sm btn-outline-warning me-2">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
 
-                        <a th:href="@{/web/employees/delete/{id}(id=${e.id})}" class="btn btn-sm btn-danger">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                    </td>
-                </tr>
-                </tbody>
+                                <a th:href="@{/web/employees/delete/{id}(id=${employee.id})}" 
+                                   class="btn btn-sm btn-outline-danger delete-confirm">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
 
-            </table>
+                        <!-- Empty State -->
+                        <tr th:if="${employees.size() == 0}">
+                            <td colspan="7" class="text-center py-4">
+                                <i class="bi bi-person-x fs-3 d-block mb-2"></i>
+                                No employees found.
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
         </div>
 
     </div>
 
-</th:block>
+    <!-- ============================ -->
+    <!-- Table Search Filter Script   -->
+    <!-- ============================ -->
+    <script>
+        const searchInput = document.getElementById("searchInput");
+        const tableRows = document.querySelectorAll("#employeeTable tr");
 
+        searchInput.addEventListener("keyup", function () {
+            let text = this.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(text)
+                    ? ""
+                    : "none";
+            });
+        });
+    </script>
+
+</div>
+</body>
 </html>
