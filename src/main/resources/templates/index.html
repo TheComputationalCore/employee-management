@@ -1,236 +1,243 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="layout :: layout(~{::title}, ~{::content})">
+      th:replace="layout :: content">
 
-<head>
-    <title>Dashboard</title>
-</head>
+<th:block th:with="pageTitle='Dashboard', content='this :: contentFragment'">
 
-<body>
+    <div th:fragment="contentFragment">
 
-<div th:fragment="content">
+        <!-- ============================== -->
+        <!-- Dashboard Summary Cards        -->
+        <!-- ============================== -->
+        <div class="container-fluid px-4">
 
-    <!-- ========================================= -->
-    <!-- DASHBOARD HEADER -->
-    <!-- ========================================= -->
-    <div class="container-fluid px-4">
-        <h2 class="mb-4 fw-bold text-dark">Dashboard</h2>
+            <h2 class="mb-4 fw-bold text-dark">Dashboard</h2>
 
-        <!-- ========================================= -->
-        <!-- DASHBOARD SUMMARY CARDS -->
-        <!-- ========================================= -->
-        <div class="row g-4 mb-4">
+            <div class="row g-4">
 
-            <!-- Total Employees -->
-            <div class="col-xl-4 col-md-6">
-                <div class="dashboard-card gradient-blue text-white">
-                    <h5>Total Employees</h5>
-                    <h2 th:text="${totalItems}">0</h2>
-                    <i class="bi bi-people-fill"></i>
+                <!-- Total Employees -->
+                <div class="col-xl-4 col-md-6">
+                    <div class="dashboard-card gradient-blue text-white">
+                        <h5>Total Employees</h5>
+                        <h2 th:text="${totalEmployees}">0</h2>
+                        <i class="bi bi-people-fill"></i>
+                    </div>
                 </div>
+
+                <!-- Departments Count -->
+                <div class="col-xl-4 col-md-6">
+                    <div class="dashboard-card gradient-purple text-white">
+                        <h5>Departments</h5>
+                        <h2 th:text="${departmentsCount}">0</h2>
+                        <i class="bi bi-diagram-3-fill"></i>
+                    </div>
+                </div>
+
+                <!-- Positions Count -->
+                <div class="col-xl-4 col-md-6">
+                    <div class="dashboard-card gradient-green text-white">
+                        <h5>Positions</h5>
+                        <h2 th:text="${positionsCount}">0</h2>
+                        <i class="bi bi-briefcase-fill"></i>
+                    </div>
+                </div>
+
             </div>
 
-            <!-- Departments -->
-            <div class="col-xl-4 col-md-6">
-                <div class="dashboard-card gradient-purple text-white">
-                    <h5>Departments</h5>
-                    <h2 th:text="${departmentsCount}">0</h2>
-                    <i class="bi bi-diagram-3-fill"></i>
+            <!-- ============================== -->
+            <!-- Search + Add Employee          -->
+            <!-- ============================== -->
+            <div class="row align-items-center mt-5 mb-3 g-3">
+
+                <!-- Search -->
+                <div class="col-md-6">
+                    <form th:action="@{/web/}" method="get">
+                        <input id="searchInput"
+                               type="text"
+                               name="search"
+                               th:value="${search}"
+                               class="form-control search-input"
+                               placeholder="Search by name, email, department..."
+                               oninput="this.form.submit()">
+                        <input type="hidden" name="sort" th:value="${sort}">
+                        <input type="hidden" name="page" value="1">
+                    </form>
                 </div>
+
+                <!-- Add Employee -->
+                <div class="col-md-6 text-md-end">
+                    <a th:href="@{/web/employees/new}" class="btn btn-primary px-4">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Add Employee
+                    </a>
+                </div>
+
             </div>
 
-            <!-- Positions -->
-            <div class="col-xl-4 col-md-6">
-                <div class="dashboard-card gradient-green text-white">
-                    <h5>Positions</h5>
-                    <h2 th:text="${positionsCount}">0</h2>
-                    <i class="bi bi-briefcase-fill"></i>
+            <!-- ============================== -->
+            <!-- Employee Table                 -->
+            <!-- ============================== -->
+            <div class="glass-table p-3 rounded">
+
+                <div class="table-responsive">
+
+                    <table class="table align-middle table-hover mb-0">
+
+                        <thead>
+                            <tr>
+                                <th>#</th>
+
+                                <!-- SORTABLE COLUMN: NAME -->
+                                <th>
+                                    <a class="table-sort-link"
+                                       th:href="@{/web(page=${currentPage},
+                                                        sort='name,' + ${reverseDirection},
+                                                        search=${search})}">
+                                        Employee
+                                        <i class="bi"
+                                           th:classappend="${sort.startsWith('name') ?
+                                               (sort.endsWith('asc') ? ' bi-caret-up-fill' : ' bi-caret-down-fill') : ''}">
+                                        </i>
+                                    </a>
+                                </th>
+
+                                <!-- SORTABLE COLUMN: EMAIL -->
+                                <th>
+                                    <a class="table-sort-link"
+                                       th:href="@{/web(page=${currentPage},
+                                                        sort='email,' + ${reverseDirection},
+                                                        search=${search})}">
+                                        Email
+                                        <i class="bi"
+                                           th:classappend="${sort.startsWith('email') ?
+                                               (sort.endsWith('asc') ? ' bi-caret-up-fill' : ' bi-caret-down-fill') : ''}">
+                                        </i>
+                                    </a>
+                                </th>
+
+                                <!-- SORTABLE COLUMN: DEPARTMENT -->
+                                <th>
+                                    <a class="table-sort-link"
+                                       th:href="@{/web(page=${currentPage},
+                                                        sort='department,' + ${reverseDirection},
+                                                        search=${search})}">
+                                        Department
+                                        <i class="bi"
+                                           th:classappend="${sort.startsWith('department') ?
+                                               (sort.endsWith('asc') ? ' bi-caret-up-fill' : ' bi-caret-down-fill') : ''}">
+                                        </i>
+                                    </a>
+                                </th>
+
+                                <!-- SORTABLE COLUMN: POSITION -->
+                                <th>
+                                    <a class="table-sort-link"
+                                       th:href="@{/web(page=${currentPage},
+                                                        sort='position,' + ${reverseDirection},
+                                                        search=${search})}">
+                                        Position
+                                        <i class="bi"
+                                           th:classappend="${sort.startsWith('position') ?
+                                               (sort.endsWith('asc') ? ' bi-caret-up-fill' : ' bi-caret-down-fill') : ''}">
+                                        </i>
+                                    </a>
+                                </th>
+
+                                <!-- SORTABLE COLUMN: SALARY -->
+                                <th>
+                                    <a class="table-sort-link"
+                                       th:href="@{/web(page=${currentPage},
+                                                        sort='salary,' + ${reverseDirection},
+                                                        search=${search})}">
+                                        Salary
+                                        <i class="bi"
+                                           th:classappend="${sort.startsWith('salary') ?
+                                               (sort.endsWith('asc') ? ' bi-caret-up-fill' : ' bi-caret-down-fill') : ''}">
+                                        </i>
+                                    </a>
+                                </th>
+
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr th:each="employee : ${employees}">
+                                <td th:text="${employee.id}"></td>
+                                <td th:text="${employee.firstName + ' ' + employee.lastName}"></td>
+                                <td th:text="${employee.email}"></td>
+                                <td th:text="${employee.department}"></td>
+                                <td th:text="${employee.position}"></td>
+                                <td th:text="'$' + ${#numbers.formatDecimal(employee.salary, 0, 'COMMA', 2, 'POINT')}"></td>
+
+                                <td class="text-end">
+
+                                    <a th:href="@{/web/employees/edit/{id}(id=${employee.id})}"
+                                       class="btn btn-sm btn-outline-warning me-2">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+
+                                    <a th:href="@{/web/employees/delete/{id}(id=${employee.id})}"
+                                       class="btn btn-sm btn-outline-danger delete-confirm">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+
+                                </td>
+                            </tr>
+
+                            <tr th:if="${employees.size() == 0}">
+                                <td colspan="7" class="text-center py-4">
+                                    <i class="bi bi-person-x fs-3 d-block mb-2"></i>
+                                    No employees found.
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
                 </div>
+
             </div>
+
+            <!-- ============================== -->
+            <!-- PAGINATION                     -->
+            <!-- ============================== -->
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+
+                    <!-- Prev -->
+                    <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/web(page=${currentPage-1}, sort=${sort}, search=${search})}">
+                            Previous
+                        </a>
+                    </li>
+
+                    <!-- Page Numbers -->
+                    <li class="page-item"
+                        th:each="page : ${#numbers.sequence(1, totalPages)}"
+                        th:classappend="${page == currentPage} ? 'active'">
+                        <a class="page-link"
+                           th:text="${page}"
+                           th:href="@{/web(page=${page}, sort=${sort}, search=${search})}"></a>
+                    </li>
+
+                    <!-- Next -->
+                    <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/web(page=${currentPage+1}, sort=${sort}, search=${search})}">
+                            Next
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
         </div>
-
-        <!-- ========================================= -->
-        <!-- SEARCH BAR + ADD EMPLOYEE -->
-        <!-- ========================================= -->
-        <div class="row align-items-center mb-3">
-            <div class="col-md-6">
-                <form method="get" th:action="@{/web/}">
-                    <input type="hidden" name="sort" th:value="${sort}">
-                    <input type="hidden" name="dir" th:value="${dir}">
-
-                    <input name="search"
-                           th:value="${search}"
-                           type="text"
-                           class="form-control search-input"
-                           placeholder="Search employees...">
-                </form>
-            </div>
-
-            <div class="col-md-6 text-md-end mt-3 mt-md-0">
-                <a th:href="@{/web/employees/new}" class="btn btn-primary px-4">
-                    <i class="bi bi-plus-circle me-1"></i>
-                    Add Employee
-                </a>
-            </div>
-        </div>
-
-        <!-- ========================================= -->
-        <!-- TABLE -->
-        <!-- ========================================= -->
-        <div class="glass-table p-3 rounded">
-            <div class="table-responsive">
-
-                <table class="table align-middle table-hover mb-0">
-                    <thead>
-                    <tr>
-                        <th>#</th>
-
-                        <!-- Sortable Column: Name -->
-                        <th>
-                            <a th:href="@{'/web/?page=' + ${currentPage} +
-                                             '&size=10&sort=name&dir=' + ${reverseDir} +
-                                             (search != null ? '&search=' + search : '')}">
-                                Name
-                                <i class="bi"
-                                   th:classappend="${sort == 'name'} ? (dir == 'asc' ? ' bi-caret-up-fill' : ' bi-caret-down-fill') : '' ">
-                                </i>
-                            </a>
-                        </th>
-
-                        <th>Email</th>
-
-                        <!-- Sortable Department -->
-                        <th>
-                            <a th:href="@{'/web/?page=' + ${currentPage} +
-                                             '&size=10&sort=department&dir=' + ${reverseDir} +
-                                             (search != null ? '&search=' + search : '')}">
-                                Department
-                                <i class="bi"
-                                   th:classappend="${sort == 'department'} ? (dir == 'asc' ? ' bi-caret-up-fill' : ' bi-caret-down-fill') : '' ">
-                                </i>
-                            </a>
-                        </th>
-
-                        <!-- Sortable Position -->
-                        <th>
-                            <a th:href="@{'/web/?page=' + ${currentPage} +
-                                             '&size=10&sort=position&dir=' + ${reverseDir} +
-                                             (search != null ? '&search=' + search : '')}">
-                                Position
-                                <i class="bi"
-                                   th:classappend="${sort == 'position'} ? (dir == 'asc' ? ' bi-caret-up-fill' : ' bi-caret-down-fill') : '' ">
-                                </i>
-                            </a>
-                        </th>
-
-                        <!-- Sortable Salary -->
-                        <th class="text-end">
-                            <a th:href="@{'/web/?page=' + ${currentPage} +
-                                             '&size=10&sort=salary&dir=' + ${reverseDir} +
-                                             (search != null ? '&search=' + search : '')}">
-                                Salary
-                                <i class="bi"
-                                   th:classappend="${sort == 'salary'} ? (dir == 'asc' ? ' bi-caret-up-fill' : ' bi-caret-down-fill') : '' ">
-                                </i>
-                            </a>
-                        </th>
-
-                        <th class="text-end">Actions</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    <tr th:each="employee : ${employees}">
-                        <td th:text="${employee.id}"></td>
-
-                        <td th:text="${employee.firstName + ' ' + employee.lastName}"></td>
-
-                        <td th:text="${employee.email}"></td>
-
-                        <td th:text="${employee.department}"></td>
-
-                        <td th:text="${employee.position}"></td>
-
-                        <td class="text-end"
-                            th:text="'$' + ${#numbers.formatDecimal(employee.salary, 0, 'COMMA', 2, 'POINT')}"></td>
-
-                        <!-- Actions -->
-                        <td class="text-end">
-                            <a th:href="@{/web/employees/edit/{id}(id=${employee.id})}"
-                               class="btn btn-sm btn-outline-warning me-2">
-                                <i class="bi bi-pencil-square"></i>
-                            </a>
-
-                            <a th:href="@{/web/employees/delete/{id}(id=${employee.id})}"
-                               class="btn btn-sm btn-outline-danger delete-confirm">
-                                <i class="bi bi-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-
-                    <!-- Empty State -->
-                    <tr th:if="${employees.size() == 0}">
-                        <td colspan="7" class="text-center py-4">
-                            <i class="bi bi-person-x fs-3 d-block mb-2"></i>
-                            No employees found.
-                        </td>
-                    </tr>
-
-                    </tbody>
-
-                </table>
-            </div>
-        </div>
-
-        <!-- ========================================= -->
-        <!-- PAGINATION -->
-        <!-- ========================================= -->
-        <nav class="mt-4">
-            <ul class="pagination justify-content-center">
-
-                <!-- Prev -->
-                <li class="page-item" th:classappend="${currentPage == 0} ? ' disabled'">
-                    <a class="page-link"
-                       th:href="@{'/web/?page=' + (${currentPage} - 1) +
-                                        '&size=10&sort=' + ${sort} +
-                                        '&dir=' + ${dir} +
-                                        (search != null ? '&search=' + search : '')}">
-                        Previous
-                    </a>
-                </li>
-
-                <!-- Page Numbers -->
-                <li class="page-item"
-                    th:each="pageNum : ${#numbers.sequence(0, totalPages-1)}"
-                    th:classappend="${pageNum == currentPage} ? ' active'">
-                    <a class="page-link"
-                       th:text="${pageNum + 1}"
-                       th:href="@{'/web/?page=' + ${pageNum} +
-                                        '&size=10&sort=' + ${sort} +
-                                        '&dir=' + ${dir} +
-                                        (search != null ? '&search=' + search : '')}">
-                    </a>
-                </li>
-
-                <!-- Next -->
-                <li class="page-item"
-                    th:classappend="${currentPage >= totalPages-1} ? ' disabled'">
-                    <a class="page-link"
-                       th:href="@{'/web/?page=' + (${currentPage} + 1) +
-                                        '&size=10&sort=' + ${sort} +
-                                        '&dir=' + ${dir} +
-                                        (search != null ? '&search=' + search : '')}">
-                        Next
-                    </a>
-                </li>
-
-            </ul>
-        </nav>
 
     </div>
 
-</div>
+</th:block>
 
-</body>
 </html>
