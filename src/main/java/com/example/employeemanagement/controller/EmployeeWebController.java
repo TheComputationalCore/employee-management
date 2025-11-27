@@ -2,63 +2,78 @@ package com.example.employeemanagement.controller;
 
 import com.example.employeemanagement.model.Employee;
 import com.example.employeemanagement.service.EmployeeService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequiredArgsConstructor
 @RequestMapping("/web")
 public class EmployeeWebController {
 
-    private final EmployeeService service;
+    private final EmployeeService employeeService;
+
+    @Autowired
+    public EmployeeWebController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
 
     @GetMapping("/")
     public String dashboard(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @RequestParam(defaultValue = "id,asc") String sort,
-            @RequestParam(defaultValue = "") String search,
-            Model model
-    ) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
 
-        // 1) Parse sort: "field,direction"
-        String[] sortParts = sort.split(",");
-        String sortField = sortParts[0];
-        Sort.Direction direction = sortParts.length > 1 && sortParts[1].equalsIgnoreCase("desc")
-                ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Employee> employeePage = employeeService.getPaginatedEmployees(pageable);
 
-        // 2) Multi-field sorting for name
-        Sort sorting;
-        if (sortField.equals("name")) {
-            sorting = Sort.by(direction, "firstName").and(Sort.by(direction, "lastName"));
-        } else {
-            sorting = Sort.by(direction, sortField);
-        }
+        model.addAttribute("page", employeePage);
 
-        Pageable pageable = PageRequest.of(page - 1, size, sorting);
-
-        // 3) Choose: search or list all
-        Page<Employee> employeePage = search.isBlank()
-                ? service.getEmployees(pageable)
-                : service.searchEmployees(search.trim(), pageable);
-
-        // 4) Add model attributes
+        model.addAttribute("totalEmployees", employeePage.getTotalElements());
+        model.addAttribute("departmentsCount", employeeService.countDepartments());
+        model.addAttribute("positionsCount", employeeService.countPositions());
         model.addAttribute("employees", employeePage.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", employeePage.getTotalPages());
-        model.addAttribute("totalItems", employeePage.getTotalElements());
 
-        model.addAttribute("sort", sort);
-        model.addAttribute("sortField", sortField);
-        model.addAttribute("direction", direction.toString().toLowerCase());
-        model.addAttribute("reverseDirection", direction == Sort.Direction.ASC ? "desc" : "asc");
-
-        model.addAttribute("search", search);
         model.addAttribute("pageTitle", "Dashboard");
 
         return "index";
+    }
+
+    @GetMapping("/employees/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("employee", new Employee());
+        model.addAttribute("pageTitle", "Add Employee");
+        return "create-employee";
+    }
+
+    @PostMapping("/employees/new")
+    public String createEmployee(@ModelAttribute Employee employee) {
+        employeeService.createEmployee(employee);
+        return "redirect:/web/";
+    }
+
+    @GetMapping("/employees/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        model.addAttribute("employee", employeeService.getEmployeeById(id));
+        model.addAttribute("pageTitle", "Edit Employee");
+        return "edit-employee";
+    }
+
+    @PostMapping("/employees/edit/{id}")
+    public String updateEmployee(@PathVariable Long id, @ModelAttribute Employee employee) {
+        employeeService.updateEmployee(id, employee);
+        return "redirect:/web/";
+    }
+
+    @GetMapping("/employees/delete/{id}")
+    public String deleteEmployee(@PathVariable Long id) {
+        employeeService.deleteEmployee(id);
+        return "redirect:/web/";
     }
 }
