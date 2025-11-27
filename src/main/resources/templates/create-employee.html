@@ -1,78 +1,118 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Add New Employee</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
 <body>
-    <div class="container mt-5">
-        <h2 class="mb-4">Add New Employee</h2>
-        
-        <form th:action="@{/web/employees/new}" th:object="${employee}" method="post" class="needs-validation" novalidate>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="firstName" class="form-label">First Name</label>
-                    <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">
-                        Please enter first name
-                    </div>
-                </div>
-                
-                <div class="col-md-6 mb-3">
-                    <label for="lastName" class="form-label">Last Name</label>
-                    <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">
-                        Please enter last name
-                    </div>
+
+<section layout:fragment="content">
+
+    <div class="form-wrapper glass shadow-lg p-4 rounded">
+
+        <h2 class="mb-4 fw-bold">
+            <i class="bi bi-person-plus-fill me-2 text-primary"></i>
+            Add New Employee
+        </h2>
+
+        <form th:action="@{/web/employees/new}"
+              th:object="${employee}"
+              method="post"
+              class="row g-4">
+
+            <!-- FIRST NAME -->
+            <div class="col-md-6">
+                <div class="floating-group">
+                    <input type="text" class="form-control floating-input"
+                           th:field="*{firstName}" required>
+                    <label class="floating-label">First Name</label>
+
+                    <small class="text-danger" th:if="${#fields.hasErrors('firstName')}"
+                          th:errors="*{firstName}"></small>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" th:field="*{email}" required>
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
-                        Please enter a valid email
-                    </div>
-                </div>
-                
-                <div class="col-md-6 mb-3">
-                    <label for="phoneNumber" class="form-label">Phone Number</label>
-                    <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}">
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}">
-                        Please enter a valid phone number
-                    </div>
+            <!-- LAST NAME -->
+            <div class="col-md-6">
+                <div class="floating-group">
+                    <input type="text" class="form-control floating-input"
+                           th:field="*{lastName}" required>
+                    <label class="floating-label">Last Name</label>
+
+                    <small class="text-danger" th:if="${#fields.hasErrors('lastName')}"
+                          th:errors="*{lastName}"></small>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="department" class="form-label">Department</label>
-                    <input type="text" class="form-control" id="department" th:field="*{department}">
-                </div>
-                
-                <div class="col-md-6 mb-3">
-                    <label for="position" class="form-label">Position</label>
-                    <input type="text" class="form-control" id="position" th:field="*{position}">
+            <!-- EMAIL -->
+            <div class="col-md-6">
+                <div class="floating-group">
+                    <input type="email" class="form-control floating-input"
+                           th:field="*{email}" required>
+                    <label class="floating-label">Email</label>
+
+                    <small class="text-danger" th:if="${#fields.hasErrors('email')}"
+                          th:errors="*{email}"></small>
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label for="salary" class="form-label">Salary</label>
-                <input type="number" class="form-control" id="salary" th:field="*{salary}" step="0.01" min="0" required>
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('salary')}" th:errors="*{salary}">
-                    Please enter a valid salary
+            <!-- PHONE -->
+            <div class="col-md-6">
+                <div class="floating-group">
+                    <input type="tel" class="form-control floating-input"
+                           th:field="*{phoneNumber}">
+                    <label class="floating-label">Phone Number</label>
+
+                    <small class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}"
+                          th:errors="*{phoneNumber}"></small>
                 </div>
             </div>
 
-            <div class="mb-3">
-                <button type="submit" class="btn btn-primary">Save Employee</button>
-                <a th:href="@{/web/}" class="btn btn-secondary">Cancel</a>
+            <!-- DEPARTMENT -->
+            <div class="col-md-6">
+                <div class="floating-group">
+                    <input type="text" class="form-control floating-input"
+                           th:field="*{department}">
+                    <label class="floating-label">Department</label>
+                </div>
             </div>
+
+            <!-- POSITION -->
+            <div class="col-md-6">
+                <div class="floating-group">
+                    <input type="text" class="form-control floating-input"
+                           th:field="*{position}">
+                    <label class="floating-label">Position</label>
+                </div>
+            </div>
+
+            <!-- SALARY -->
+            <div class="col-md-12">
+                <div class="floating-group">
+                    <input type="number" step="0.01" min="0"
+                           class="form-control floating-input"
+                           th:field="*{salary}" required>
+                    <label class="floating-label">Salary</label>
+
+                    <small class="text-danger" th:if="${#fields.hasErrors('salary')}"
+                          th:errors="*{salary}"></small>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a th:href="@{/web/}" class="btn btn-outline-secondary px-4 py-2">
+                    <i class="bi bi-arrow-left me-1"></i> Cancel
+                </a>
+
+                <button type="submit" class="btn btn-gradient px-4 py-2 shadow">
+                    <i class="bi bi-check2-circle me-1"></i> Save Employee
+                </button>
+            </div>
+
         </form>
+
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</section>
+
 </body>
-</html> 
+</html>
