@@ -4,6 +4,9 @@ import com.example.employeemanagement.model.Employee;
 import com.example.employeemanagement.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/web")
@@ -25,34 +27,41 @@ public class EmployeeWebController {
     }
 
     /* ============================================================
-       DASHBOARD + EMPLOYEE LIST PAGE
+       DASHBOARD + PAGINATED EMPLOYEE LIST
        ============================================================ */
     @GetMapping("/")
-    public String listEmployees(Model model) {
+    public String listEmployees(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
 
-        List<Employee> employees = employeeService.getAllEmployees();
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Employee> employeePage = employeeService.getAllEmployeesPaginated(pageable);
+
+        List<Employee> employees = employeePage.getContent();
+
         model.addAttribute("employees", employees);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", employeePage.getTotalPages());
+        model.addAttribute("pageSize", size);
 
-        // Count unique departments
+        // Dashboard metrics
+        long totalEmployees = employeePage.getTotalElements();
         long departmentsCount = employees.stream()
                 .map(Employee::getDepartment)
                 .filter(d -> d != null && !d.isBlank())
                 .distinct()
                 .count();
 
-        // Count unique positions
         long positionsCount = employees.stream()
                 .map(Employee::getPosition)
                 .filter(p -> p != null && !p.isBlank())
                 .distinct()
                 .count();
 
-        // Total employees
-        long totalEmployees = employees.size();
-
+        model.addAttribute("totalEmployees", totalEmployees);
         model.addAttribute("departmentsCount", departmentsCount);
         model.addAttribute("positionsCount", positionsCount);
-        model.addAttribute("totalEmployees", totalEmployees);
 
         return "index";
     }
