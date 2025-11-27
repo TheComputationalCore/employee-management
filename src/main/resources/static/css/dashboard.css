@@ -1,0 +1,73 @@
+/* ================================
+   DASHBOARD CARDS
+   ================================ */
+
+.dashboard-cards .dashboard-card {
+    background: rgba(255,255,255,0.5);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 22px;
+    text-align: center;
+    transition: 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.card-icon {
+    font-size: 32px;
+    padding: 10px;
+    color: white;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+/* Gradient Icon Variants */
+.gradient-bg {
+    background: linear-gradient(135deg, #4F46E5, #9333EA);
+}
+.gradient-bg-2 {
+    background: linear-gradient(135deg, #10B981, #059669);
+}
+.gradient-bg-3 {
+    background: linear-gradient(135deg, #F59E0B, #D97706);
+}
+
+/* ================================
+   TABLE
+   ================================ */
+
+table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(99, 102, 241, 0.08);
+}
+
+.table thead th {
+    background: linear-gradient(135deg, #4F46E5, #9333EA);
+    color: white;
+    border: none;
+}
+
+/* ================================
+   SEARCH BAR
+   ================================ */
+
+#searchInput {
+    border-radius: 10px;
+}
+
+/* ================================
+   FLOATING ADD BUTTON
+   ================================ */
+
+.float-btn {
+    border-radius: 40px;
+    font-weight: 600;
+    padding: 10px 20px;
+}
