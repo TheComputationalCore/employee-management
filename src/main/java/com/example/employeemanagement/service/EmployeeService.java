@@ -1,43 +1,41 @@
 package com.example.employeemanagement.service;
 
 import com.example.employeemanagement.dto.EmployeeRequestDTO;
-import com.example.employeemanagement.model.Employee;
-import org.springframework.data.domain.Page;
+import com.example.employeemanagement.dto.EmployeeWebDTO;
+
+import java.util.List;
 
 public interface EmployeeService {
 
-    /* ===========================================================
-       PAGINATION + SEARCH
-    ============================================================ */
+    /* ---------------------------
+       CRUD (Used by Web + API)
+    --------------------------- */
+    EmployeeWebDTO createEmployee(EmployeeRequestDTO dto);
 
-    /**
-     * Returns a paginated + optionally searchable list of employees.
-     * 
-     * @param page        zero-based page index 
-     * @param size        page size
-     * @param search      optional search text (name/email/department/position)
-     * @return paginated employees
-     */
-    Page<Employee> getPaginatedEmployees(int page, int size, String search);
-
-    
-    /* ===========================================================
-       BUSINESS CRUD OPERATIONS
-    ============================================================ */
-
-    Employee createEmployee(EmployeeRequestDTO request);
-
-    Employee updateEmployee(Long id, EmployeeRequestDTO request);
-
-    Employee getEmployeeById(Long id);
+    EmployeeWebDTO updateEmployee(Long id, EmployeeRequestDTO dto);
 
     void deleteEmployee(Long id);
 
+    EmployeeWebDTO getEmployeeById(Long id);
 
-    /* ===========================================================
-       DASHBOARD COUNTERS
-    ============================================================ */
 
+    /* ---------------------------
+       WEB: Pagination + Search
+    --------------------------- */
+    List<EmployeeWebDTO> getPaginatedEmployees(
+            int page,
+            int size,
+            String sortField,
+            String sortDir,
+            String keyword
+    );
+
+    long getTotalEmployeeCount(String keyword);
+
+
+    /* ---------------------------
+       Dashboard Counts
+    --------------------------- */
     long countEmployees();
 
     long countDepartments();
