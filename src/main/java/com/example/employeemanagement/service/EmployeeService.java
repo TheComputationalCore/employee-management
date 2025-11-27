@@ -1,20 +1,31 @@
 package com.example.employeemanagement.service;
 
-import com.example.employeemanagement.dto.EmployeeDTO;
-import com.example.employeemanagement.dto.EmployeeRequestDTO;
+import com.example.employeemanagement.model.Employee;
 import org.springframework.data.domain.Page;
 
 public interface EmployeeService {
 
-    Page<EmployeeDTO> getEmployees(int page, int size, String sortField, String sortDir);
+    Page<Employee> getPaginatedEmployees(
+            int page,
+            int size,
+            String sortField,
+            String sortDirection,
+            String search,
+            String department,
+            String position
+    );
 
-    Page<EmployeeDTO> searchEmployees(String keyword, int page, int size);
+    Employee getEmployeeById(Long id);
 
-    EmployeeDTO getEmployeeById(Long id);
+    Employee createEmployee(Employee employee);
 
-    EmployeeDTO createEmployee(EmployeeRequestDTO request);
-
-    EmployeeDTO updateEmployee(Long id, EmployeeRequestDTO request);
+    Employee updateEmployee(Long id, Employee employeeDetails);
 
     void deleteEmployee(Long id);
+
+    long getTotalEmployees();
+
+    long getDepartmentsCount();
+
+    long getPositionsCount();
 }
