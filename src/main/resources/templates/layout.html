@@ -1,88 +1,111 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Management</title>
+    <title th:text="${pageTitle} ?: 'Employee Management System'"></title>
 
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Icons -->
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-    <!-- Custom UI -->
+    <!-- Custom CSS -->
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <link rel="stylesheet" th:href="@{/css/components.css}">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
-<!-- ===================== PRELOADER ===================== -->
-<div id="preloader">
-    <div class="loader-glass"></div>
-</div>
 
 <body>
 
-<div class="dashboard-wrapper">
+    <!-- ========================================= -->
+    <!--                PRELOADER                 -->
+    <!-- ========================================= -->
+    <div id="preloader">
+        <div class="loader-glass"></div>
+    </div>
 
-    <!-- Sidebar -->
-    <aside class="sidebar glass">
+    <!-- ========================================= -->
+    <!--              SIDEBAR WRAPPER              -->
+    <!-- ========================================= -->
+    <aside class="sidebar">
         <div class="sidebar-header">
-            <h2 class="app-title">
-                <i class="bi bi-people-fill"></i> EMS
-            </h2>
+            <h3>EMS</h3>
         </div>
 
-        <nav class="sidebar-nav">
-            <a th:href="@{/web/employees}" class="nav-item">
-                <i class="bi bi-speedometer2"></i> Dashboard
-            </a>
-            <a th:href="@{/web/employees}" class="nav-item">
-                <i class="bi bi-table"></i> Employee List
-            </a>
-            <a th:href="@{/web/employees/new}" class="nav-item">
-                <i class="bi bi-plus-circle"></i> Add Employee
-            </a>
-            <a th:href="@{/swagger-ui/index.html}" class="nav-item">
-                <i class="bi bi-file-earmark-code"></i> API Docs
-            </a>
-        </nav>
+        <ul class="sidebar-menu">
+            <li>
+                <a th:href="@{/web/}">
+                    <i class="bi bi-speedometer2"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/web/employees/new}">
+                    <i class="bi bi-person-plus"></i>
+                    Add Employee
+                </a>
+            </li>
+        </ul>
     </aside>
 
-    <!-- Main Content -->
-    <main class="main-content">
+    <!-- Sidebar Toggle (Mobile) -->
+    <button class="sidebar-toggle">
+        <i class="bi bi-list"></i>
+    </button>
 
-        <!-- Header -->
-        <header class="main-header gradient-bg">
-            <div class="header-left">
-                <h3>Employee Management System</h3>
-            </div>
-            <div class="header-right">
-                <i class="bi bi-person-circle profile-icon"></i>
-            </div>
-        </header>
+    <!-- ========================================= -->
+    <!--                MAIN CONTENT               -->
+    <!-- ========================================= -->
+    <main class="content-area">
 
-        <!-- Flash Messages -->
+        <!-- Navbar -->
+        <nav class="navbar topbar">
+            <div class="left">
+                <h4 class="page-title" th:text="${pageTitle}"></h4>
+            </div>
+
+            <div class="right d-flex align-items-center gap-3">
+                <!-- Dark Mode Toggle -->
+                <button id="themeToggle" class="btn btn-outline-dark btn-sm theme-btn">
+                    <i class="bi bi-moon"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Toast Container -->
+        <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3"></div>
+
+        <!-- Flash Alerts -->
         <div class="container mt-3">
-            <div th:if="${success}" class="alert alert-success shadow-sm">
-                <span th:text="${success}"></span>
+            <div th:if="${message}" class="alert alert-success shadow-sm">
+                <span th:text="${message}"></span>
             </div>
+
             <div th:if="${error}" class="alert alert-danger shadow-sm">
                 <span th:text="${error}"></span>
             </div>
         </div>
 
-        <!-- Dynamic Page Content -->
-        <section class="content-wrapper container mt-4" layout:fragment="content">
-            <!-- Child templates inject content here -->
+        <!-- Dynamic Page Body -->
+        <section class="page-body container mt-4">
+            <div th:replace="${content}"></div>
         </section>
 
     </main>
-</div>
 
-<!-- JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script th:src="@{/js/ui.js}"></script>
+    <!-- ========================================= -->
+    <!--               JS ASSETS                   -->
+    <!-- ========================================= -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/ui.js}"></script>
 
 </body>
+
 </html>
