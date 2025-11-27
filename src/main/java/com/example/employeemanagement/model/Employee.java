@@ -2,12 +2,18 @@ package com.example.employeemanagement.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "employees")
+@Table(
+    name = "employees",
+    indexes = {
+        @Index(name = "idx_employee_email", columnList = "email")
+    }
+)
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Employee {
@@ -17,9 +23,11 @@ public class Employee {
     private Long id;
 
     @NotBlank(message = "First name is required")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @NotBlank(message = "Last name is required")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @NotBlank(message = "Email is required")
