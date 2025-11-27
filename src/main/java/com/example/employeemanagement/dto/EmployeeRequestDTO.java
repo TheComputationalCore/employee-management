@@ -1,8 +1,6 @@
 package com.example.employeemanagement.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
@@ -15,13 +13,15 @@ public class EmployeeRequestDTO {
     private String lastName;
 
     @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email address")
+    @Email(message = "Invalid email format")
     private String email;
 
     private String phoneNumber;
+
     private String department;
+
     private String position;
 
-    @PositiveOrZero(message = "Salary must be >= 0")
+    @PositiveOrZero(message = "Salary must be positive")
     private Double salary;
 }
