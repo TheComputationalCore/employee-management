@@ -2,64 +2,84 @@ package com.example.employeemanagement.service;
 
 import com.example.employeemanagement.model.Employee;
 import com.example.employeemanagement.repository.EmployeeRepository;
+
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
+@Transactional
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private final EmployeeRepository repo;
+    private final EmployeeRepository employeeRepository;
 
-    @Override
-    public Page<Employee> getEmployees(Pageable pageable) {
-        return repo.findAll(pageable);
+    @Autowired
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
     }
 
     @Override
-    public Page<Employee> searchEmployees(String keyword, Pageable pageable) {
-        return repo.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrDepartmentContainingIgnoreCase(
-                keyword, keyword, keyword, keyword, pageable
-        );
+    public Page<Employee> getPaginatedEmployees(Pageable pageable) {
+        return employeeRepository.findAll(pageable);
     }
 
     @Override
     public Employee getEmployeeById(Long id) {
-        return repo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
+        return employeeRepository.findById(id)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Employee not found with id: " + id));
     }
 
     @Override
     public Employee createEmployee(Employee employee) {
-        if (repo.existsByEmail(employee.getEmail()))
-            throw new IllegalArgumentException("Email already exists.");
+        if (employeeRepository.existsByEmail(employee.getEmail()))
+            throw new IllegalArgumentException("Email already exists: " + employee.getEmail());
 
-        return repo.save(employee);
+        return employeeRepository.save(employee);
     }
 
     @Override
-    public Employee updateEmployee(Long id, Employee updated) {
-        Employee emp = getEmployeeById(id);
+    public Employee updateEmployee(Long id, Employee employeeDetails) {
 
-        if (!emp.getEmail().equals(updated.getEmail()) && repo.existsByEmail(updated.getEmail()))
-            throw new IllegalArgumentException("Email already exists.");
+        Employee employee = getEmployeeById(id);
 
-        emp.setFirstName(updated.getFirstName());
-        emp.setLastName(updated.getLastName());
-        emp.setEmail(updated.getEmail());
-        emp.setPhoneNumber(updated.getPhoneNumber());
-        emp.setDepartment(updated.getDepartment());
-        emp.setPosition(updated.getPosition());
-        emp.setSalary(updated.getSalary());
+        // email uniqueness check
+        if (!employee.getEmail().equals(employeeDetails.getEmail()) &&
+                employeeRepository.existsByEmail(employeeDetails.getEmail())) {
+            throw new IllegalArgumentException("Email already exists: " + employeeDetails.getEmail());
+        }
 
-        return repo.save(emp);
+        employee.setFirstName(employeeDetails.getFirstName());
+        employee.setLastName(employeeDetails.getLastName());
+        employee.setEmail(employeeDetails.getEmail());
+        employee.setPhoneNumber(employeeDetails.getPhoneNumber());
+        employee.setDepartment(employeeDetails.getDepartment());
+        employee.setPosition(employeeDetails.getPosition());
+        employee.setSalary(employeeDetails.getSalary());
+
+        return employeeRepository.save(employee);
     }
 
     @Override
     public void deleteEmployee(Long id) {
-        repo.deleteById(id);
+        if (!employeeRepository.existsById(id))
+            throw new EntityNotFoundException("Employee not found with id: " + id);
+
+        employeeRepository.deleteById(id);
+    }
+
+    @Override
+    public long countDepartments() {
+        return employeeRepository.countDistinctDepartment();
+    }
+
+    @Override
+    public long countPositions() {
+        return employeeRepository.countDistinctPosition();
     }
 }
