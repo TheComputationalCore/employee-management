@@ -10,110 +10,71 @@
 
 <div th:fragment="content">
 
-    <div class="glass-card p-4 shadow-lg mx-auto" style="max-width: 760px;">
+    <div class="glass-card p-4 shadow-lg mx-auto" style="max-width: 750px;">
 
         <h3 class="mb-4 fw-bold">
-            <i class="bi bi-pencil-square me-2"></i>
-            Edit Employee
+            <i class="bi bi-pencil-square me-2"></i> Edit Employee
         </h3>
 
         <form th:action="@{/web/employees/edit/{id}(id=${employee.id})}"
-              th:object="${employee}"
-              method="post"
-              class="needs-validation"
-              novalidate>
+              th:object="${employee}" method="post"
+              class="needs-validation" novalidate>
 
             <input type="hidden" th:field="*{id}">
 
             <div class="row g-4">
 
-                <!-- First Name -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="text"
-                               th:field="*{firstName}"
-                               id="firstName"
-                               class="form-control floating-input"
-                               required>
-                        <label for="firstName">First Name</label>
-                        <div class="invalid-feedback" th:errors="*{firstName}">
-                            Please provide a first name.
-                        </div>
+                        <input type="text" th:field="*{firstName}" class="form-control floating-input" required>
+                        <label>First Name</label>
+                        <div class="invalid-feedback" th:errors="*{firstName}">Required</div>
                     </div>
                 </div>
 
-                <!-- Last Name -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="text"
-                               th:field="*{lastName}"
-                               id="lastName"
-                               class="form-control floating-input"
-                               required>
-                        <label for="lastName">Last Name</label>
-                        <div class="invalid-feedback" th:errors="*{lastName}">
-                            Please provide a last name.
-                        </div>
+                        <input type="text" th:field="*{lastName}" class="form-control floating-input" required>
+                        <label>Last Name</label>
+                        <div class="invalid-feedback" th:errors="*{lastName}">Required</div>
                     </div>
                 </div>
 
-                <!-- Email -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="email"
-                               th:field="*{email}"
-                               class="form-control floating-input"
-                               required>
+                        <input type="email" th:field="*{email}" class="form-control floating-input" required>
                         <label>Email</label>
-                        <div class="invalid-feedback" th:errors="*{email}">
-                            Enter a valid email.
-                        </div>
+                        <div class="invalid-feedback" th:errors="*{email}">Invalid</div>
                     </div>
                 </div>
 
-                <!-- Phone -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="tel"
-                               th:field="*{phoneNumber}"
-                               class="form-control floating-input">
+                        <input type="tel" th:field="*{phoneNumber}" class="form-control floating-input">
                         <label>Phone Number</label>
                     </div>
                 </div>
 
-                <!-- Department -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="text"
-                               th:field="*{department}"
-                               class="form-control floating-input">
+                        <input type="text" th:field="*{department}" class="form-control floating-input">
                         <label>Department</label>
                     </div>
                 </div>
 
-                <!-- Position -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="text"
-                               th:field="*{position}"
-                               class="form-control floating-input">
+                        <input type="text" th:field="*{position}" class="form-control floating-input">
                         <label>Position</label>
                     </div>
                 </div>
 
-                <!-- Salary -->
                 <div class="col-12">
                     <div class="form-floating">
-                        <input type="number"
-                               th:field="*{salary}"
-                               id="salary"
-                               step="0.01"
-                               class="form-control floating-input"
-                               required>
+                        <input type="number" th:field="*{salary}" step="0.01"
+                               class="form-control floating-input" required>
                         <label>Salary</label>
-                        <div class="invalid-feedback" th:errors="*{salary}">
-                            Enter a valid salary.
-                        </div>
+                        <div class="invalid-feedback" th:errors="*{salary}">Invalid</div>
                     </div>
                 </div>
 
@@ -121,13 +82,9 @@
 
             <div class="mt-4 d-flex gap-3">
                 <button class="btn btn-primary px-4">
-                    <i class="bi bi-check2-circle me-1"></i>
-                    Update Employee
+                    <i class="bi bi-check2-circle me-1"></i> Update
                 </button>
-
-                <a th:href="@{/web/}" class="btn btn-outline-secondary px-4">
-                    Cancel
-                </a>
+                <a th:href="@{/web/}" class="btn btn-outline-secondary px-4">Cancel</a>
             </div>
 
         </form>
