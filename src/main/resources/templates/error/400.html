@@ -1,34 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="layout :: layout(~{::title}, ~{::content})">
-
+<html>
 <head>
-    <title>Error 400 - Bad Request</title>
+    <title>400 - Bad Request</title>
+    <link rel="stylesheet" href="/css/layout.css">
 </head>
-
 <body>
-<div th:fragment="content">
 
-    <div class="d-flex justify-content-center align-items-center" style="min-height:70vh;">
-        <div class="glass-card p-5 text-center" style="max-width: 480px;">
+<div class="glass-card p-5 text-center mx-auto mt-5" style="max-width: 600px;">
+    <h1 class="display-4 fw-bold text-danger">400</h1>
+    <p class="fs-5 mt-3">Bad Request — Something went wrong with your input.</p>
 
-            <img src="https://cdn-icons-png.flaticon.com/512/11420/11420497.png"
-                 class="img-fluid mb-3"
-                 style="max-height:140px; opacity:0.9;">
-
-            <h1 class="fw-bold text-danger">400</h1>
-            <h4 class="fw-semibold">Bad Request</h4>
-
-            <p class="text-muted mt-2" th:text="${message}">
-                Your request could not be processed.
-            </p>
-
-            <a th:href="@{/web/}" class="btn btn-primary mt-3 px-4">
-                Go Home
-            </a>
-        </div>
-    </div>
-
+    <a href="/web" class="btn btn-primary mt-4">Go Back Home</a>
 </div>
+
 </body>
 </html>
