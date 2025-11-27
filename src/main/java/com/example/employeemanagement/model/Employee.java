@@ -1,4 +1,4 @@
-package com.thecomputationalcore.employeemanagement.model;
+package com.example.employeemanagement.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
