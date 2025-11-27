@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
+
+<th:block th:with="pageTitle='500 — Server Error', content='this :: contentFragment'">
+
+<div th:fragment="contentFragment">
+
+    <div class="glass-card text-center p-5 mx-auto" style="max-width: 600px;">
+
+        <h1 class="display-4 fw-bold text-warning">500</h1>
+        <p class="fs-5 mb-4">Something went wrong on our end.</p>
+
+        <img src="https://cdn-icons-png.flaticon.com/512/595/595067.png"
+             width="120" class="mb-4 opacity-75" />
+
+        <a th:href="@{/web/}" class="btn btn-primary px-4">Back to Dashboard</a>
+    </div>
+
+</div>
+
+</th:block>
+
+</html>
