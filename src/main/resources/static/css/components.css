@@ -1,206 +1,225 @@
 /* ==========================================================
-   COMPONENTS.CSS — Buttons, Floating Inputs, Cards, Tables
-   PREMIUM UI READY
+   COMPONENTS.CSS — Forms, Buttons, Glass Cards, Tables
+   Premium Edition (Matches layout.css)
    ========================================================== */
 
+:root {
+    --radius: 16px;
+    --transition: 0.35s ease;
 
-/* ---------------------------- */
-/* Floating Label Inputs        */
-/* ---------------------------- */
+    --primary: #4c6ef5;
+    --primary-dark: #3b5bdb;
+    --danger: #e03131;
+    --success: #2f9e44;
+
+    /* Light Mode */
+    --glass: rgba(255, 255, 255, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.35);
+
+    /* Dark Mode */
+    --glass-dark: rgba(25,25,25,0.45);
+    --glass-border-dark: rgba(255,255,255,0.12);
+
+    --text-light: #222;
+    --text-dark: #eee;
+}
+
+/* ==========================================================
+   GLASS CARD
+   ========================================================== */
+
+.glass-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 28px;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    transition: var(--transition);
+}
+
+html.dark-mode .glass-card {
+    background: var(--glass-dark);
+    border-color: var(--glass-border-dark);
+}
+
+/* Hover Elevation */
+.glass-card:hover {
+    transform: translateY(-3px);
+}
+
+/* ==========================================================
+   FLOATING INPUTS
+   ========================================================== */
 
 .form-floating .form-control.floating-input {
-    background: rgba(255, 255, 255, 0.65);
-    border: 1px solid rgba(150, 150, 150, 0.3);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    transition: all 0.25s ease;
+    border-radius: var(--radius);
+    background: rgba(255,255,255,0.70);
+    border: 1px solid rgba(150,150,150,0.25);
     font-weight: 500;
+    padding-left: 16px;
+    transition: var(--transition);
+    height: 58px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
-.form-floating .form-control.floating-input:focus {
-    border-color: #4c6ef5;
-    box-shadow: 0 0 0 3px rgba(89, 86, 233, 0.25);
+html.dark-mode .form-floating .form-control.floating-input {
+    background: rgba(30,30,30,0.6);
+    border-color: rgba(255,255,255,0.12);
+    color: var(--text-dark);
 }
 
-/* Floating label animations */
-.floating-input.has-value + label,
-.form-floating .form-control:not(:placeholder-shown) + label {
-    opacity: 0.9;
-    transform: translateY(-12px) scale(0.85);
+.form-floating .form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(76,110,245,0.25);
 }
 
 .form-floating > label {
-    color: #555;
+    padding-left: 16px;
     font-weight: 500;
-    transition: all 0.25s ease;
+    transition: var(--transition);
 }
 
-
-/* ---------------------------- */
-/* Glass Panel Card             */
-/* ---------------------------- */
-
-.glass-card {
-    background: rgba(255, 255, 255, 0.55);
-    border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.4);
-    backdrop-filter: blur(16px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-    padding: 25px;
+.form-control.floating-input.has-value + label,
+.form-control:not(:placeholder-shown) + label {
+    opacity: 0.9;
+    transform: translateY(-12px) scale(0.9);
 }
 
+/* ==========================================================
+   BUTTONS
+   ========================================================== */
 
-/* ---------------------------- */
-/* Buttons                      */
-/* ---------------------------- */
-
-.btn-primary {
-    background: linear-gradient(135deg, #4c6ef5, #8b5cf6);
-    border: none !important;
-    color: white;
+.btn {
+    border-radius: var(--radius);
     font-weight: 600;
-    transition: all 0.25s ease;
+    padding: 10px 20px;
+    transition: var(--transition);
+}
+
+/* Primary Button */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), #7950f2);
+    border: none;
+    color: #fff;
 }
 
 .btn-primary:hover {
-    opacity: 0.92;
     transform: translateY(-2px);
+    opacity: 0.92;
+}
+
+/* Outline Button */
+.btn-outline-secondary {
+    border-radius: var(--radius);
 }
 
 .btn-outline-secondary:hover {
-    background: rgba(150,150,150,0.1);
+    background: rgba(150,150,150,0.08);
 }
 
-.btn-outline-warning {
-    border-color: #f1c40f;
-}
-
-.btn-outline-warning:hover {
-    background: #f1c40f22;
+/* Danger Button */
+.btn-outline-danger {
+    border-radius: var(--radius);
+    color: #e03131;
+    border-color: #e03131;
 }
 
 .btn-outline-danger:hover {
-    background: #e74c3c22;
+    background: rgba(224,49,49,0.1);
 }
 
-
-/* ---------------------------- */
-/* Glass Table                  */
-/* ---------------------------- */
+/* ==========================================================
+   TABLE (Glass Table)
+   ========================================================== */
 
 .glass-table {
     background: rgba(255,255,255,0.45);
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.3);
-    backdrop-filter: blur(14px);
-    padding: 15px;
+    border-radius: var(--radius);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    padding: 10px;
+    transition: var(--transition);
+}
+
+html.dark-mode .glass-table {
+    background: rgba(25,25,25,0.35);
+    border-color: rgba(255,255,255,0.08);
 }
 
 .glass-table table thead {
-    background: rgba(255,255,255,0.6);
-    font-weight: 700;
-    letter-spacing: 0.3px;
+    background: rgba(255,255,255,0.65);
+    border-radius: var(--radius);
+    font-weight: 600;
+}
+
+html.dark-mode .glass-table table thead {
+    background: rgba(40,40,40,0.55);
+}
+
+.glass-table tbody tr {
+    transition: var(--transition);
 }
 
 .glass-table tbody tr:hover {
-    background: rgba(255,255,255,0.55);
+    background: rgba(255,255,255,0.5);
     backdrop-filter: blur(8px);
-    transition: 0.25s ease;
 }
 
+html.dark-mode .glass-table tbody tr:hover {
+    background: rgba(255,255,255,0.08);
+}
 
-/* ---------------------------- */
-/* Search Bar                   */
-/* ---------------------------- */
+/* ==========================================================
+   SEARCH INPUT
+   ========================================================== */
 
 .search-input {
     background: rgba(255,255,255,0.7);
-    border: 1px solid rgba(150,150,150,0.3);
-    backdrop-filter: blur(10px);
+    border: 1px solid rgba(150,150,150,0.25);
+    height: 52px;
+    padding-left: 16px;
+    border-radius: var(--radius);
+    transition: var(--transition);
+}
 
-    padding-left: 14px;
-    height: 50px;
-    border-radius: 10px;
-
-    transition: box-shadow 0.25s ease;
+html.dark-mode .search-input {
+    background: rgba(30,30,30,0.55);
+    border-color: rgba(255,255,255,0.15);
+    color: var(--text-dark);
 }
 
 .search-input:focus {
-    box-shadow: 0 0 0 3px rgba(89, 86, 233, 0.25);
+    box-shadow: 0 0 0 3px rgba(76,110,245,0.25);
 }
-
-
-/* ---------------------------- */
-/* Alerts                       */
-/* ---------------------------- */
-
-.alert {
-    border-radius: 10px;
-    border: none;
-    font-size: 0.95rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.07);
-}
-
 
 /* ==========================================================
-   PREMIUM PAGINATION + SORTING (NEW)
+   ALERTS / TOASTS
    ========================================================== */
 
-/* Pagination */
-.pagination .page-link {
-    border-radius: 10px;
-    padding: 8px 14px;
+.alert {
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 0.95rem;
     border: none;
-
-    background: rgba(255,255,255,0.7);
-    backdrop-filter: blur(10px);
-
-    color: #333;
-    transition: all 0.25s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.07);
+    transition: var(--transition);
 }
 
-.pagination .page-item.active .page-link {
-    background: linear-gradient(135deg, #4c6ef5, #8b5cf6);
-    color: #fff !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+/* Toasts Framework */
+.toast {
+    border-radius: var(--radius);
+    padding: 10px 14px;
 }
 
-.pagination .page-link:hover {
-    transform: translateY(-2px);
-    background: rgba(255,255,255,0.9);
+/* ==========================================================
+   FORMS — Validation
+   ========================================================== */
+
+.was-validated .form-control:invalid {
+    border-color: var(--danger);
 }
 
-
-/* Sorting Links */
-.table-sort-link {
-    color: #333;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: color 0.25s ease, transform 0.2s ease;
-}
-
-.table-sort-link:hover {
-    color: #4c6ef5;
-}
-
-.table-sort-link.sort-clicked {
-    transform: scale(0.96);
-}
-
-/* Sorting Icon Colors */
-.table-sort-link .bi-caret-up-fill,
-.table-sort-link .bi-caret-down-fill {
-    color: #4c6ef5;
-}
-
-
-/* ===================== */
-/* Table Header Styling  */
-/* ===================== */
-
-table thead th {
-    font-weight: 700 !important;
-    letter-spacing: 0.3px;
-    user-select: none;
+.was-validated .form-control:valid {
+    border-color: var(--success);
 }
