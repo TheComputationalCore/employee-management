@@ -1,79 +1,161 @@
 package com.example.employeemanagement.controller;
 
-import com.example.employeemanagement.model.Employee;
+import com.example.employeemanagement.dto.EmployeeDTO;
+import com.example.employeemanagement.dto.EmployeeRequestDTO;
 import com.example.employeemanagement.service.EmployeeService;
+
+import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequiredArgsConstructor
 @RequestMapping("/web")
+@RequiredArgsConstructor
 public class EmployeeWebController {
 
     private final EmployeeService service;
 
+    /* -------------------------------------------------------------
+        DASHBOARD + PAGINATION + SORTING + SEARCH IN ONE ENDPOINT
+       ------------------------------------------------------------- */
     @GetMapping("/")
-    public String dashboard(Model model,
-                            @RequestParam(defaultValue = "0") int page,
-                            @RequestParam(defaultValue = "8") int size,
-                            @RequestParam(defaultValue = "") String keyword,
-                            @RequestParam(defaultValue = "firstName") String sortField,
-                            @RequestParam(defaultValue = "asc") String sortDir) {
+    public String dashboard(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            @RequestParam(defaultValue = "firstName") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String search,
+            Model model
+    ) {
 
-        Page<Employee> p = service.getEmployeesPaginated(page, size, keyword, sortField, sortDir);
+        Page<EmployeeDTO> employees;
 
-        model.addAttribute("employees", p.getContent());
+        if (search != null && !search.isBlank()) {
+            employees = service.searchEmployees(search, page, size);
+        } else {
+            employees = service.getEmployees(page, size, sortField, sortDir);
+        }
+
+        /* ---- Dashboard Stats ---- */
+        long totalEmployees = employees.getTotalElements();
+        long departments = employees.stream().map(EmployeeDTO::getDepartment).distinct().count();
+        long positions = employees.stream().map(EmployeeDTO::getPosition).distinct().count();
+
+        model.addAttribute("employees", employees.getContent());
+        model.addAttribute("totalEmployees", totalEmployees);
+        model.addAttribute("departmentsCount", departments);
+        model.addAttribute("positionsCount", positions);
+
+        /* ---- Pagination Data ---- */
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", p.getTotalPages());
-        model.addAttribute("totalEmployees", p.getTotalElements());
+        model.addAttribute("totalPages", employees.getTotalPages());
+        model.addAttribute("totalItems", employees.getTotalElements());
 
-        model.addAttribute("keyword", keyword);
+        /* ---- Sorting / Search ---- */
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+        model.addAttribute("search", search);
 
-        model.addAttribute("departmentsCount", p.stream().map(Employee::getDepartment).distinct().count());
-        model.addAttribute("positionsCount", p.stream().map(Employee::getPosition).distinct().count());
+        model.addAttribute("pageTitle", "Dashboard");
 
         return "index";
     }
 
-    @GetMapping("/employees/profile/{id}")
-    public String profile(@PathVariable Long id, Model model) {
-        model.addAttribute("employee", service.getEmployeeById(id));
-        return "profile";
-    }
 
+    /* -------------------------------------------------------------
+        CREATE EMPLOYEE
+       ------------------------------------------------------------- */
     @GetMapping("/employees/new")
-    public String newForm(Model m) {
-        m.addAttribute("employee", new Employee());
+    public String showCreateForm(Model model) {
+        model.addAttribute("employee", new EmployeeRequestDTO());
+        model.addAttribute("pageTitle", "Add Employee");
         return "create-employee";
     }
 
     @PostMapping("/employees/new")
-    public String create(Employee e) {
-        service.createEmployee(e);
+    public String createEmployee(
+            @Valid @ModelAttribute("employee") EmployeeRequestDTO request,
+            BindingResult bindingResult,
+            RedirectAttributes redirect
+    ) {
+        if (bindingResult.hasErrors()) {
+            return "create-employee";
+        }
+
+        try {
+            service.createEmployee(request);
+            redirect.addFlashAttribute("message", "Employee created successfully!");
+        } catch (Exception ex) {
+            bindingResult.rejectValue("email", "error.employee", ex.getMessage());
+            return "create-employee";
+        }
+
         return "redirect:/web/";
     }
 
+
+    /* -------------------------------------------------------------
+        EDIT EMPLOYEE
+       ------------------------------------------------------------- */
     @GetMapping("/employees/edit/{id}")
-    public String editForm(@PathVariable Long id, Model m) {
-        m.addAttribute("employee", service.getEmployeeById(id));
+    public String showEditForm(@PathVariable Long id, Model model) {
+
+        EmployeeDTO dto = service.getEmployeeById(id);
+
+        EmployeeRequestDTO request = new EmployeeRequestDTO();
+        request.setFirstName(dto.getFirstName());
+        request.setLastName(dto.getLastName());
+        request.setEmail(dto.getEmail());
+        request.setPhoneNumber(dto.getPhoneNumber());
+        request.setDepartment(dto.getDepartment());
+        request.setPosition(dto.getPosition());
+        request.setSalary(dto.getSalary());
+
+        model.addAttribute("employee", request);
+        model.addAttribute("employeeId", id);
+        model.addAttribute("pageTitle", "Edit Employee");
+
         return "edit-employee";
     }
 
     @PostMapping("/employees/edit/{id}")
-    public String update(@PathVariable Long id, Employee e) {
-        service.updateEmployee(id, e);
+    public String updateEmployee(
+            @PathVariable Long id,
+            @Valid @ModelAttribute("employee") EmployeeRequestDTO request,
+            BindingResult bindingResult,
+            RedirectAttributes redirect
+    ) {
+        if (bindingResult.hasErrors()) {
+            return "edit-employee";
+        }
+
+        try {
+            service.updateEmployee(id, request);
+            redirect.addFlashAttribute("message", "Employee updated successfully!");
+        } catch (IllegalArgumentException ex) {
+            bindingResult.rejectValue("email", "error.employee", ex.getMessage());
+            return "edit-employee";
+        }
+
         return "redirect:/web/";
     }
 
+    /* -------------------------------------------------------------
+        DELETE EMPLOYEE
+       ------------------------------------------------------------- */
     @GetMapping("/employees/delete/{id}")
-    public String delete(@PathVariable Long id) {
+    public String deleteEmployee(@PathVariable Long id, RedirectAttributes redirect) {
         service.deleteEmployee(id);
+        redirect.addFlashAttribute("message", "Employee deleted successfully!");
         return "redirect:/web/";
     }
 }
