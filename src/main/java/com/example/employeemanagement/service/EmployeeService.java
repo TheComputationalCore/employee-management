@@ -2,21 +2,22 @@ package com.example.employeemanagement.service;
 
 import com.example.employeemanagement.model.Employee;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 public interface EmployeeService {
 
-    Page<Employee> getPaginatedEmployees(Pageable pageable);
+    Page<Employee> getEmployeesPaginated(
+            int page,
+            int size,
+            String keyword,
+            String sortField,
+            String sortDirection
+    );
 
     Employee getEmployeeById(Long id);
 
     Employee createEmployee(Employee employee);
 
-    Employee updateEmployee(Long id, Employee employeeDetails);
+    Employee updateEmployee(Long id, Employee updatedEmployee);
 
     void deleteEmployee(Long id);
-
-    long countDepartments();
-
-    long countPositions();
 }
