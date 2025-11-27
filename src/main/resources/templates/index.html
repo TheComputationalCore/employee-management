@@ -1,23 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="layout :: layout(~{::title}, ~{::content})">
-
-<head>
-    <title>Dashboard</title>
-</head>
+      th:replace="layout :: layout('Dashboard', ~{::content})">
 
 <body>
 
 <div th:fragment="content">
 
-    <!-- ========================= -->
-    <!-- PAGE HEADER               -->
-    <!-- ========================= -->
     <div class="container-fluid px-4">
-        <h2 class="mb-4 fw-bold text-dark">Dashboard</h2>
 
-        <div class="row g-4">
-            <!-- TOTAL EMPLOYEES -->
+        <!-- ===================== -->
+        <!-- Dashboard Cards       -->
+        <!-- ===================== -->
+        <div class="row g-4 mb-4">
+
             <div class="col-xl-4 col-md-6">
                 <div class="dashboard-card gradient-blue text-white">
                     <h5>Total Employees</h5>
@@ -26,7 +21,6 @@
                 </div>
             </div>
 
-            <!-- DEPARTMENTS -->
             <div class="col-xl-4 col-md-6">
                 <div class="dashboard-card gradient-purple text-white">
                     <h5>Departments</h5>
@@ -35,7 +29,6 @@
                 </div>
             </div>
 
-            <!-- POSITIONS -->
             <div class="col-xl-4 col-md-6">
                 <div class="dashboard-card gradient-green text-white">
                     <h5>Positions</h5>
@@ -43,16 +36,18 @@
                     <i class="bi bi-briefcase-fill"></i>
                 </div>
             </div>
+
         </div>
 
-        <!-- ========================= -->
-        <!-- SEARCH + ADD BUTTON       -->
-        <!-- ========================= -->
-        <div class="row align-items-center mt-5 mb-3">
+        <!-- ===================== -->
+        <!-- Search + Add Button   -->
+        <!-- ===================== -->
+        <div class="row align-items-center mb-4">
             <div class="col-md-6">
-                <input id="searchInput" type="text" class="form-control search-input"
+                <input type="text" id="searchInput" class="form-control search-input"
                        placeholder="Search employees...">
             </div>
+
             <div class="col-md-6 text-md-end mt-3 mt-md-0">
                 <a th:href="@{/web/employees/new}" class="btn btn-primary px-4">
                     <i class="bi bi-plus-circle me-1"></i>Add Employee
@@ -60,11 +55,12 @@
             </div>
         </div>
 
-        <!-- ========================= -->
-        <!-- EMPLOYEE TABLE            -->
-        <!-- ========================= -->
+        <!-- ===================== -->
+        <!-- Employee Table        -->
+        <!-- ===================== -->
         <div class="glass-table p-3 rounded">
             <div class="table-responsive">
+
                 <table class="table align-middle table-hover mb-0">
                     <thead>
                     <tr>
@@ -77,14 +73,15 @@
                         <th class="text-end">Actions</th>
                     </tr>
                     </thead>
+
                     <tbody id="employeeTable">
-                    <tr th:each="employee : ${page.content}">
+                    <tr th:each="employee : ${employees}">
                         <td th:text="${employee.id}"></td>
                         <td th:text="${employee.firstName + ' ' + employee.lastName}"></td>
                         <td th:text="${employee.email}"></td>
                         <td th:text="${employee.department}"></td>
                         <td th:text="${employee.position}"></td>
-                        <td th:text="'$' + ${#numbers.formatDecimal(employee.salary,0,'COMMA',2,'POINT')}"></td>
+                        <td th:text="${'$' + #numbers.formatDecimal(employee.salary,0,'COMMA',2,'POINT')}"></td>
 
                         <td class="text-end">
                             <a th:href="@{/web/employees/edit/{id}(id=${employee.id})}"
@@ -99,7 +96,7 @@
                         </td>
                     </tr>
 
-                    <tr th:if="${page.totalElements == 0}">
+                    <tr th:if="${employees.size() == 0}">
                         <td colspan="7" class="text-center py-4">
                             <i class="bi bi-person-x fs-3 d-block mb-2"></i>
                             No employees found.
@@ -108,62 +105,64 @@
 
                     </tbody>
                 </table>
+
             </div>
         </div>
 
-        <!-- ========================= -->
-        <!-- PAGINATION                -->
-        <!-- ========================= -->
-        <nav th:if="${page.totalPages > 1}" class="mt-4">
-            <ul class="pagination justify-content-center">
+        <!-- ===================== -->
+        <!-- Pagination Controls   -->
+        <!-- ===================== -->
+        <div class="d-flex justify-content-center mt-4">
 
-                <!-- PREV -->
-                <li class="page-item" th:classappend="${page.first} ? 'disabled'">
-                    <a class="page-link rounded-pill"
-                       th:href="@{/web/(page=${page.number - 1})}">
-                        ‹ Prev
-                    </a>
-                </li>
+            <nav aria-label="Page navigation">
+                <ul class="pagination pagination-lg">
 
-                <!-- PAGE NUMBERS -->
-                <li class="page-item"
-                    th:each="p : ${#numbers.sequence(0, page.totalPages - 1)}"
-                    th:classappend="${p == page.number} ? 'active'">
-                    <a class="page-link rounded-pill"
-                       th:text="${p + 1}"
-                       th:href="@{/web/(page=${p})}">
-                    </a>
-                </li>
+                    <!-- Previous -->
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/web/(page=${currentPage - 1}, size=${pageSize})}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
 
-                <!-- NEXT -->
-                <li class="page-item" th:classappend="${page.last} ? 'disabled'">
-                    <a class="page-link rounded-pill"
-                       th:href="@{/web/(page=${page.number + 1})}">
-                        Next ›
-                    </a>
-                </li>
+                    <!-- Page Numbers -->
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link"
+                           th:text="${i + 1}"
+                           th:href="@{/web/(page=${i}, size=${pageSize})}"></a>
+                    </li>
 
-            </ul>
-        </nav>
+                    <!-- Next -->
+                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/web/(page=${currentPage + 1}, size=${pageSize})}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+
+                </ul>
+            </nav>
+
+        </div>
 
     </div>
 
-    <!-- SEARCH FILTER JS -->
+    <!-- Search Filter Script -->
     <script>
         const searchInput = document.getElementById("searchInput");
         const rows = document.querySelectorAll("#employeeTable tr");
 
         searchInput.addEventListener("keyup", () => {
             const text = searchInput.value.toLowerCase();
-
             rows.forEach(r => {
-                r.style.display = r.textContent.toLowerCase().includes(text)
-                    ? "" : "none";
+                r.style.display = r.textContent.toLowerCase().includes(text) ? "" : "none";
             });
         });
     </script>
 
 </div>
-</body>
 
+</body>
 </html>
