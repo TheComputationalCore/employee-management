@@ -1,11 +1,13 @@
 package com.example.employeemanagement.service;
 
+import com.example.employeemanagement.dto.EmployeeRequestDTO;
 import com.example.employeemanagement.model.Employee;
 import com.example.employeemanagement.repository.EmployeeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -13,103 +15,108 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository repository;
 
+    /* ===========================================================
+       PAGINATION + SEARCH
+    ============================================================ */
+
     @Override
-    public Page<Employee> getPaginatedEmployees(
-            int page,
-            int size,
-            String sortField,
-            String sortDirection,
-            String search,
-            String department,
-            String position
-    ) {
-        Sort sort = sortDirection.equalsIgnoreCase("desc")
-                ? Sort.by(sortField).descending()
-                : Sort.by(sortField).ascending();
+    public Page<Employee> getPaginatedEmployees(int page, int size, String search) {
 
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
-        if (search != null && !search.isEmpty()) {
-            return repository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
-                    search, search, pageable
-            );
+        if (search == null || search.trim().isEmpty()) {
+            return repository.findAll(pageable);
         }
 
-        if (department != null && !department.isEmpty()) {
-            return repository.findByDepartmentIgnoreCase(department, pageable);
+        search = "%" + search.toLowerCase() + "%";
+
+        return repository.searchEmployees(search, pageable);
+    }
+
+    /* ===========================================================
+       BUSINESS CRUD OPERATIONS
+    ============================================================ */
+
+    @Override
+    @Transactional
+    public Employee createEmployee(EmployeeRequestDTO req) {
+
+        if (repository.existsByEmail(req.getEmail())) {
+            throw new IllegalArgumentException("Email already exists: " + req.getEmail());
         }
 
-        if (position != null && !position.isEmpty()) {
-            return repository.findByPositionIgnoreCase(position, pageable);
+        Employee employee = new Employee();
+        employee.setFirstName(req.getFirstName());
+        employee.setLastName(req.getLastName());
+        employee.setEmail(req.getEmail());
+        employee.setPhoneNumber(req.getPhoneNumber());
+        employee.setDepartment(req.getDepartment());
+        employee.setPosition(req.getPosition());
+        employee.setSalary(req.getSalary());
+
+        return repository.save(employee);
+    }
+
+
+    @Override
+    @Transactional
+    public Employee updateEmployee(Long id, EmployeeRequestDTO req) {
+
+        Employee employee = getEmployeeById(id);
+
+        // Prevent duplicate email across employees
+        if (!employee.getEmail().equals(req.getEmail()) && repository.existsByEmail(req.getEmail())) {
+            throw new IllegalArgumentException("Email already exists: " + req.getEmail());
         }
 
-        return repository.findAll(pageable);
+        employee.setFirstName(req.getFirstName());
+        employee.setLastName(req.getLastName());
+        employee.setEmail(req.getEmail());
+        employee.setPhoneNumber(req.getPhoneNumber());
+        employee.setDepartment(req.getDepartment());
+        employee.setPosition(req.getPosition());
+        employee.setSalary(req.getSalary());
+
+        return repository.save(employee);
     }
 
-    @Override
-    public long getTotalEmployees() {
-        return repository.count();
-    }
-
-    @Override
-    public long getDepartmentsCount() {
-        return repository.findAll()
-                .stream()
-                .map(Employee::getDepartment)
-                .filter(d -> d != null && !d.isBlank())
-                .distinct()
-                .count();
-    }
-
-    @Override
-    public long getPositionsCount() {
-        return repository.findAll()
-                .stream()
-                .map(Employee::getPosition)
-                .filter(p -> p != null && !p.isBlank())
-                .distinct()
-                .count();
-    }
 
     @Override
     public Employee getEmployeeById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Employee not found with ID: " + id));
     }
 
-    @Override
-    public Employee createEmployee(Employee employee) {
-        if (repository.existsByEmail(employee.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
-        }
-        return repository.save(employee);
-    }
 
     @Override
-    public Employee updateEmployee(Long id, Employee employeeDetails) {
-        Employee employee = getEmployeeById(id);
-
-        if (!employee.getEmail().equals(employeeDetails.getEmail()) &&
-                repository.existsByEmail(employeeDetails.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
-        }
-
-        employee.setFirstName(employeeDetails.getFirstName());
-        employee.setLastName(employeeDetails.getLastName());
-        employee.setEmail(employeeDetails.getEmail());
-        employee.setPhoneNumber(employeeDetails.getPhoneNumber());
-        employee.setDepartment(employeeDetails.getDepartment());
-        employee.setPosition(employeeDetails.getPosition());
-        employee.setSalary(employeeDetails.getSalary());
-
-        return repository.save(employee);
-    }
-
-    @Override
+    @Transactional
     public void deleteEmployee(Long id) {
+
         if (!repository.existsById(id)) {
-            throw new EntityNotFoundException("Employee not found");
+            throw new EntityNotFoundException("Employee not found with ID: " + id);
         }
+
         repository.deleteById(id);
+    }
+
+
+    /* ===========================================================
+       DASHBOARD COUNTERS
+    ============================================================ */
+
+    @Override
+    public long countEmployees() {
+        return repository.count();
+    }
+
+    @Override
+    public long countDepartments() {
+        return repository.countDistinctDepartments();
+    }
+
+    @Override
+    public long countPositions() {
+        return repository.countDistinctPositions();
     }
 }
