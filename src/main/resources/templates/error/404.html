@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
+
+<th:block th:with="pageTitle='404 — Not Found', content='this :: contentFragment'">
+
+<div th:fragment="contentFragment">
+
+    <div class="glass-card text-center p-5 mx-auto" style="max-width: 600px;">
+        <h1 class="display-4 fw-bold text-danger">404</h1>
+        <p class="fs-5 mb-4">Oops! The page you're looking for doesn't exist.</p>
+
+        <img src="https://cdn-icons-png.flaticon.com/512/580/580185.png"
+             width="120" class="mb-4 opacity-75" />
+
+        <a th:href="@{/web/}" class="btn btn-primary px-4">Back to Dashboard</a>
+    </div>
+
+</div>
+
+</th:block>
+
+</html>
