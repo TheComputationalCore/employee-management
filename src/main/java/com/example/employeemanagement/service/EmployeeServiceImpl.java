@@ -1,157 +1,111 @@
 package com.example.employeemanagement.service;
 
-import com.example.employeemanagement.dto.EmployeeRequestDTO;
-import com.example.employeemanagement.dto.EmployeeWebDTO;
-import com.example.employeemanagement.mapper.EmployeeMapper;
 import com.example.employeemanagement.model.Employee;
 import com.example.employeemanagement.repository.EmployeeRepository;
-
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private final EmployeeRepository repo;
-    private final EmployeeMapper mapper;
+    private final EmployeeRepository employeeRepository;
 
-    /* ---------------------------
-        CRUD Operations
-    --------------------------- */
-
+    /* ============================================================
+       PAGINATION + SEARCH
+       ============================================================ */
     @Override
-    public EmployeeWebDTO createEmployee(EmployeeRequestDTO dto) {
+    public Page<Employee> getPaginatedEmployees(int page, int size, String search) {
 
-        if (repo.existsByEmail(dto.getEmail())) {
-            throw new IllegalArgumentException("Email already exists: " + dto.getEmail());
+        Pageable pageable = PageRequest.of(
+                Math.max(page - 1, 0),
+                size,
+                Sort.by("id").descending()
+        );
+
+        if (search != null && !search.trim().isEmpty()) {
+            String keyword = "%" + search.trim().toLowerCase() + "%";
+
+            return employeeRepository.searchEmployees(keyword, pageable);
         }
 
-        Employee employee = mapper.toEntity(dto);
-        repo.save(employee);
-
-        return mapper.toWebDTO(employee);
+        return employeeRepository.findAll(pageable);
     }
 
-    @Override
-    public EmployeeWebDTO updateEmployee(Long id, EmployeeRequestDTO dto) {
-        Employee existing = repo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
-
-        // Email uniqueness
-        if (!existing.getEmail().equals(dto.getEmail()) &&
-                repo.existsByEmail(dto.getEmail())) {
-            throw new IllegalArgumentException("Email already exists: " + dto.getEmail());
-        }
-
-        mapper.updateEntity(existing, dto);
-        repo.save(existing);
-
-        return mapper.toWebDTO(existing);
-    }
-
-    @Override
-    public void deleteEmployee(Long id) {
-        if (!repo.existsById(id)) {
-            throw new EntityNotFoundException("Employee not found");
-        }
-        repo.deleteById(id);
-    }
-
-    @Override
-    public EmployeeWebDTO getEmployeeById(Long id) {
-        return repo.findById(id)
-                .map(mapper::toWebDTO)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
-    }
-
-
-    /* ---------------------------
-        Pagination + Search
-    --------------------------- */
-
-    @Override
-    public List<EmployeeWebDTO> getPaginatedEmployees(
-            int page,
-            int size,
-            String sortField,
-            String sortDir,
-            String keyword
-    ) {
-
-        List<Employee> source = (keyword == null || keyword.isBlank())
-                ? repo.findAll()
-                : repo.search(keyword);
-
-        // Sorting
-        Comparator<Employee> comparator = getComparator(sortField);
-
-        if ("desc".equalsIgnoreCase(sortDir)) {
-            comparator = comparator.reversed();
-        }
-
-        List<Employee> sorted = source.stream()
-                .sorted(comparator)
-                .collect(Collectors.toList());
-
-        // Pagination window
-        int start = page * size;
-        int end = Math.min(start + size, sorted.size());
-
-        if (start > sorted.size()) {
-            return List.of();
-        }
-
-        return sorted.subList(start, end)
-                .stream()
-                .map(mapper::toWebDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public long getTotalEmployeeCount(String keyword) {
-        return (keyword == null || keyword.isBlank())
-                ? repo.count()
-                : repo.search(keyword).size();
-    }
-
-
-    /* ---------------------------
-        Dashboard Counters
-    --------------------------- */
+    /* ============================================================
+       DASHBOARD METRICS
+       ============================================================ */
 
     @Override
     public long countEmployees() {
-        return repo.countEmployees();
+        return employeeRepository.count();
     }
 
     @Override
     public long countDepartments() {
-        return repo.countDepartments();
+        return employeeRepository.countDistinctDepartments();
     }
 
     @Override
     public long countPositions() {
-        return repo.countPositions();
+        return employeeRepository.countDistinctPositions();
     }
 
+    /* ============================================================
+       CRUD OPERATIONS
+       ============================================================ */
 
-    /* ---------------------------
-        Helper
-    --------------------------- */
+    @Override
+    public Employee getEmployeeById(Long id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Employee not found with ID: " + id));
+    }
 
-    private Comparator<Employee> getComparator(String sortField) {
-        return switch (sortField) {
-            case "email"      -> Comparator.comparing(Employee::getEmail, String.CASE_INSENSITIVE_ORDER);
-            case "department" -> Comparator.comparing(Employee::getDepartment, String.CASE_INSENSITIVE_ORDER);
-            case "position"   -> Comparator.comparing(Employee::getPosition, String.CASE_INSENSITIVE_ORDER);
-            case "salary"     -> Comparator.comparing(Employee::getSalary);
-            default           -> Comparator.comparing(Employee::getFirstName, String.CASE_INSENSITIVE_ORDER);
-        };
+    @Override
+    public Employee createEmployee(Employee employee) {
+
+        if (employeeRepository.existsByEmail(employee.getEmail())) {
+            throw new IllegalArgumentException("Email already exists: " + employee.getEmail());
+        }
+
+        return employeeRepository.save(employee);
+    }
+
+    @Override
+    public Employee updateEmployee(Long id, Employee details) {
+
+        Employee employee = getEmployeeById(id);
+
+        // Handling email uniqueness check
+        if (!employee.getEmail().equals(details.getEmail())) {
+            if (employeeRepository.existsByEmail(details.getEmail())) {
+                throw new IllegalArgumentException("Email already exists: " + details.getEmail());
+            }
+        }
+
+        employee.setFirstName(details.getFirstName());
+        employee.setLastName(details.getLastName());
+        employee.setEmail(details.getEmail());
+        employee.setPhoneNumber(details.getPhoneNumber());
+        employee.setDepartment(details.getDepartment());
+        employee.setPosition(details.getPosition());
+        employee.setSalary(details.getSalary());
+
+        return employeeRepository.save(employee);
+    }
+
+    @Override
+    public void deleteEmployee(Long id) {
+
+        if (!employeeRepository.existsById(id)) {
+            throw new EntityNotFoundException("Employee ID not found: " + id);
+        }
+
+        employeeRepository.deleteById(id);
     }
 }
