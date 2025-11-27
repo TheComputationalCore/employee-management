@@ -1,27 +1,20 @@
-package com.thecomputationalcore.employeemanagement.service;
+package com.example.employeemanagement.service;
 
-import com.thecomputationalcore.employeemanagement.model.Employee;
+import com.example.employeemanagement.model.Employee;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface EmployeeService {
 
-    /**
-     * Paginated + sorted + searchable employee list.
-     *
-     * @param page   page number (0-based)
-     * @param size   number of records per page
-     * @param sort   clean sort key: name | department | position | salary
-     * @param dir    asc or desc
-     * @param search search keyword (nullable or empty)
-     */
-    Page<Employee> getEmployees(int page, int size, String sort, String dir, String search);
+    Page<Employee> getEmployees(Pageable pageable);
 
+    Page<Employee> searchEmployees(String keyword, Pageable pageable);
 
     Employee getEmployeeById(Long id);
 
     Employee createEmployee(Employee employee);
 
-    Employee updateEmployee(Long id, Employee employee);
+    Employee updateEmployee(Long id, Employee updated);
 
     void deleteEmployee(Long id);
 }
