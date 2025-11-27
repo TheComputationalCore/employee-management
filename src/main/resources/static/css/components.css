@@ -297,3 +297,48 @@ html.dark-mode .alert-danger {
 .pagination .page-link:hover {
     background: rgba(255,255,255,0.9);
 }
+
+/* ============================ */
+/* Premium Split Layout         */
+/* ============================ */
+
+.split-container {
+    display: flex;
+    min-height: 85vh;
+    gap: 0;
+}
+
+/* LEFT PANEL */
+.split-left {
+    width: 40%;
+    padding: 50px;
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+.info-content {
+    max-width: 400px;
+}
+
+/* RIGHT PANEL */
+.split-right {
+    width: 60%;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 992px) {
+    .split-container {
+        flex-direction: column;
+    }
+
+    .split-left,
+    .split-right {
+        width: 100%;
+        padding: 30px;
+        text-align: center;
+    }
+}
+
