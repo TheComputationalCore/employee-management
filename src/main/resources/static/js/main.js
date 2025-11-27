@@ -1,95 +1,181 @@
-// Form validation
-(function () {
-    'use strict'
+/* =======================================================
+   PREMIUM UI JAVASCRIPT FOR EMPLOYEE MANAGEMENT SYSTEM
+   ======================================================= */
 
-    // Fetch all forms that need validation
-    const forms = document.querySelectorAll('.needs-validation')
+// -----------------------------------------
+// SWEETALERT2 DELETE CONFIRMATION
+// -----------------------------------------
+document.addEventListener('DOMContentLoaded', function () {
+    const deleteLinks = document.querySelectorAll('a[href*="/delete/"]');
 
-    // Loop over them and prevent submission
-    Array.from(forms).forEach(form => {
-        form.addEventListener('submit', event => {
-            if (!form.checkValidity()) {
-                event.preventDefault()
-                event.stopPropagation()
-            }
-            form.classList.add('was-validated')
-        }, false)
-    })
-})()
-
-// Phone number formatting
-document.addEventListener('DOMContentLoaded', function() {
-    const phoneInputs = document.querySelectorAll('input[type="tel"]')
-    
-    phoneInputs.forEach(input => {
-        input.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '')
-            if (value.length > 0) {
-                if (value.length <= 3) {
-                    value = value
-                } else if (value.length <= 6) {
-                    value = value.slice(0, 3) + '-' + value.slice(3)
-                } else {
-                    value = value.slice(0, 3) + '-' + value.slice(3, 6) + '-' + value.slice(6, 10)
-                }
-            }
-            e.target.value = value
-        })
-    })
-})
-
-// Salary formatting
-document.addEventListener('DOMContentLoaded', function() {
-    const salaryInput = document.getElementById('salary')
-    if (salaryInput) {
-        salaryInput.addEventListener('input', function(e) {
-            let value = e.target.value
-            if (value) {
-                value = parseFloat(value).toFixed(2)
-                if (!isNaN(value)) {
-                    e.target.value = value
-                }
-            }
-        })
-    }
-})
-
-// Auto-capitalize names
-document.addEventListener('DOMContentLoaded', function() {
-    const nameInputs = document.querySelectorAll('#firstName, #lastName')
-    
-    nameInputs.forEach(input => {
-        input.addEventListener('input', function(e) {
-            let value = e.target.value
-            if (value) {
-                e.target.value = value.charAt(0).toUpperCase() + value.slice(1)
-            }
-        })
-    })
-})
-
-// Confirmation dialogs
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteLinks = document.querySelectorAll('a[href*="/delete/"]')
-    
     deleteLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            if (!confirm('Are you sure you want to delete this employee?')) {
-                e.preventDefault()
-            }
-        })
-    })
-})
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
 
-// Auto-dismiss alerts
-document.addEventListener('DOMContentLoaded', function() {
-    const alerts = document.querySelectorAll('.alert:not(.alert-permanent)')
-    
+            Swal.fire({
+                title: "Delete Employee?",
+                text: "This action cannot be undone.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete",
+                background: "#ffffffee",
+                backdrop: "rgba(0,0,0,0.4)",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = link.href;
+                }
+            });
+        });
+    });
+});
+
+
+// -----------------------------------------
+// REAL-TIME TABLE SEARCH
+// -----------------------------------------
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById("searchInput");
+    const tableRows = document.querySelectorAll("#employeeTable tr");
+
+    if (searchInput) {
+        searchInput.addEventListener("keyup", function () {
+            const searchTerm = searchInput.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                const rowText = row.innerText.toLowerCase();
+                row.style.display = rowText.includes(searchTerm) ? "" : "none";
+            });
+        });
+    }
+});
+
+
+// -----------------------------------------
+// FLOATING LABELS SMOOTH BEHAVIOR
+// -----------------------------------------
+document.addEventListener('DOMContentLoaded', function () {
+    const inputs = document.querySelectorAll(".floating-input");
+
+    inputs.forEach(input => {
+        // Trigger animation on load if field has value
+        if (input.value.trim().length > 0) {
+            input.classList.add("has-value");
+        }
+
+        // Trigger animation on input
+        input.addEventListener("input", () => {
+            if (input.value.trim().length > 0) {
+                input.classList.add("has-value");
+            } else {
+                input.classList.remove("has-value");
+            }
+        });
+    });
+});
+
+
+// -----------------------------------------
+// AUTO-CAPITALIZE NAME FIELDS
+// -----------------------------------------
+document.addEventListener("DOMContentLoaded", function () {
+    const nameInputs = document.querySelectorAll("#firstName, #lastName");
+
+    nameInputs.forEach(input => {
+        input.addEventListener("input", function () {
+            let value = input.value;
+            input.value = value.charAt(0).toUpperCase() + value.slice(1);
+        });
+    });
+});
+
+
+// -----------------------------------------
+// PHONE NUMBER FORMATTER (123-456-7890)
+// -----------------------------------------
+document.addEventListener("DOMContentLoaded", function () {
+    const phoneFields = document.querySelectorAll('input[type="tel"]');
+
+    phoneFields.forEach(field => {
+        field.addEventListener("input", function () {
+            let digits = field.value.replace(/\D/g, "").slice(0, 10);
+
+            if (digits.length > 6) {
+                field.value = digits.replace(/(\d{3})(\d{3})(\d+)/, "$1-$2-$3");
+            } else if (digits.length > 3) {
+                field.value = digits.replace(/(\d{3})(\d+)/, "$1-$2");
+            } else {
+                field.value = digits;
+            }
+        });
+    });
+});
+
+
+// -----------------------------------------
+// SALARY FORMATTING — on blur only
+// -----------------------------------------
+document.addEventListener("DOMContentLoaded", function () {
+    const salary = document.getElementById("salary");
+
+    if (salary) {
+        salary.addEventListener("blur", function () {
+            let value = parseFloat(salary.value);
+            if (!isNaN(value)) {
+                salary.value = value.toFixed(2);
+            }
+        });
+    }
+});
+
+
+// -----------------------------------------
+// AUTO-CLOSE ALERTS (sweet fade-out)
+// -----------------------------------------
+document.addEventListener('DOMContentLoaded', function () {
+    const alerts = document.querySelectorAll('.alert');
+
     alerts.forEach(alert => {
         setTimeout(() => {
-            alert.style.transition = 'opacity 0.5s ease-in-out'
-            alert.style.opacity = '0'
-            setTimeout(() => alert.remove(), 500)
-        }, 5000)
-    })
-}) 
+            alert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            alert.style.opacity = '0';
+            alert.style.transform = 'translateY(-6px)';
+            setTimeout(() => alert.remove(), 600);
+        }, 3500);
+    });
+});
+
+
+// -----------------------------------------
+// FORM VALIDATION (Bootstrap)
+// -----------------------------------------
+(function () {
+    "use strict";
+    const forms = document.querySelectorAll(".needs-validation");
+
+    Array.from(forms).forEach(form => {
+        form.addEventListener("submit", event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add("was-validated");
+        }, false);
+    });
+})();
+
+
+// -----------------------------------------
+// SIDEBAR TOGGLE (for mobile in future)
+// -----------------------------------------
+document.addEventListener('DOMContentLoaded', function () {
+    const sidebar = document.querySelector('.sidebar');
+    const toggleBtn = document.querySelector('.sidebar-toggle');
+
+    if (toggleBtn && sidebar) {
+        toggleBtn.addEventListener('click', function () {
+            sidebar.classList.toggle("open");
+        });
+    }
+});
