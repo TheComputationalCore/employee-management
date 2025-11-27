@@ -1,31 +1,46 @@
 package com.example.employeemanagement.service;
 
+import com.example.employeemanagement.dto.EmployeeRequestDTO;
 import com.example.employeemanagement.model.Employee;
 import org.springframework.data.domain.Page;
 
 public interface EmployeeService {
 
-    Page<Employee> getPaginatedEmployees(
-            int page,
-            int size,
-            String sortField,
-            String sortDirection,
-            String search,
-            String department,
-            String position
-    );
+    /* ===========================================================
+       PAGINATION + SEARCH
+    ============================================================ */
+
+    /**
+     * Returns a paginated + optionally searchable list of employees.
+     * 
+     * @param page        zero-based page index 
+     * @param size        page size
+     * @param search      optional search text (name/email/department/position)
+     * @return paginated employees
+     */
+    Page<Employee> getPaginatedEmployees(int page, int size, String search);
+
+    
+    /* ===========================================================
+       BUSINESS CRUD OPERATIONS
+    ============================================================ */
+
+    Employee createEmployee(EmployeeRequestDTO request);
+
+    Employee updateEmployee(Long id, EmployeeRequestDTO request);
 
     Employee getEmployeeById(Long id);
 
-    Employee createEmployee(Employee employee);
-
-    Employee updateEmployee(Long id, Employee employeeDetails);
-
     void deleteEmployee(Long id);
 
-    long getTotalEmployees();
 
-    long getDepartmentsCount();
+    /* ===========================================================
+       DASHBOARD COUNTERS
+    ============================================================ */
 
-    long getPositionsCount();
+    long countEmployees();
+
+    long countDepartments();
+
+    long countPositions();
 }
