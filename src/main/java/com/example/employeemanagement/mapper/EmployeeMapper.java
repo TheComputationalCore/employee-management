@@ -1,35 +1,49 @@
 package com.example.employeemanagement.mapper;
 
 import com.example.employeemanagement.dto.EmployeeDTO;
-import com.example.employeemanagement.dto.EmployeeWebDTO;
+import com.example.employeemanagement.dto.EmployeeRequestDTO;
 import com.example.employeemanagement.model.Employee;
-import org.mapstruct.*;
-import java.util.List;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface EmployeeMapper {
+@Component
+public class EmployeeMapper {
 
-    /* -------------------------
-       ENTITY → DTO
-    ------------------------- */
-    EmployeeDTO toDto(Employee employee);
+    public EmployeeDTO toDTO(Employee employee) {
+        EmployeeDTO dto = new EmployeeDTO();
 
-    List<EmployeeDTO> toDtoList(List<Employee> employees);
+        dto.setId(employee.getId());
+        dto.setFirstName(employee.getFirstName());
+        dto.setLastName(employee.getLastName());
+        dto.setEmail(employee.getEmail());
+        dto.setPhoneNumber(employee.getPhoneNumber());
+        dto.setDepartment(employee.getDepartment());
+        dto.setPosition(employee.getPosition());
+        dto.setSalary(employee.getSalary());
 
-    /* -------------------------
-       DTO → ENTITY
-    ------------------------- */
-    Employee toEntity(EmployeeDTO dto);
+        return dto;
+    }
 
-    /* -------------------------
-       ENTITY → WEB DTO
-    ------------------------- */
-    EmployeeWebDTO toWebDto(Employee employee);
+    public Employee toEntity(EmployeeRequestDTO req) {
+        Employee employee = new Employee();
 
-    /* -------------------------
-       WEB DTO → ENTITY
-    ------------------------- */
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateEntityFromWebDto(EmployeeWebDTO dto, @MappingTarget Employee employee);
+        employee.setFirstName(req.getFirstName());
+        employee.setLastName(req.getLastName());
+        employee.setEmail(req.getEmail());
+        employee.setPhoneNumber(req.getPhoneNumber());
+        employee.setDepartment(req.getDepartment());
+        employee.setPosition(req.getPosition());
+        employee.setSalary(req.getSalary());
 
+        return employee;
+    }
+
+    public void updateEntity(Employee employee, EmployeeRequestDTO req) {
+        employee.setFirstName(req.getFirstName());
+        employee.setLastName(req.getLastName());
+        employee.setEmail(req.getEmail());
+        employee.setPhoneNumber(req.getPhoneNumber());
+        employee.setDepartment(req.getDepartment());
+        employee.setPosition(req.getPosition());
+        employee.setSalary(req.getSalary());
+    }
 }
