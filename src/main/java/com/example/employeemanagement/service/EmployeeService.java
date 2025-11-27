@@ -1,22 +1,24 @@
-package com.thecomputationalcore.employeemanagement.service;
+package com.example.employeemanagement.service;
 
-import com.thecomputationalcore.employeemanagement.dto.EmployeeDto;
+import com.example.employeemanagement.model.Employee;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface EmployeeService {
 
-    List<EmployeeDto> getAllEmployees();
+    // Pagination
+    Page<Employee> getAllEmployeesPaginated(Pageable pageable);
 
-    EmployeeDto getEmployeeById(Long id);
-
-    EmployeeDto createEmployee(EmployeeDto employeeDto);
-
-    EmployeeDto updateEmployee(Long id, EmployeeDto employeeDto);
-
+    // CRUD
+    List<Employee> getAllEmployees();
+    Employee getEmployeeById(Long id);
+    Employee createEmployee(Employee employee);
+    Employee updateEmployee(Long id, Employee employeeDetails);
     void deleteEmployee(Long id);
 
-    List<EmployeeDto> getEmployeesByDepartment(String department);
-
-    List<EmployeeDto> getEmployeesByPosition(String position);
+    // Filters
+    List<Employee> getEmployeesByDepartment(String department);
+    List<Employee> getEmployeesByPosition(String position);
 }
