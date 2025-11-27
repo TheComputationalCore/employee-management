@@ -1,7 +1,8 @@
 package com.example.employeemanagement.service;
 
-import com.example.employeemanagement.dto.EmployeeFilterRequest;
-import com.example.employeemanagement.dto.PagedResponse;
+import com.example.employeemanagement.dto.EmployeeDTO;
+import com.example.employeemanagement.dto.EmployeeRequestDTO;
+import com.example.employeemanagement.mapper.EmployeeMapper;
 import com.example.employeemanagement.model.Employee;
 import com.example.employeemanagement.repository.EmployeeRepository;
 
@@ -17,75 +18,90 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeRepository repository;
+    private final EmployeeMapper mapper;
 
+    /* ================================
+          PAGINATION + SORTING
+       ================================ */
     @Override
-    public PagedResponse<Employee> getEmployees(int page, int size, EmployeeFilterRequest filter) {
+    public Page<EmployeeDTO> getEmployees(int page, int size, String sortField, String sortDir) {
 
-        Sort sort = filter.getSortDir().equalsIgnoreCase("desc") ?
-                Sort.by(filter.getSortField()).descending() :
-                Sort.by(filter.getSortField()).ascending();
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortField).descending()
+                : Sort.by(sortField).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Employee> result;
+        return repository.findAll(pageable)
+                .map(mapper::toDTO);
+    }
 
-        boolean searching = filter.getSearch() != null && !filter.getSearch().isBlank();
-        boolean dept = filter.getDepartment() != null && !filter.getDepartment().isBlank();
-        boolean pos = filter.getPosition() != null && !filter.getPosition().isBlank();
+    /* ================================
+          SEARCH
+       ================================ */
+    @Override
+    public Page<EmployeeDTO> searchEmployees(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
 
-        if (searching) {
-            result = employeeRepository
-                    .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-                            filter.getSearch(), filter.getSearch(), filter.getSearch(), pageable);
-        } else if (dept) {
-            result = employeeRepository.findByDepartmentIgnoreCase(filter.getDepartment(), pageable);
-        } else if (pos) {
-            result = employeeRepository.findByPositionIgnoreCase(filter.getPosition(), pageable);
-        } else {
-            result = employeeRepository.findAll(pageable);
+        return repository
+                .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
+                        keyword, keyword, pageable
+                )
+                .map(mapper::toDTO);
+    }
+
+    /* ================================
+          GET ONE
+       ================================ */
+    @Override
+    public EmployeeDTO getEmployeeById(Long id) {
+        Employee employee = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
+
+        return mapper.toDTO(employee);
+    }
+
+    /* ================================
+          CREATE
+       ================================ */
+    @Override
+    public EmployeeDTO createEmployee(EmployeeRequestDTO request) {
+
+        if (repository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
         }
 
-        return new PagedResponse<>(result);
+        Employee employee = mapper.toEntity(request);
+        return mapper.toDTO(repository.save(employee));
     }
 
+    /* ================================
+          UPDATE
+       ================================ */
     @Override
-    public Employee getEmployeeById(Long id) {
-        return employeeRepository
-                .findById(id)
+    public EmployeeDTO updateEmployee(Long id, EmployeeRequestDTO request) {
+
+        Employee employee = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
-    }
 
-    @Override
-    public Employee createEmployee(Employee employee) {
-        if (employeeRepository.existsByEmail(employee.getEmail()))
+        if (!employee.getEmail().equals(request.getEmail())
+                && repository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
+        }
 
-        return employeeRepository.save(employee);
+        mapper.updateEntity(employee, request);
+        return mapper.toDTO(repository.save(employee));
     }
 
-    @Override
-    public Employee updateEmployee(Long id, Employee updated) {
-        Employee existing = getEmployeeById(id);
-
-        if (!existing.getEmail().equals(updated.getEmail())
-                && employeeRepository.existsByEmail(updated.getEmail()))
-            throw new IllegalArgumentException("Email already exists");
-
-        existing.setFirstName(updated.getFirstName());
-        existing.setLastName(updated.getLastName());
-        existing.setEmail(updated.getEmail());
-        existing.setPhoneNumber(updated.getPhoneNumber());
-        existing.setDepartment(updated.getDepartment());
-        existing.setPosition(updated.getPosition());
-        existing.setSalary(updated.getSalary());
-
-        return employeeRepository.save(existing);
-    }
-
+    /* ================================
+          DELETE
+       ================================ */
     @Override
     public void deleteEmployee(Long id) {
-        getEmployeeById(id);
-        employeeRepository.deleteById(id);
+        if (!repository.existsById(id)) {
+            throw new EntityNotFoundException("Employee not found");
+        }
+        repository.deleteById(id);
     }
 }
