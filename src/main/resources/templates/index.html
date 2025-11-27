@@ -10,11 +10,13 @@
 
 <div th:fragment="content">
 
+    <!-- ===================== -->
+    <!-- Dashboard Header      -->
+    <!-- ===================== -->
     <div class="container-fluid px-4">
-
         <h2 class="mb-4 fw-bold text-dark">Dashboard</h2>
 
-        <!-- Dashboard Cards -->
+        <!-- Cards -->
         <div class="row g-4">
 
             <div class="col-xl-4 col-md-6">
@@ -43,25 +45,46 @@
 
         </div>
 
-
-        <!-- Search + Add -->
+        <!-- ================================ -->
+        <!-- Search + Add + Sort Controls    -->
+        <!-- ================================ -->
         <div class="row align-items-center mt-5 mb-3">
-            <div class="col-md-6">
-                <input id="searchInput" type="text" class="form-control search-input"
-                       placeholder="Search employees...">
+            <div class="col-md-4">
+                <input id="searchInput"
+                       type="text"
+                       th:value="${keyword}"
+                       class="form-control search-input"
+                       placeholder="Search employees..."
+                       onkeyup="applySearch()">
             </div>
-            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+
+            <div class="col-md-4 mt-3 mt-md-0">
+                <select id="sortSelect" class="form-select"
+                        onchange="changeSort(this.value)">
+                    <option value="firstName,asc"
+                            th:selected="${sortField=='firstName' and sortDir=='asc'}">Name ↑</option>
+                    <option value="firstName,desc"
+                            th:selected="${sortField=='firstName' and sortDir=='desc'}">Name ↓</option>
+
+                    <option value="salary,asc"
+                            th:selected="${sortField=='salary' and sortDir=='asc'}">Salary ↑</option>
+                    <option value="salary,desc"
+                            th:selected="${sortField=='salary' and sortDir=='desc'}">Salary ↓</option>
+                </select>
+            </div>
+
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
                 <a th:href="@{/web/employees/new}" class="btn btn-primary px-4">
                     <i class="bi bi-plus-circle me-1"></i> Add Employee
                 </a>
             </div>
         </div>
 
-
-        <!-- Table Wrapper -->
-        <div class="glass-table p-3 rounded">
+        <!-- ===================== -->
+        <!-- Employee Table        -->
+        <!-- ===================== -->
+        <div class="glass-table p-3 rounded mt-3">
             <div class="table-responsive">
-
                 <table class="table align-middle table-hover mb-0">
                     <thead>
                         <tr>
@@ -74,75 +97,65 @@
                             <th class="text-end">Actions</th>
                         </tr>
                     </thead>
-
-                    <tbody id="employeeTable">
-
+                    <tbody>
                         <tr th:each="emp : ${employees}">
                             <td th:text="${emp.id}"></td>
-                            <td th:text="${emp.firstName + ' ' + emp.lastName}"></td>
+                            <td th:text="${emp.fullName}"></td>
                             <td th:text="${emp.email}"></td>
                             <td th:text="${emp.department}"></td>
                             <td th:text="${emp.position}"></td>
-                            <td th:text="'$' + ${#numbers.formatDecimal(emp.salary, 0, 'COMMA', 2, 'POINT')}"></td>
+                            <td th:text="'$' + ${#numbers.formatDecimal(emp.salary,0,'COMMA',2,'POINT')}"></td>
 
                             <td class="text-end">
-
                                 <a th:href="@{/web/employees/edit/{id}(id=${emp.id})}"
                                    class="btn btn-sm btn-outline-warning me-2">
-                                   <i class="bi bi-pencil-square"></i>
+                                    <i class="bi bi-pencil-square"></i>
                                 </a>
 
                                 <a th:href="@{/web/employees/delete/{id}(id=${emp.id})}"
                                    class="btn btn-sm btn-outline-danger delete-confirm">
-                                   <i class="bi bi-trash"></i>
+                                    <i class="bi bi-trash"></i>
                                 </a>
-
                             </td>
                         </tr>
 
-                        <!-- Empty State -->
+                        <!-- Empty -->
                         <tr th:if="${employees.size() == 0}">
-                            <td colspan="7" class="text-center py-4">
+                            <td colspan="7" class="text-center py-4 text-muted">
                                 <i class="bi bi-person-x fs-3 d-block mb-2"></i>
                                 No employees found.
                             </td>
                         </tr>
-
                     </tbody>
                 </table>
-
             </div>
         </div>
 
-
-        <!-- PAGINATION -->
-        <nav class="mt-4" th:if="${totalPages > 1}">
+        <!-- ===================== -->
+        <!-- Pagination Bar        -->
+        <!-- ===================== -->
+        <nav class="mt-4">
             <ul class="pagination justify-content-center">
 
-                <!-- Prev -->
                 <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/web/(page=${currentPage - 1})}">
+                       th:href="@{|/web/?page=${currentPage - 1}&size=${size}&sortField=${sortField}&sortDir=${sortDir}&keyword=${keyword}|}">
                         Previous
                     </a>
                 </li>
 
-                <!-- Page numbers -->
                 <li class="page-item"
                     th:each="i : ${#numbers.sequence(0, totalPages-1)}"
                     th:classappend="${i == currentPage} ? 'active'">
-
                     <a class="page-link"
                        th:text="${i + 1}"
-                       th:href="@{/web/(page=${i})}">
+                       th:href="@{|/web/?page=${i}&size=${size}&sortField=${sortField}&sortDir=${sortDir}&keyword=${keyword}|}">
                     </a>
-
                 </li>
 
-                <!-- Next -->
-                <li class="page-item" th:classappend="${currentPage == totalPages-1} ? 'disabled'">
+                <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/web/(page=${currentPage + 1})}">
+                       th:href="@{|/web/?page=${currentPage + 1}&size=${size}&sortField=${sortField}&sortDir=${sortDir}&keyword=${keyword}|}">
                         Next
                     </a>
                 </li>
@@ -152,23 +165,22 @@
 
     </div>
 
+    <!-- ===================== -->
+    <!-- JS for filters        -->
+    <!-- ===================== -->
+    <script>
+        function applySearch() {
+            const term = document.getElementById("searchInput").value;
+            window.location.href = `/web/?keyword=${term}`;
+        }
+
+        function changeSort(val) {
+            const [field, dir] = val.split(",");
+            window.location.href = `/web/?sortField=${field}&sortDir=${dir}`;
+        }
+    </script>
+
 </div>
-
-
-<!-- Table Live Search -->
-<script>
-    const searchInput = document.getElementById("searchInput");
-    const tableRows = document.querySelectorAll("#employeeTable tr");
-
-    searchInput.addEventListener("keyup", () => {
-        let text = searchInput.value.toLowerCase();
-        tableRows.forEach(row => {
-            row.style.display = row.textContent.toLowerCase().includes(text)
-                ? ""
-                : "none";
-        });
-    });
-</script>
 
 </body>
 </html>
