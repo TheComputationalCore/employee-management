@@ -1,52 +1,67 @@
 package com.example.employeemanagement.service;
 
+import com.example.employeemanagement.dto.EmployeeFilterRequest;
+import com.example.employeemanagement.dto.PagedResponse;
 import com.example.employeemanagement.model.Employee;
 import com.example.employeemanagement.repository.EmployeeRepository;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private final EmployeeRepository repository;
+    private final EmployeeRepository employeeRepository;
 
     @Override
-    public Page<Employee> getEmployeesPaginated(
-            int page,
-            int size,
-            String keyword,
-            String sortField,
-            String sortDirection
-    ) {
-        Sort sort = Sort.by(sortField);
-        sort = sortDirection.equalsIgnoreCase("asc")
-                ? sort.ascending()
-                : sort.descending();
+    public PagedResponse<Employee> getEmployees(int page, int size, EmployeeFilterRequest filter) {
+
+        Sort sort = filter.getSortDir().equalsIgnoreCase("desc") ?
+                Sort.by(filter.getSortField()).descending() :
+                Sort.by(filter.getSortField()).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        if (keyword == null || keyword.trim().isEmpty()) {
-            return repository.findAll(pageable);
+        Page<Employee> result;
+
+        boolean searching = filter.getSearch() != null && !filter.getSearch().isBlank();
+        boolean dept = filter.getDepartment() != null && !filter.getDepartment().isBlank();
+        boolean pos = filter.getPosition() != null && !filter.getPosition().isBlank();
+
+        if (searching) {
+            result = employeeRepository
+                    .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+                            filter.getSearch(), filter.getSearch(), filter.getSearch(), pageable);
+        } else if (dept) {
+            result = employeeRepository.findByDepartmentIgnoreCase(filter.getDepartment(), pageable);
+        } else if (pos) {
+            result = employeeRepository.findByPositionIgnoreCase(filter.getPosition(), pageable);
+        } else {
+            result = employeeRepository.findAll(pageable);
         }
 
-        return repository.searchEmployees(keyword.trim(), pageable);
+        return new PagedResponse<>(result);
     }
 
     @Override
     public Employee getEmployeeById(Long id) {
-        return repository.findById(id)
+        return employeeRepository
+                .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
     }
 
     @Override
-    public Employee createEmployee(Employee e) {
-        if (repository.existsByEmail(e.getEmail())) {
+    public Employee createEmployee(Employee employee) {
+        if (employeeRepository.existsByEmail(employee.getEmail()))
             throw new IllegalArgumentException("Email already exists");
-        }
-        return repository.save(e);
+
+        return employeeRepository.save(employee);
     }
 
     @Override
@@ -54,9 +69,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee existing = getEmployeeById(id);
 
         if (!existing.getEmail().equals(updated.getEmail())
-                && repository.existsByEmail(updated.getEmail())) {
+                && employeeRepository.existsByEmail(updated.getEmail()))
             throw new IllegalArgumentException("Email already exists");
-        }
 
         existing.setFirstName(updated.getFirstName());
         existing.setLastName(updated.getLastName());
@@ -66,11 +80,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         existing.setPosition(updated.getPosition());
         existing.setSalary(updated.getSalary());
 
-        return repository.save(existing);
+        return employeeRepository.save(existing);
     }
 
     @Override
     public void deleteEmployee(Long id) {
-        repository.deleteById(id);
+        getEmployeeById(id);
+        employeeRepository.deleteById(id);
     }
 }
