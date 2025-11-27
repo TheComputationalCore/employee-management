@@ -91,3 +91,75 @@ body {
     font-size: 28px;
     cursor: pointer;
 }
+/* ==========================================================
+   GLASSMORPHIC PRELOADER
+   ========================================================== */
+
+#preloader {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.4s ease;
+}
+
+.loader-glass {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, 0.25);
+    border-top-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    animation: spin 1.2s linear infinite;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ==========================================================
+   PAGE TRANSITION
+   ========================================================== */
+body {
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+}
+
+body.loaded {
+    opacity: 1;
+}
+
+/* ==========================================================
+   DARK MODE THEME
+   ========================================================== */
+.dark-mode body {
+    background: #0f0f0f;
+    color: #eaeaea;
+}
+
+.dark-mode .sidebar {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+}
+
+/* Dashboard cards in dark mode */
+.dark-mode .dashboard-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+}
+
+/* Tables */
+.dark-mode table {
+    color: #eaeaea;
+}
+
+.dark-mode thead {
+    background: rgba(255,255,255,0.1);
+}
+
