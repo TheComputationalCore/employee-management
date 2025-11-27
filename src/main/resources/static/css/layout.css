@@ -1,53 +1,74 @@
 /* ==========================================================
    PREMIUM LAYOUT STYLESHEET (GLASSMORPHIC + DARK MODE)
+   Updated for: Soft Rounded Corners + Smooth Transitions
    ========================================================== */
 
-/* RESET / BASE */
+/* ---------------------------- */
+/* RESET + BASE */
+/* ---------------------------- */
 * {
-    padding: 0;
     margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
+:root {
+    --radius: 16px;
+    --transition: 0.35s ease;
+
+    /* Light Mode Theme */
+    --bg-body: #f5f7fb;
+    --text-color: #222;
+    --glass-bg: rgba(255, 255, 255, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.35);
+    --input-bg: rgba(255, 255, 255, 0.70);
+    --sidebar-bg: rgba(255, 255, 255, 0.35);
+    --sidebar-hover: rgba(255, 255, 255, 0.5);
+
+    /* Dark Mode Theme */
+    --dark-bg-body: #0d0d0e;
+    --dark-text: #f5f5f5;
+    --dark-glass-bg: rgba(20, 20, 20, 0.45);
+    --dark-glass-border: rgba(255, 255, 255, 0.1);
+    --dark-sidebar-bg: rgba(20, 20, 20, 0.55);
+    --dark-sidebar-hover: rgba(255, 255, 255, 0.08);
+}
+
 body {
-    background: #f5f7fb;
     font-family: "Inter", sans-serif;
-    color: #333;
+    background: var(--bg-body);
+    color: var(--text-color);
     opacity: 0;
-    transition: opacity 0.4s ease-in-out;
+    transition: opacity 0.4s ease-in-out, background var(--transition);
 }
 
 body.loaded {
     opacity: 1;
 }
 
-/* ==========================================================
-   SIDEBAR
-   ========================================================== */
+/* --------------------------------------------------------- */
+/* SIDEBAR */
+/* --------------------------------------------------------- */
 
 .sidebar {
     position: fixed;
     top: 0;
     left: 0;
-    width: 240px;
+    width: 245px;
     height: 100vh;
 
-    background: rgba(255, 255, 255, 0.25);
+    background: var(--sidebar-bg);
     backdrop-filter: blur(16px);
+    border-right: 1px solid var(--glass-border);
 
-    border-right: 1px solid rgba(255, 255, 255, 0.4);
-
-    padding: 25px 15px;
-
+    padding: 28px 18px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 26px;
 
-    transition: transform 0.35s ease-in-out;
-}
+    border-radius: 0 var(--radius) var(--radius) 0;
 
-.sidebar-header {
-    text-align: center;
+    transition: transform var(--transition), background var(--transition);
 }
 
 .sidebar-header h3 {
@@ -57,12 +78,6 @@ body.loaded {
 
 .sidebar-menu {
     list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.sidebar-menu li {
-    margin-bottom: 12px;
 }
 
 .sidebar-menu a {
@@ -70,20 +85,19 @@ body.loaded {
     align-items: center;
     gap: 12px;
 
-    padding: 12px;
-    border-radius: 8px;
+    padding: 12px 14px;
+    border-radius: var(--radius);
 
     text-decoration: none;
+    color: var(--text-color);
     font-weight: 500;
-    color: #333;
 
-    transition: 0.25s ease;
+    transition: background var(--transition), transform var(--transition);
 }
 
 .sidebar-menu a:hover {
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(18px);
-    transform: translateX(4px);
+    background: var(--sidebar-hover);
+    transform: translateX(5px);
 }
 
 /* Mobile Sidebar */
@@ -92,49 +106,55 @@ body.loaded {
     position: fixed;
     top: 16px;
     left: 16px;
-    z-index: 9999;
+    background: var(--glass-bg);
+    padding: 10px 12px;
+    border-radius: var(--radius);
     border: none;
-    background: #ffffffcc;
-    padding: 8px 12px;
-    border-radius: 6px;
+    z-index: 9999;
+    transition: background var(--transition);
+}
+
+.sidebar-toggle:hover {
+    background: var(--sidebar-hover);
 }
 
 @media (max-width: 960px) {
     .sidebar {
         transform: translateX(-100%);
     }
-
     .sidebar.open {
         transform: translateX(0);
     }
-
     .sidebar-toggle {
         display: block;
     }
-
     .content-area {
         margin-left: 0 !important;
     }
 }
 
-/* ==========================================================
-   MAIN CONTENT AREA
-   ========================================================== */
+/* --------------------------------------------------------- */
+/* MAIN CONTENT */
+/* --------------------------------------------------------- */
 
 .content-area {
-    margin-left: 240px;
-    padding: 20px;
+    margin-left: 245px;
+    padding: 24px;
+    transition: margin-left var(--transition);
 }
 
 .topbar {
+    padding: 15px 10px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
     background: transparent;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* ==========================================================
-   PRELOADER
-   ========================================================== */
+/* --------------------------------------------------------- */
+/* PRELOADER */
+/* --------------------------------------------------------- */
 
 #preloader {
     position: fixed;
@@ -145,54 +165,66 @@ body.loaded {
     justify-content: center;
     align-items: center;
     z-index: 99999;
-    transition: opacity 0.4s ease;
+    transition: opacity var(--transition);
 }
 
 .loader-glass {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    border: 4px solid rgba(255,255,255,0.25);
-    border-top-color: rgba(0,0,0,0.6);
+    border: 4px solid rgba(255,255,255,0.35);
+    border-top-color: rgba(0,0,0,0.65);
     animation: spin 1.2s linear infinite;
-    backdrop-filter: blur(6px);
 }
 
 @keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+    to { transform: rotate(360deg); }
 }
 
-/* ==========================================================
-   DARK MODE
-   ========================================================== */
+/* --------------------------------------------------------- */
+/* DARK MODE */
+/* --------------------------------------------------------- */
 
 html.dark-mode body {
-    background: #0e0e0f;
-    color: #f1f1f1;
+    background: var(--dark-bg-body);
+    color: var(--dark-text);
 }
 
 html.dark-mode .sidebar {
-    background: rgba(0,0,0,0.3);
-    border-right: 1px solid rgba(255,255,255,0.1);
+    background: var(--dark-sidebar-bg);
+    border-right: 1px solid var(--dark-glass-border);
 }
 
 html.dark-mode .sidebar-menu a {
-    color: #f5f5f5;
+    color: var(--dark-text);
 }
 
-html.dark-mode .page-body {
-    color: white;
+html.dark-mode .sidebar-menu a:hover {
+    background: var(--dark-sidebar-hover);
 }
 
-/* Topbar */
 html.dark-mode .topbar {
-    border-bottom-color: rgba(255,255,255,0.12);
+    border-bottom-color: rgba(255,255,255,0.15);
 }
 
-/* Alerts */
-html.dark-mode .alert {
-    opacity: 0.85;
+/* --------------------------------------------------------- */
+/* PAGE BODY */
+/* --------------------------------------------------------- */
+
+.page-body {
+    margin-top: 10px;
+    transition: all var(--transition);
 }
 
+/* --------------------------------------------------------- */
+/* FLASH ALERTS */
+/* --------------------------------------------------------- */
+
+.alert {
+    border-radius: var(--radius);
+    border: none;
+    padding: 14px 16px;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.07);
+    transition: opacity var(--transition);
+}
