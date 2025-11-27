@@ -27,8 +27,7 @@
                     <h3 class="fw-bold">Add New Employee</h3>
 
                     <p class="text-muted">
-                        Fill the employee details carefully and submit the form.
-                        Salary, email and name fields are validated automatically.
+                        Fill the employee details and submit. Email uniqueness and salary validation are handled for you.
                     </p>
 
                 </div>
@@ -59,7 +58,7 @@
                                     <label>First Name</label>
                                     <div class="invalid-feedback"
                                          th:errors="*{firstName}">
-                                        Required
+                                        Please enter first name
                                     </div>
                                 </div>
                             </div>
@@ -74,7 +73,7 @@
                                     <label>Last Name</label>
                                     <div class="invalid-feedback"
                                          th:errors="*{lastName}">
-                                        Required
+                                        Please enter last name
                                     </div>
                                 </div>
                             </div>
@@ -86,9 +85,7 @@
                                            th:field="*{email}"
                                            class="form-control floating-input"
                                            required>
-
                                     <label>Email</label>
-
                                     <div class="invalid-feedback"
                                          th:errors="*{email}">
                                         Invalid or duplicate email
@@ -135,10 +132,9 @@
                                            class="form-control floating-input"
                                            required>
                                     <label>Salary</label>
-
                                     <div class="invalid-feedback"
                                          th:errors="*{salary}">
-                                        Invalid salary
+                                        Please enter a valid salary
                                     </div>
                                 </div>
                             </div>
