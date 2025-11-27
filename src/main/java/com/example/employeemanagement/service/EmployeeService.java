@@ -1,44 +1,21 @@
 package com.example.employeemanagement.service;
 
-import com.example.employeemanagement.dto.EmployeeRequestDTO;
-import com.example.employeemanagement.dto.EmployeeWebDTO;
-
-import java.util.List;
+import com.example.employeemanagement.model.Employee;
+import org.springframework.data.domain.Page;
 
 public interface EmployeeService {
 
-    /* ---------------------------
-       CRUD (Used by Web + API)
-    --------------------------- */
-    EmployeeWebDTO createEmployee(EmployeeRequestDTO dto);
+    // Pagination + Search
+    Page<Employee> getPaginatedEmployees(int page, int size, String search);
 
-    EmployeeWebDTO updateEmployee(Long id, EmployeeRequestDTO dto);
-
-    void deleteEmployee(Long id);
-
-    EmployeeWebDTO getEmployeeById(Long id);
-
-
-    /* ---------------------------
-       WEB: Pagination + Search
-    --------------------------- */
-    List<EmployeeWebDTO> getPaginatedEmployees(
-            int page,
-            int size,
-            String sortField,
-            String sortDir,
-            String keyword
-    );
-
-    long getTotalEmployeeCount(String keyword);
-
-
-    /* ---------------------------
-       Dashboard Counts
-    --------------------------- */
+    // Dashboard KPIs
     long countEmployees();
-
     long countDepartments();
-
     long countPositions();
+
+    // CRUD
+    Employee getEmployeeById(Long id);
+    Employee createEmployee(Employee employee);
+    Employee updateEmployee(Long id, Employee employeeDetails);
+    void deleteEmployee(Long id);
 }
