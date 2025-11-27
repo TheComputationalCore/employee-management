@@ -3,55 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Management System</title>
+    <title>Employee Management</title>
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- Custom UI -->
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
 </head>
+
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" th:href="@{/web/}">Employee Management</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/web/employees/new}">Add Employee</a>
-                    </li>
-                </ul>
+
+<div class="dashboard-wrapper">
+
+    <!-- Sidebar -->
+    <aside class="sidebar glass">
+        <div class="sidebar-header">
+            <h2 class="app-title">
+                <i class="bi bi-people-fill"></i> EMS
+            </h2>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a th:href="@{/web/employees}" class="nav-item">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a th:href="@{/web/employees}" class="nav-item">
+                <i class="bi bi-table"></i> Employee List
+            </a>
+            <a th:href="@{/web/employees/new}" class="nav-item">
+                <i class="bi bi-plus-circle"></i> Add Employee
+            </a>
+            <a th:href="@{/swagger-ui/index.html}" class="nav-item">
+                <i class="bi bi-file-earmark-code"></i> API Docs
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Header -->
+        <header class="main-header gradient-bg">
+            <div class="header-left">
+                <h3>Employee Management System</h3>
+            </div>
+            <div class="header-right">
+                <i class="bi bi-person-circle profile-icon"></i>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        <div class="container mt-3">
+            <div th:if="${success}" class="alert alert-success shadow-sm">
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="alert alert-danger shadow-sm">
+                <span th:text="${error}"></span>
             </div>
         </div>
-    </nav>
 
-    <div class="container mt-4">
-        <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <span th:text="${message}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <span th:text="${error}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        
-        <div th:replace="${content}">
-            <!-- Content will be replaced here -->
-        </div>
-    </div>
+        <!-- Dynamic Page Content -->
+        <section class="content-wrapper container mt-4" layout:fragment="content">
+            <!-- Child templates inject content here -->
+        </section>
 
-    <footer class="footer mt-5 py-3 bg-light">
-        <div class="container text-center">
-            <span class="text-muted">© 2024 Employee Management System</span>
-        </div>
-    </footer>
+    </main>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script th:src="@{/js/main.js}"></script>
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/ui.js}"></script>
+
 </body>
-</html> 
+</html>
