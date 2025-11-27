@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
+<html xmlns:th="http://www.thymeleaf.org">
 
-<th:block th:with="pageTitle='500 — Server Error', content='this :: contentFragment'">
+<head>
+    <title>Error 500</title>
+</head>
 
-<div th:fragment="contentFragment">
+<body class="d-flex justify-content-center align-items-center" style="height:100vh">
 
-    <div class="glass-card text-center p-5 mx-auto" style="max-width: 600px;">
+<div class="glass-card p-5 text-center">
 
-        <h1 class="display-4 fw-bold text-warning">500</h1>
-        <p class="fs-5 mb-4">Something went wrong on our end.</p>
+    <h1 class="fw-bold text-danger">500</h1>
+    <h4 class="mb-3">Internal Server Error</h4>
 
-        <img src="https://cdn-icons-png.flaticon.com/512/595/595067.png"
-             width="120" class="mb-4 opacity-75" />
+    <p>Something went wrong on our side.</p>
 
-        <a th:href="@{/web/}" class="btn btn-primary px-4">Back to Dashboard</a>
-    </div>
+    <a th:href="@{/web/}" class="btn btn-primary mt-3">
+        <i class="bi bi-arrow-repeat"></i> Try Again
+    </a>
 
 </div>
 
-</th:block>
-
+</body>
 </html>
