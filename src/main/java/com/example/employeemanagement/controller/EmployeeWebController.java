@@ -1,116 +1,137 @@
-package com.thecomputationalcore.employeemanagement.controller;
+package com.example.employeemanagement.controller;
 
-import com.thecomputationalcore.employeemanagement.dto.EmployeeDto;
-import com.thecomputationalcore.employeemanagement.exception.ResourceNotFoundException;
-import com.thecomputationalcore.employeemanagement.service.EmployeeService;
-
+import com.example.employeemanagement.model.Employee;
+import com.example.employeemanagement.service.EmployeeService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
-@RequestMapping("/web/employees")
-@RequiredArgsConstructor
-@Slf4j
+@RequestMapping("/web")
 public class EmployeeWebController {
 
     private final EmployeeService employeeService;
 
-    // Display list of employees
-    @GetMapping
+    @Autowired
+    public EmployeeWebController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
+
+    /* ============================================================
+       DASHBOARD + EMPLOYEE LIST PAGE
+       ============================================================ */
+    @GetMapping("/")
     public String listEmployees(Model model) {
-        log.info("WEB: Listing all employees");
-        model.addAttribute("employees", employeeService.getAllEmployees());
+
+        List<Employee> employees = employeeService.getAllEmployees();
+        model.addAttribute("employees", employees);
+
+        // Count unique departments
+        long departmentsCount = employees.stream()
+                .map(Employee::getDepartment)
+                .filter(d -> d != null && !d.isBlank())
+                .distinct()
+                .count();
+
+        // Count unique positions
+        long positionsCount = employees.stream()
+                .map(Employee::getPosition)
+                .filter(p -> p != null && !p.isBlank())
+                .distinct()
+                .count();
+
+        // Total employees
+        long totalEmployees = employees.size();
+
+        model.addAttribute("departmentsCount", departmentsCount);
+        model.addAttribute("positionsCount", positionsCount);
+        model.addAttribute("totalEmployees", totalEmployees);
+
         return "index";
     }
 
-    // Show creation form
-    @GetMapping("/new")
+    /* ============================================================
+       CREATE EMPLOYEE
+       ============================================================ */
+    @GetMapping("/employees/new")
     public String showCreateForm(Model model) {
-        log.info("WEB: Loading employee creation form");
-        model.addAttribute("employee", new EmployeeDto());
+        model.addAttribute("employee", new Employee());
         return "create-employee";
     }
 
-    // Handle creation
-    @PostMapping("/new")
-    public String createEmployee(@Valid @ModelAttribute("employee") EmployeeDto employeeDto,
+    @PostMapping("/employees/new")
+    public String createEmployee(@Valid @ModelAttribute("employee") Employee employee,
                                  BindingResult result,
                                  RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
-            log.warn("WEB: Validation failed while creating employee");
             return "create-employee";
         }
 
         try {
-            employeeService.createEmployee(employeeDto);
-            redirectAttributes.addFlashAttribute("success", "Employee created successfully!");
-            return "redirect:/web/employees";
+            employeeService.createEmployee(employee);
+            redirectAttributes.addFlashAttribute("message", "Employee created successfully!");
+            return "redirect:/web/";
         } catch (IllegalArgumentException e) {
-            log.error("WEB: Email conflict creating employee - {}", e.getMessage());
             result.rejectValue("email", "error.employee", e.getMessage());
             return "create-employee";
         }
     }
 
-    // Show edit form
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        try {
-            log.info("WEB: Loading edit form for employee ID {}", id);
-            EmployeeDto employee = employeeService.getEmployeeById(id);
-            model.addAttribute("employee", employee);
-            return "edit-employee";
-        } catch (ResourceNotFoundException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/web/employees";
-        }
+    /* ============================================================
+       EDIT EMPLOYEE
+       ============================================================ */
+    @GetMapping("/employees/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+
+        Employee employee = employeeService.getEmployeeById(id);
+        model.addAttribute("employee", employee);
+
+        return "edit-employee";
     }
 
-    // Handle update
-    @PostMapping("/edit/{id}")
+    @PostMapping("/employees/edit/{id}")
     public String updateEmployee(@PathVariable Long id,
-                                 @Valid @ModelAttribute("employee") EmployeeDto employeeDto,
+                                 @Valid @ModelAttribute("employee") Employee employee,
                                  BindingResult result,
                                  RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
-            log.warn("WEB: Validation failed updating employee ID {}", id);
             return "edit-employee";
         }
 
         try {
-            employeeService.updateEmployee(id, employeeDto);
-            redirectAttributes.addFlashAttribute("success", "Employee updated successfully!");
-            return "redirect:/web/employees";
+            employeeService.updateEmployee(id, employee);
+            redirectAttributes.addFlashAttribute("message", "Employee updated successfully!");
+            return "redirect:/web/";
         } catch (IllegalArgumentException e) {
-            log.error("WEB: Email conflict updating employee - {}", e.getMessage());
             result.rejectValue("email", "error.employee", e.getMessage());
             return "edit-employee";
         }
     }
 
-    // Handle deletion
-    @GetMapping("/delete/{id}")
+    /* ============================================================
+       DELETE EMPLOYEE
+       ============================================================ */
+    @GetMapping("/employees/delete/{id}")
     public String deleteEmployee(@PathVariable Long id,
                                  RedirectAttributes redirectAttributes) {
-        log.info("WEB: Deleting employee ID {}", id);
 
         try {
             employeeService.deleteEmployee(id);
-            redirectAttributes.addFlashAttribute("success", "Employee deleted successfully!");
-        } catch (ResourceNotFoundException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "Employee deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Could not delete employee: " + e.getMessage());
         }
 
-        return "redirect:/web/employees";
+        return "redirect:/web/";
     }
 }
