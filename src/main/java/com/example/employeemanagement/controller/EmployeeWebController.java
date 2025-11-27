@@ -2,43 +2,32 @@ package com.example.employeemanagement.controller;
 
 import com.example.employeemanagement.model.Employee;
 import com.example.employeemanagement.service.EmployeeService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/web")
-@RequiredArgsConstructor
 public class EmployeeWebController {
 
-    private final EmployeeService employeeService;
+    @Autowired
+    private EmployeeService employeeService;
 
-    /* ============================================================
-       DASHBOARD + PAGINATION + SEARCH
-       ============================================================ */
-    @GetMapping("/")
-    public String index(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "6") int size,
-            @RequestParam(defaultValue = "") String keyword,
-            Model model
-    ) {
+    @GetMapping
+    public String dashboard(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "8") int size,
+            Model model) {
 
-        Page<Employee> employeePage = employeeService.getPaginatedEmployees(page, size, keyword);
+        Page<Employee> employeePage = employeeService.getPaginatedEmployees(page, size);
 
         model.addAttribute("employees", employeePage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", employeePage.getTotalPages());
-        model.addAttribute("totalItems", employeePage.getTotalElements());
-        model.addAttribute("keyword", keyword);
+        model.addAttribute("pageSize", size);
 
-        // Dashboard counters
         model.addAttribute("totalEmployees", employeeService.countEmployees());
         model.addAttribute("departmentsCount", employeeService.countDepartments());
         model.addAttribute("positionsCount", employeeService.countPositions());
@@ -48,9 +37,6 @@ public class EmployeeWebController {
         return "index";
     }
 
-    /* ============================================================
-       CREATE FORM
-       ============================================================ */
     @GetMapping("/employees/new")
     public String showCreateForm(Model model) {
         model.addAttribute("employee", new Employee());
@@ -59,81 +45,28 @@ public class EmployeeWebController {
     }
 
     @PostMapping("/employees/new")
-    public String createEmployee(
-            @Valid @ModelAttribute("employee") Employee employee,
-            BindingResult result,
-            RedirectAttributes redirectAttributes,
-            Model model
-    ) {
-        if (result.hasErrors()) {
-            model.addAttribute("pageTitle", "Add Employee");
-            return "create-employee";
-        }
-
-        try {
-            employeeService.createEmployee(employee);
-            redirectAttributes.addFlashAttribute("message", "Employee created successfully!");
-            return "redirect:/web/";
-        } catch (IllegalArgumentException e) {
-            result.rejectValue("email", "error.employee", e.getMessage());
-            model.addAttribute("pageTitle", "Add Employee");
-            return "create-employee";
-        }
+    public String createEmployee(@ModelAttribute Employee employee) {
+        employeeService.createEmployee(employee);
+        return "redirect:/web?created=true";
     }
 
-    /* ============================================================
-       EDIT FORM
-       ============================================================ */
     @GetMapping("/employees/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-
-        Employee employee = employeeService.getEmployeeById(id);
-
-        model.addAttribute("employee", employee);
+        model.addAttribute("employee", employeeService.getEmployeeById(id));
         model.addAttribute("pageTitle", "Edit Employee");
-
         return "edit-employee";
     }
 
     @PostMapping("/employees/edit/{id}")
-    public String updateEmployee(
-            @PathVariable Long id,
-            @Valid @ModelAttribute("employee") Employee employee,
-            BindingResult result,
-            RedirectAttributes redirectAttributes,
-            Model model
-    ) {
-        if (result.hasErrors()) {
-            model.addAttribute("pageTitle", "Edit Employee");
-            return "edit-employee";
-        }
-
-        try {
-            employeeService.updateEmployee(id, employee);
-            redirectAttributes.addFlashAttribute("message", "Employee updated successfully!");
-            return "redirect:/web/";
-        } catch (IllegalArgumentException e) {
-            result.rejectValue("email", "error.employee", e.getMessage());
-            model.addAttribute("pageTitle", "Edit Employee");
-            return "edit-employee";
-        }
+    public String updateEmployee(@PathVariable Long id,
+                                 @ModelAttribute Employee employee) {
+        employeeService.updateEmployee(id, employee);
+        return "redirect:/web?updated=true";
     }
 
-    /* ============================================================
-       DELETE EMPLOYEE
-       ============================================================ */
     @GetMapping("/employees/delete/{id}")
-    public String deleteEmployee(
-            @PathVariable Long id,
-            RedirectAttributes redirectAttributes
-    ) {
-        try {
-            employeeService.deleteEmployee(id);
-            redirectAttributes.addFlashAttribute("message", "Employee deleted successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error deleting employee: " + e.getMessage());
-        }
-
-        return "redirect:/web/";
+    public String deleteEmployee(@PathVariable Long id) {
+        employeeService.deleteEmployee(id);
+        return "redirect:/web?deleted=true";
     }
 }
