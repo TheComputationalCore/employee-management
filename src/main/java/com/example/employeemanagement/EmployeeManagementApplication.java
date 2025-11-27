@@ -1,24 +1,16 @@
-package com.example.employeemanagement;
+package com.thecomputationalcore.employeemanagement;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import lombok.extern.slf4j.Slf4j;
 
-@SpringBootApplication(scanBasePackages = "com.example.employeemanagement")
-@EntityScan("com.example.employeemanagement.model")
-@EnableJpaRepositories("com.example.employeemanagement.repository")
-@OpenAPIDefinition(
-    info = @Info(
-        title = "Employee Management API",
-        version = "1.0",
-        description = "REST API documentation for Employee Management System"
-    )
-)
+@SpringBootApplication
+@Slf4j
 public class EmployeeManagementApplication {
+
     public static void main(String[] args) {
+        log.info("🚀 Starting Employee Management System...");
         SpringApplication.run(EmployeeManagementApplication.class, args);
+        log.info("✅ Employee Management System started successfully!");
     }
-} 
+}
