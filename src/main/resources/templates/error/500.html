@@ -1,24 +1,35 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: layout(~{::title}, ~{::content})">
 
 <head>
-    <title>Error 500</title>
+    <title>Error 500 - Server Error</title>
 </head>
 
-<body class="d-flex justify-content-center align-items-center" style="height:100vh">
+<body>
+<div th:fragment="content">
 
-<div class="glass-card p-5 text-center">
+    <div class="d-flex justify-content-center align-items-center" style="min-height:70vh;">
+        <div class="glass-card p-5 text-center" style="max-width: 480px;">
 
-    <h1 class="fw-bold text-danger">500</h1>
-    <h4 class="mb-3">Internal Server Error</h4>
+            <img src="https://cdn-icons-png.flaticon.com/512/5038/5038597.png"
+                 class="img-fluid mb-3"
+                 style="max-height:150px; opacity:0.9;">
 
-    <p>Something went wrong on our side.</p>
+            <h1 class="fw-bold text-danger">500</h1>
+            <h4 class="fw-semibold">Internal Server Error</h4>
 
-    <a th:href="@{/web/}" class="btn btn-primary mt-3">
-        <i class="bi bi-arrow-repeat"></i> Try Again
-    </a>
+            <p class="text-muted mt-2" th:text="${message}">
+                Something went wrong on the server.
+            </p>
+
+            <a th:href="@{/web/}" class="btn btn-primary mt-3 px-4">
+                Return Home
+            </a>
+
+        </div>
+    </div>
 
 </div>
-
 </body>
 </html>
