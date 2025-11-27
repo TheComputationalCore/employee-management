@@ -1,107 +1,92 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
-      
-<body>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
 
-<section layout:fragment="content">
+<th:block th:with="pageTitle='Dashboard', content='this :: contentFragment'">
 
-    <!-- DASHBOARD HEADER -->
-    <div class="row dashboard-cards">
+    <div th:fragment="contentFragment">
 
-        <!-- Total Employees -->
-        <div class="col-md-4">
-            <div class="dashboard-card glass shadow-sm">
-                <div class="card-icon gradient-bg">
+        <!-- ======================= DASHBOARD CARDS ======================= -->
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="dashboard-card gradient-blue">
+                    <h5>Total Employees</h5>
+                    <h2 th:text="${employees.size()}"></h2>
                     <i class="bi bi-people"></i>
                 </div>
-                <h5>Total Employees</h5>
-                <h2 th:text="${employees.size()}"></h2>
             </div>
-        </div>
 
-        <!-- Departments Count -->
-        <div class="col-md-4">
-            <div class="dashboard-card glass shadow-sm">
-                <div class="card-icon gradient-bg-2">
+            <div class="col-md-4">
+                <div class="dashboard-card gradient-purple">
+                    <h5>Departments</h5>
+                    <h2 th:text="${departmentsCount}"></h2>
                     <i class="bi bi-building"></i>
                 </div>
-
-                <h5>Departments</h5>
-                <h2 th:text="${#lists.size(#sets.newHashSet(employees.?[department]))}"></h2>
             </div>
-        </div>
 
-        <!-- Positions Count -->
-        <div class="col-md-4">
-            <div class="dashboard-card glass shadow-sm">
-                <div class="card-icon gradient-bg-3">
-                    <i class="bi bi-card-checklist"></i>
+            <div class="col-md-4">
+                <div class="dashboard-card gradient-green">
+                    <h5>Positions</h5>
+                    <h2 th:text="${positionsCount}"></h2>
+                    <i class="bi bi-briefcase"></i>
                 </div>
-
-                <h5>Positions</h5>
-                <h2 th:text="${#lists.size(#sets.newHashSet(employees.?[position]))}"></h2>
             </div>
+        </div>
+
+        <!-- ======================= SEARCH BAR ======================= -->
+        <div class="row mt-5 mb-3">
+            <div class="col-md-6">
+                <input id="searchInput" type="text" class="form-control form-control-lg shadow-sm search-input"
+                       placeholder="Search employees...">
+            </div>
+
+            <div class="col-md-6 text-end">
+                <a th:href="@{/web/employees/new}" class="btn btn-primary btn-lg shadow">
+                    <i class="bi bi-plus-lg me-1"></i> Add Employee
+                </a>
+            </div>
+        </div>
+
+        <!-- ======================= EMPLOYEE TABLE ======================= -->
+        <div class="table-responsive glass-table shadow-sm">
+            <table class="table align-middle">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                    <th>Position</th>
+                    <th>Salary</th>
+                    <th style="width:140px;">Actions</th>
+                </tr>
+                </thead>
+
+                <tbody id="employeeTable">
+                <tr th:each="e : ${employees}">
+                    <td th:text="${e.id}"></td>
+                    <td th:text="${e.firstName + ' ' + e.lastName}"></td>
+                    <td th:text="${e.email}"></td>
+                    <td th:text="${e.department}"></td>
+                    <td th:text="${e.position}"></td>
+                    <td th:text="${#numbers.formatDecimal(e.salary, 0, 'COMMA', 2, 'POINT')}"></td>
+
+                    <td>
+                        <a th:href="@{/web/employees/edit/{id}(id=${e.id})}" class="btn btn-sm btn-warning me-1">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+
+                        <a th:href="@{/web/employees/delete/{id}(id=${e.id})}" class="btn btn-sm btn-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+
+            </table>
         </div>
 
     </div>
 
+</th:block>
 
-    <!-- SEARCH + ACTIONS -->
-    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-        <input type="text" id="searchInput" class="form-control w-50 shadow-sm"
-               placeholder="Search employees...">
-        
-        <a th:href="@{/web/employees/new}" class="btn btn-gradient float-btn shadow">
-            <i class="bi bi-plus-lg"></i> Add Employee
-        </a>
-    </div>
-
-
-    <!-- EMPLOYEE TABLE -->
-    <div class="table-responsive glass card p-3 shadow-sm">
-        <table class="table table-hover align-middle">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Position</th>
-                <th>Salary</th>
-                <th class="text-center">Actions</th>
-            </tr>
-            </thead>
-
-            <tbody id="employeeTable">
-            <tr th:each="employee : ${employees}">
-                <td th:text="${employee.id}"></td>
-                <td th:text="${employee.firstName + ' ' + employee.lastName}"></td>
-                <td th:text="${employee.email}"></td>
-                <td th:text="${employee.department}"></td>
-                <td th:text="${employee.position}"></td>
-                <td th:text="'$' + ${#numbers.formatDecimal(employee.salary, 0, 'COMMA', 2, 'POINT')}"></td>
-
-                <td class="text-center">
-                    <a th:href="@{/web/employees/edit/{id}(id=${employee.id})}"
-                       class="btn btn-sm btn-outline-primary me-2">
-                        <i class="bi bi-pencil"></i>
-                    </a>
-
-                    <a th:href="@{/web/employees/delete/{id}(id=${employee.id})}"
-                       class="btn btn-sm btn-outline-danger"
-                       onclick="return confirm('Are you sure you want to delete this employee?')">
-                        <i class="bi bi-trash"></i>
-                    </a>
-                </td>
-
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-</section>
-
-</body>
 </html>
