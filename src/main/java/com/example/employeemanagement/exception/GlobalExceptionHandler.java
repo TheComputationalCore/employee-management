@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.LocalDateTime;
@@ -13,25 +14,72 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    /* -------------------------------
-       API ERROR RESPONSE (JSON)
-    -------------------------------- */
+    /* =====================================================
+       HELPER — Detect if request is API or Web
+    ====================================================== */
+    private boolean isApiRequest(WebRequest request) {
+        String path = request.getDescription(false);
+        return path.contains("/api/");
+    }
 
+    /* =====================================================
+       ENTITY NOT FOUND (404)
+    ====================================================== */
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> handleNotFound(EntityNotFoundException ex) {
-        return buildJsonError(HttpStatus.NOT_FOUND, ex.getMessage());
+    public Object handleNotFound(EntityNotFoundException ex, WebRequest request, Model model) {
+
+        if (isApiRequest(request)) {
+            return buildJsonError(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+
+        model.addAttribute("errorCode", "404");
+        model.addAttribute("message", ex.getMessage());
+        return "error/404";
     }
 
+    /* =====================================================
+       BAD REQUEST (400)
+    ====================================================== */
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<?> handleInvalid(IllegalArgumentException ex) {
-        return buildJsonError(HttpStatus.BAD_REQUEST, ex.getMessage());
+    public Object handleBadRequest(IllegalArgumentException ex, WebRequest request, Model model) {
+
+        if (isApiRequest(request)) {
+            return buildJsonError(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+
+        model.addAttribute("errorCode", "400");
+        model.addAttribute("message", ex.getMessage());
+        return "error/400";
     }
 
+    /* =====================================================
+       GENERAL SERVER ERROR (500)
+    ====================================================== */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleGeneral(Exception ex) {
-        return buildJsonError(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong.");
+    public Object handleGeneral(Exception ex, WebRequest request, Model model) {
+
+        if (isApiRequest(request)) {
+            return buildJsonError(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong.");
+        }
+
+        model.addAttribute("errorCode", "500");
+        model.addAttribute("message", "Something went wrong.");
+        return "error/500";
     }
 
+    /* =====================================================
+       404 FOR INVALID ROUTES
+    ====================================================== */
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public String handle404(Model model) {
+        model.addAttribute("errorCode", "404");
+        model.addAttribute("message", "Page Not Found");
+        return "error/404";
+    }
+
+    /* =====================================================
+       JSON ERROR BUILDER
+    ====================================================== */
     private ResponseEntity<?> buildJsonError(HttpStatus status, String message) {
         return ResponseEntity.status(status).body(
                 Map.of(
@@ -41,31 +89,5 @@ public class GlobalExceptionHandler {
                         "message", message
                 )
         );
-    }
-
-
-    /* -------------------------------
-       WEB ERROR PAGES (THYMELEAF)
-    -------------------------------- */
-
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public String handle404(Model model) {
-        model.addAttribute("errorCode", "404");
-        model.addAttribute("message", "Page Not Found");
-        return "error/404";
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    public String handle500(Model model, RuntimeException ex) {
-        model.addAttribute("errorCode", "500");
-        model.addAttribute("message", ex.getMessage());
-        return "error/500";
-    }
-
-    @ExceptionHandler({IllegalArgumentException.class})
-    public String handle400(Model model, IllegalArgumentException ex) {
-        model.addAttribute("errorCode", "400");
-        model.addAttribute("message", ex.getMessage());
-        return "error/400";
     }
 }
