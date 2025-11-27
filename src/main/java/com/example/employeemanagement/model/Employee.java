@@ -5,12 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Entity
-@Table(
-    name = "employees",
-    indexes = {
-        @Index(name = "idx_employee_email", columnList = "email")
-    }
-)
+@Table(name = "employees")
 @Data
 @Builder
 @NoArgsConstructor
@@ -21,26 +16,23 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "{employee.firstName.required}")
-    @Column(name = "first_name", nullable = false)
+    @NotBlank(message = "First name is required")
+    @Column(nullable = false)
     private String firstName;
 
-    @NotBlank(message = "{employee.lastName.required}")
-    @Column(name = "last_name", nullable = false)
+    @NotBlank(message = "Last name is required")
+    @Column(nullable = false)
     private String lastName;
 
-    @NotBlank(message = "{employee.email.required}")
-    @Email(message = "{employee.email.invalid}")
+    @Email(message = "Invalid email format")
+    @NotBlank(message = "Email is required")
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(name = "phone_number")
     private String phoneNumber;
-
     private String department;
-
     private String position;
 
-    @PositiveOrZero(message = "{employee.salary.positive}")
+    @PositiveOrZero(message = "Salary must be positive")
     private Double salary;
 }
