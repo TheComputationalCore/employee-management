@@ -1,73 +1,61 @@
-/* ================================
-   DASHBOARD CARDS
-   ================================ */
+/* ==========================================================
+   DASHBOARD.CSS — Cards, Gradients, Dashboard Styles
+   ========================================================== */
 
-.dashboard-cards .dashboard-card {
-    background: rgba(255,255,255,0.5);
-    backdrop-filter: blur(12px);
-    border-radius: 18px;
-    padding: 22px;
-    text-align: center;
-    transition: 0.3s ease;
+.dashboard-card {
+    position: relative;
+    padding: 25px;
+    border-radius: 16px;
+    color: white;
+    overflow: hidden;
+    height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
+/* Hover effect */
 .dashboard-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
 }
 
-.card-icon {
-    font-size: 32px;
-    padding: 10px;
-    color: white;
-    border-radius: 12px;
-    margin-bottom: 10px;
+/* Gradient Themes */
+.gradient-blue {
+    background: linear-gradient(135deg, #4285F4, #3b65e4);
 }
 
-/* Gradient Icon Variants */
-.gradient-bg {
-    background: linear-gradient(135deg, #4F46E5, #9333EA);
-}
-.gradient-bg-2 {
-    background: linear-gradient(135deg, #10B981, #059669);
-}
-.gradient-bg-3 {
-    background: linear-gradient(135deg, #F59E0B, #D97706);
+.gradient-purple {
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
 }
 
-/* ================================
-   TABLE
-   ================================ */
-
-table {
-    border-radius: 12px;
-    overflow: hidden;
+.gradient-green {
+    background: linear-gradient(135deg, #10b981, #059669);
 }
 
-.table-hover tbody tr:hover {
-    background: rgba(99, 102, 241, 0.08);
+/* Icon Styling */
+.dashboard-card i {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-size: 2.4rem;
+    opacity: 0.25;
 }
 
-.table thead th {
-    background: linear-gradient(135deg, #4F46E5, #9333EA);
-    color: white;
-    border: none;
+.dashboard-card h5 {
+    font-size: 1rem;
+    opacity: 0.85;
 }
 
-/* ================================
-   SEARCH BAR
-   ================================ */
-
-#searchInput {
-    border-radius: 10px;
+.dashboard-card h2 {
+    font-weight: 700;
+    font-size: 2rem;
 }
 
-/* ================================
-   FLOATING ADD BUTTON
-   ================================ */
-
-.float-btn {
-    border-radius: 40px;
-    font-weight: 600;
-    padding: 10px 20px;
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-card {
+        height: 160px;
+    }
 }
