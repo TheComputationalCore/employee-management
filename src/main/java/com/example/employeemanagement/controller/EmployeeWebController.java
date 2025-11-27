@@ -1,18 +1,14 @@
 package com.example.employeemanagement.controller;
 
+import com.example.employeemanagement.dto.EmployeeRequestDTO;
 import com.example.employeemanagement.model.Employee;
 import com.example.employeemanagement.service.EmployeeService;
-
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,93 +17,114 @@ public class EmployeeWebController {
 
     private final EmployeeService employeeService;
 
-    /* ============================
-       DASHBOARD + PAGINATION
-    ============================ */
+    /* ===========================================================
+       DASHBOARD + PAGINATION + SEARCH
+    ============================================================ */
+
     @GetMapping("/")
-    public String dashboard(Model model,
-                            @RequestParam(defaultValue = "0") int page) {
+    public String dashboard(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            @RequestParam(defaultValue = "") String search,
+            Model model
+    ) {
 
-        Page<Employee> paged = employeeService.getPaginatedEmployees(page, 8);
+        Page<Employee> employees = employeeService.getPaginatedEmployees(page, size, search);
 
-        model.addAttribute("employees", paged.getContent());
+        model.addAttribute("employees", employees.getContent());
+        model.addAttribute("totalPages", employees.getTotalPages());
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", paged.getTotalPages());
+        model.addAttribute("search", search);
 
+        /* Dashboard counters */
         model.addAttribute("totalEmployees", employeeService.countEmployees());
         model.addAttribute("departmentsCount", employeeService.countDepartments());
         model.addAttribute("positionsCount", employeeService.countPositions());
 
+        model.addAttribute("pageTitle", "Dashboard");
+
         return "index";
     }
 
+    /* ===========================================================
+       CREATE EMPLOYEE
+    ============================================================ */
 
-    /* ============================
-       CREATE EMPLOYEE (FORM)
-    ============================ */
     @GetMapping("/employees/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("employee", new Employee());
+        model.addAttribute("employee", new EmployeeRequestDTO());
+        model.addAttribute("pageTitle", "Add Employee");
         return "create-employee";
     }
 
     @PostMapping("/employees/new")
-    public String createEmployee(@Valid @ModelAttribute("employee") Employee employee,
-                                 BindingResult result,
-                                 RedirectAttributes redirectAttributes) {
-
-        if (result.hasErrors()) return "create-employee";
+    public String createEmployee(@ModelAttribute("employee") EmployeeRequestDTO dto,
+                                 Model model) {
 
         try {
-            employeeService.createEmployee(employee);
-            redirectAttributes.addFlashAttribute("message", "Employee created successfully!");
-        } catch (IllegalArgumentException ex) {
-            result.rejectValue("email", "error.employee", ex.getMessage());
+            employeeService.createEmployee(dto);
+            model.addAttribute("message", "Employee created successfully!");
+            return "redirect:/web/";
+        } catch (Exception ex) {
+            model.addAttribute("error", ex.getMessage());
+            model.addAttribute("pageTitle", "Add Employee");
             return "create-employee";
         }
-
-        return "redirect:/web/";
     }
 
+    /* ===========================================================
+       EDIT EMPLOYEE
+    ============================================================ */
 
-    /* ============================
-       EDIT EMPLOYEE (FORM)
-    ============================ */
     @GetMapping("/employees/edit/{id}")
-    public String showEdit(@PathVariable Long id, Model model) {
-        model.addAttribute("employee", employeeService.getEmployeeById(id));
+    public String showEditForm(@PathVariable Long id, Model model) {
+        Employee emp = employeeService.getEmployeeById(id);
+
+        EmployeeRequestDTO dto = new EmployeeRequestDTO(
+                emp.getFirstName(),
+                emp.getLastName(),
+                emp.getEmail(),
+                emp.getPhoneNumber(),
+                emp.getDepartment(),
+                emp.getPosition(),
+                emp.getSalary()
+        );
+
+        model.addAttribute("employee", dto);
+        model.addAttribute("id", id);
+        model.addAttribute("pageTitle", "Edit Employee");
+
         return "edit-employee";
     }
 
     @PostMapping("/employees/edit/{id}")
     public String updateEmployee(@PathVariable Long id,
-                                 @Valid @ModelAttribute("employee") Employee employee,
-                                 BindingResult result,
-                                 RedirectAttributes redirectAttributes) {
-
-        if (result.hasErrors()) return "edit-employee";
+                                 @ModelAttribute("employee") EmployeeRequestDTO dto,
+                                 Model model) {
 
         try {
-            employeeService.updateEmployee(id, employee);
-            redirectAttributes.addFlashAttribute("message", "Employee updated successfully!");
-        } catch (IllegalArgumentException ex) {
-            result.rejectValue("email", "error.employee", ex.getMessage());
+            employeeService.updateEmployee(id, dto);
+            return "redirect:/web/?updated=true";
+        } catch (Exception ex) {
+            model.addAttribute("error", ex.getMessage());
+            model.addAttribute("id", id);
+            model.addAttribute("pageTitle", "Edit Employee");
             return "edit-employee";
         }
-
-        return "redirect:/web/";
     }
 
-
-    /* ============================
+    /* ===========================================================
        DELETE EMPLOYEE
-    ============================ */
-    @GetMapping("/employees/delete/{id}")
-    public String deleteEmployee(@PathVariable Long id,
-                                 RedirectAttributes redirectAttributes) {
+    ============================================================ */
 
-        employeeService.deleteEmployee(id);
-        redirectAttributes.addFlashAttribute("message", "Employee deleted successfully!");
+    @GetMapping("/employees/delete/{id}")
+    public String deleteEmployee(@PathVariable Long id, Model model) {
+
+        try {
+            employeeService.deleteEmployee(id);
+        } catch (Exception ex) {
+            model.addAttribute("error", ex.getMessage());
+        }
 
         return "redirect:/web/";
     }
