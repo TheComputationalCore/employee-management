@@ -1,18 +1,20 @@
 package com.example.employeemanagement.service;
 
-import com.example.employeemanagement.dto.EmployeeFilterRequest;
-import com.example.employeemanagement.dto.PagedResponse;
-import com.example.employeemanagement.model.Employee;
+import com.example.employeemanagement.dto.EmployeeDTO;
+import com.example.employeemanagement.dto.EmployeeRequestDTO;
+import org.springframework.data.domain.Page;
 
 public interface EmployeeService {
 
-    PagedResponse<Employee> getEmployees(int page, int size, EmployeeFilterRequest filter);
+    Page<EmployeeDTO> getEmployees(int page, int size, String sortField, String sortDir);
 
-    Employee getEmployeeById(Long id);
+    Page<EmployeeDTO> searchEmployees(String keyword, int page, int size);
 
-    Employee createEmployee(Employee employee);
+    EmployeeDTO getEmployeeById(Long id);
 
-    Employee updateEmployee(Long id, Employee updated);
+    EmployeeDTO createEmployee(EmployeeRequestDTO request);
+
+    EmployeeDTO updateEmployee(Long id, EmployeeRequestDTO request);
 
     void deleteEmployee(Long id);
 }
