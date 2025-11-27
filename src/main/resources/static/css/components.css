@@ -267,3 +267,33 @@ html.dark-mode .alert-danger {
     font-weight: 600;
 }
 
+.table-sort-link {
+    text-decoration: none;
+    font-weight: 600;
+    color: #444;
+    transition: 0.2s;
+}
+
+.table-sort-link:hover {
+    color: var(--primary-color);
+}
+.pagination .page-link {
+    border: none;
+    margin: 0 4px;
+    border-radius: 8px;
+    padding: 8px 14px;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(10px);
+    transition: 0.25s ease;
+}
+
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #4c6ef5, #8b5cf6);
+    color: white;
+    border: none;
+    font-weight: 600;
+}
+
+.pagination .page-link:hover {
+    background: rgba(255,255,255,0.9);
+}
