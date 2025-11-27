@@ -2,28 +2,42 @@ package com.example.employeemanagement.repository;
 
 import com.example.employeemanagement.model.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Optional;
 
-@Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-    /* ===========================================================
-       BASIC FINDERS
-    ============================================================ */
+    /* -----------------------------------------------------------
+       SEARCH (name, email, department, position)
+    ------------------------------------------------------------ */
+    @Query("""
+            SELECT e FROM Employee e
+            WHERE LOWER(e.firstName)   LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR LOWER(e.lastName)    LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR LOWER(e.email)       LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR LOWER(e.department)  LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR LOWER(e.position)    LIKE LOWER(CONCAT('%', :keyword, '%'))
+            """)
+    List<Employee> search(String keyword);
 
-    Optional<Employee> findByEmail(String email);
 
+    /* -----------------------------------------------------------
+       UNIQUE EMAIL CHECK
+    ------------------------------------------------------------ */
     boolean existsByEmail(String email);
 
-    /* ===========================================================
-       FILTER QUERIES
-       (Supports dashboard + search + table filters)
-    ============================================================ */
 
-    List<Employee> findByDepartment(String department);
+    /* -----------------------------------------------------------
+       DASHBOARD COUNTERS
+    ------------------------------------------------------------ */
 
-    List<Employee> findByPosition(String position);
+    @Query("SELECT COUNT(e) FROM Employee e")
+    long countEmployees();
+
+    @Query("SELECT COUNT(DISTINCT e.department) FROM Employee e WHERE e.department IS NOT NULL AND e.department <> ''")
+    long countDepartments();
+
+    @Query("SELECT COUNT(DISTINCT e.position) FROM Employee e WHERE e.position IS NOT NULL AND e.position <> ''")
+    long countPositions();
 }
