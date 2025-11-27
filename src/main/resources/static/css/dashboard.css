@@ -1,61 +1,158 @@
 /* ==========================================================
-   DASHBOARD.CSS — Cards, Gradients, Dashboard Styles
+   DASHBOARD.CSS — Premium Gradient Cards + Dashboard UI
+   Matches layout.css + components.css
+   ========================================================== */
+
+:root {
+    --radius: 16px;
+    --transition: 0.35s ease;
+
+    --blue-1: #4c6ef5;
+    --blue-2: #3b5bdb;
+
+    --purple-1: #8b5cf6;
+    --purple-2: #6d28d9;
+
+    --green-1: #10b981;
+    --green-2: #059669;
+
+    --glass-light: rgba(255,255,255,0.55);
+    --glass-dark: rgba(25,25,25,0.45);
+}
+
+/* ==========================================================
+   DASHBOARD CARD BASE
    ========================================================== */
 
 .dashboard-card {
     position: relative;
-    padding: 25px;
-    border-radius: 16px;
+    padding: 28px;
+    border-radius: var(--radius);
+    height: 150px;
+
     color: white;
-    overflow: hidden;
-    height: 140px;
+
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: transform 0.2s ease, box-shadow 0.3s ease;
+
+    overflow: hidden;
+    transition: var(--transition);
+
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
 }
 
-/* Hover effect */
+/* Hover Animation */
 .dashboard-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.15);
 }
 
-/* Gradient Themes */
-.gradient-blue {
-    background: linear-gradient(135deg, #4285F4, #3b65e4);
-}
-
-.gradient-purple {
-    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-}
-
-.gradient-green {
-    background: linear-gradient(135deg, #10b981, #059669);
-}
-
-/* Icon Styling */
-.dashboard-card i {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    font-size: 2.4rem;
-    opacity: 0.25;
-}
-
+/* Title */
 .dashboard-card h5 {
     font-size: 1rem;
-    opacity: 0.85;
+    letter-spacing: 0.4px;
+    opacity: 0.9;
+    font-weight: 500;
 }
 
 .dashboard-card h2 {
     font-weight: 700;
-    font-size: 2rem;
+    font-size: 2.2rem;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Card Icon */
+.dashboard-card i {
+    position: absolute;
+    right: 22px;
+    bottom: 22px;
+    font-size: 2.6rem;
+    opacity: 0.22;
+    transition: var(--transition);
+}
+
+.dashboard-card:hover i {
+    opacity: 0.35;
+}
+
+/* ==========================================================
+   GRADIENT THEMES
+   ========================================================== */
+
+.gradient-blue {
+    background: linear-gradient(135deg, var(--blue-1), var(--blue-2));
+}
+
+.gradient-purple {
+    background: linear-gradient(135deg, var(--purple-1), var(--purple-2));
+}
+
+.gradient-green {
+    background: linear-gradient(135deg, var(--green-1), var(--green-2));
+}
+
+/* ==========================================================
+   DARK MODE OVERRIDES
+   ========================================================== */
+
+html.dark-mode .dashboard-card {
+    box-shadow: 0 8px 26px rgba(0,0,0,0.25);
+}
+
+html.dark-mode .dashboard-card:hover {
+    box-shadow: 0 14px 32px rgba(0,0,0,0.35);
+}
+
+/* Icons slightly brighter in dark */
+html.dark-mode .dashboard-card i {
+    opacity: 0.32;
+}
+
+/* ==========================================================
+   GRID SPACING
+   ========================================================== */
+
+@media (max-width: 992px) {
     .dashboard-card {
         height: 160px;
     }
+}
+
+@media (max-width: 768px) {
+    .dashboard-card {
+        height: 170px;
+    }
+}
+
+/* ==========================================================
+   TABLE + SEARCH CONTAINER SPACING
+   ========================================================== */
+
+.table-section {
+    margin-top: 40px;
+}
+
+/* Search Box Spacing */
+.search-box {
+    margin-top: 35px;
+    margin-bottom: 15px;
+}
+
+/* ==========================================================
+   EMPTY STATE
+   ========================================================== */
+
+.empty-state {
+    text-align: center;
+    padding: 40px 10px;
+    color: #777;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    opacity: 0.35;
+}
+
+html.dark-mode .empty-state {
+    color: #ccc;
 }
