@@ -1,20 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="layout :: content">
+      th:replace="layout :: layout(~{::title}, ~{::content})">
 
-<th:block th:with="pageTitle='Edit Employee', content='this :: contentFragment'">
+<head>
+    <title>Edit Employee</title>
+</head>
 
-<div th:fragment="contentFragment">
+<body>
 
-    <div class="glass-card p-4 shadow-lg mx-auto" style="max-width: 780px;">
+<div th:fragment="content">
+
+    <div class="glass-card p-4 shadow-lg mx-auto" style="max-width: 760px;">
 
         <h3 class="mb-4 fw-bold">
-            <i class="bi bi-pencil-square me-2"></i> Edit Employee
+            <i class="bi bi-pencil-square me-2"></i>
+            Edit Employee
         </h3>
 
         <form th:action="@{/web/employees/edit/{id}(id=${employee.id})}"
-              th:object="${employee}" method="post"
-              class="needs-validation" novalidate>
+              th:object="${employee}"
+              method="post"
+              class="needs-validation"
+              novalidate>
 
             <input type="hidden" th:field="*{id}">
 
@@ -23,11 +30,14 @@
                 <!-- First Name -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="text" th:field="*{firstName}" id="firstName"
-                               class="form-control floating-input" placeholder="First Name" required>
+                        <input type="text"
+                               th:field="*{firstName}"
+                               id="firstName"
+                               class="form-control floating-input"
+                               required>
                         <label for="firstName">First Name</label>
                         <div class="invalid-feedback" th:errors="*{firstName}">
-                            Required
+                            Please provide a first name.
                         </div>
                     </div>
                 </div>
@@ -35,11 +45,14 @@
                 <!-- Last Name -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="text" th:field="*{lastName}" id="lastName"
-                               class="form-control floating-input" placeholder="Last Name" required>
+                        <input type="text"
+                               th:field="*{lastName}"
+                               id="lastName"
+                               class="form-control floating-input"
+                               required>
                         <label for="lastName">Last Name</label>
                         <div class="invalid-feedback" th:errors="*{lastName}">
-                            Required
+                            Please provide a last name.
                         </div>
                     </div>
                 </div>
@@ -47,20 +60,23 @@
                 <!-- Email -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="email" th:field="*{email}"
-                               class="form-control floating-input" placeholder="Email" required>
+                        <input type="email"
+                               th:field="*{email}"
+                               class="form-control floating-input"
+                               required>
                         <label>Email</label>
                         <div class="invalid-feedback" th:errors="*{email}">
-                            Invalid email
+                            Enter a valid email.
                         </div>
                     </div>
                 </div>
 
-                <!-- Phone Number -->
+                <!-- Phone -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="tel" th:field="*{phoneNumber}"
-                               class="form-control floating-input" placeholder="Phone Number">
+                        <input type="tel"
+                               th:field="*{phoneNumber}"
+                               class="form-control floating-input">
                         <label>Phone Number</label>
                     </div>
                 </div>
@@ -68,8 +84,9 @@
                 <!-- Department -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="text" th:field="*{department}"
-                               class="form-control floating-input" placeholder="Department">
+                        <input type="text"
+                               th:field="*{department}"
+                               class="form-control floating-input">
                         <label>Department</label>
                     </div>
                 </div>
@@ -77,8 +94,9 @@
                 <!-- Position -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <input type="text" th:field="*{position}"
-                               class="form-control floating-input" placeholder="Position">
+                        <input type="text"
+                               th:field="*{position}"
+                               class="form-control floating-input">
                         <label>Position</label>
                     </div>
                 </div>
@@ -86,11 +104,15 @@
                 <!-- Salary -->
                 <div class="col-12">
                     <div class="form-floating">
-                        <input type="number" step="0.01" th:field="*{salary}" id="salary"
-                               class="form-control floating-input" placeholder="Salary" required>
+                        <input type="number"
+                               th:field="*{salary}"
+                               id="salary"
+                               step="0.01"
+                               class="form-control floating-input"
+                               required>
                         <label>Salary</label>
                         <div class="invalid-feedback" th:errors="*{salary}">
-                            Invalid salary
+                            Enter a valid salary.
                         </div>
                     </div>
                 </div>
@@ -114,6 +136,5 @@
 
 </div>
 
-</th:block>
-
+</body>
 </html>
