@@ -1,34 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="layout :: layout(~{::title}, ~{::content})">
-
+<html>
 <head>
-    <title>Error 404 - Not Found</title>
+    <title>404 - Page Not Found</title>
+    <link rel="stylesheet" href="/css/layout.css">
 </head>
-
 <body>
-<div th:fragment="content">
 
-    <div class="d-flex justify-content-center align-items-center" style="min-height:70vh;">
-        <div class="glass-card p-5 text-center" style="max-width: 480px;">
+<div class="glass-card p-5 text-center mx-auto mt-5" style="max-width: 600px;">
+    <h1 class="display-4 fw-bold text-warning">404</h1>
+    <p class="fs-5 mt-3">Oops! The page you’re looking for doesn’t exist.</p>
 
-            <img src="https://cdni.iconscout.com/illustration/premium/thumb/404-error-page-illustration-download-in-svg-png-gif-file-formats--search-not-found-pack-design-development-illustrations-7910372.png?f=webp"
-                 class="img-fluid mb-3"
-                 style="max-height:160px;">
-
-            <h1 class="fw-bold text-warning">404</h1>
-            <h4 class="fw-semibold">Page Not Found</h4>
-
-            <p class="text-muted mt-2" th:text="${message}">
-                The page you’re looking for doesn’t exist.
-            </p>
-
-            <a th:href="@{/web/}" class="btn btn-primary mt-3 px-4">
-                Back to Dashboard
-            </a>
-        </div>
-    </div>
-
+    <a href="/web" class="btn btn-primary mt-4">Go Back Home</a>
 </div>
+
 </body>
 </html>
