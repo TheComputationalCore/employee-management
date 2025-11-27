@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: layout('Employee Profile', ~{::content})">
+
+<body>
+<div th:fragment="content">
+
+    <!-- =============================== -->
+    <!-- Profile Header Card             -->
+    <!-- =============================== -->
+    <div class="glass-card p-4 shadow-lg mb-4">
+
+        <div class="row align-items-center">
+            <div class="col-md-3 text-center">
+
+                <!-- Avatar -->
+                <div class="profile-avatar mx-auto mb-3">
+                    <img src="https://api.dicebear.com/7.x/initials/svg?seed="
+                         th:src="@{|https://api.dicebear.com/7.x/initials/svg?seed=${employee.firstName}_${employee.lastName}|}"
+                         alt="Avatar">
+                </div>
+
+            </div>
+
+            <div class="col-md-9">
+
+                <h2 class="fw-bold mb-1" th:text="${employee.firstName + ' ' + employee.lastName}"></h2>
+
+                <h5 class="text-secondary mb-3" th:text="${employee.position ?: 'Not Assigned'}"></h5>
+
+                <div class="d-flex flex-wrap gap-3">
+
+                    <div class="badge bg-primary px-3 py-2 fs-6">
+                        <i class="bi bi-diagram-3 me-1"></i>
+                        <span th:text="${employee.department ?: 'No Department'}"></span>
+                    </div>
+
+                    <div class="badge bg-success px-3 py-2 fs-6">
+                        <i class="bi bi-cash me-1"></i>
+                        <span th:text="${'$' + #numbers.formatDecimal(employee.salary,0,'COMMA',2,'POINT')}"></span>
+                    </div>
+
+                    <div class="badge bg-dark px-3 py-2 fs-6">
+                        <i class="bi bi-envelope-at me-1"></i>
+                        <span th:text="${employee.email}"></span>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- =============================== -->
+    <!-- Two-column layout               -->
+    <!-- =============================== -->
+    <div class="row g-4">
+
+        <!-- Left Column -->
+        <div class="col-xl-4">
+
+            <!-- Contact Information -->
+            <div class="glass-card p-4 shadow-sm mb-4">
+
+                <h4 class="fw-bold mb-3">
+                    <i class="bi bi-person-vcard me-2"></i> Contact Information
+                </h4>
+
+                <ul class="list-group list-group-flush profile-info-list">
+
+                    <li class="list-group-item">
+                        <i class="bi bi-envelope-open me-2"></i>
+                        Email:
+                        <span class="fw-semibold" th:text="${employee.email}"></span>
+                    </li>
+
+                    <li class="list-group-item">
+                        <i class="bi bi-telephone me-2"></i>
+                        Phone:
+                        <span class="fw-semibold" th:text="${employee.phoneNumber ?: 'Not Provided'}"></span>
+                    </li>
+
+                    <li class="list-group-item">
+                        <i class="bi bi-diagram-3 me-2"></i>
+                        Department:
+                        <span class="fw-semibold" th:text="${employee.department ?: 'N/A'}"></span>
+                    </li>
+
+                    <li class="list-group-item">
+                        <i class="bi bi-briefcase me-2"></i>
+                        Position:
+                        <span class="fw-semibold" th:text="${employee.position ?: 'N/A'}"></span>
+                    </li>
+
+                    <li class="list-group-item">
+                        <i class="bi bi-cash-coin me-2"></i>
+                        Salary:
+                        <span class="fw-semibold"
+                              th:text="${'$' + #numbers.formatDecimal(employee.salary,0,'COMMA',2,'POINT')}"></span>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-xl-8">
+
+            <!-- Activity Timeline -->
+            <div class="glass-card p-4 shadow-sm mb-4">
+
+                <h4 class="fw-bold mb-3">
+                    <i class="bi bi-clock-history me-2"></i> Activity Timeline
+                </h4>
+
+                <ul class="timeline">
+
+                    <li>
+                        <span class="timeline-icon bg-primary"></span>
+                        <div class="timeline-content">
+                            <h6>Employee Profile Updated</h6>
+                            <p>Information was recently updated.</p>
+                        </div>
+                    </li>
+
+                    <li>
+                        <span class="timeline-icon bg-success"></span>
+                        <div class="timeline-content">
+                            <h6>Position Assigned</h6>
+                            <p th:text="${employee.position ?: 'No position assigned'}"></p>
+                        </div>
+                    </li>
+
+                    <li>
+                        <span class="timeline-icon bg-info"></span>
+                        <div class="timeline-content">
+                            <h6>Department Allocation</h6>
+                            <p th:text="${employee.department ?: 'Not assigned'}"></p>
+                        </div>
+                    </li>
+
+                    <li>
+                        <span class="timeline-icon bg-dark"></span>
+                        <div class="timeline-content">
+                            <h6>Employee Registered</h6>
+                            <p>This employee was added to the system.</p>
+                        </div>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
