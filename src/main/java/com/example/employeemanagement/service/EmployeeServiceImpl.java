@@ -1,102 +1,110 @@
 package com.example.employeemanagement.service;
 
-import com.example.employeemanagement.dto.EmployeeDTO;
-import com.example.employeemanagement.dto.EmployeeRequestDTO;
-import com.example.employeemanagement.mapper.EmployeeMapper;
 import com.example.employeemanagement.model.Employee;
 import com.example.employeemanagement.repository.EmployeeRepository;
-
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository repository;
-    private final EmployeeMapper mapper;
 
-    /* ================================
-          PAGINATION + SORTING
-       ================================ */
     @Override
-    public Page<EmployeeDTO> getEmployees(int page, int size, String sortField, String sortDir) {
-
-        Sort sort = sortDir.equalsIgnoreCase("desc")
+    public Page<Employee> getPaginatedEmployees(
+            int page,
+            int size,
+            String sortField,
+            String sortDirection,
+            String search,
+            String department,
+            String position
+    ) {
+        Sort sort = sortDirection.equalsIgnoreCase("desc")
                 ? Sort.by(sortField).descending()
                 : Sort.by(sortField).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        return repository.findAll(pageable)
-                .map(mapper::toDTO);
+        if (search != null && !search.isEmpty()) {
+            return repository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
+                    search, search, pageable
+            );
+        }
+
+        if (department != null && !department.isEmpty()) {
+            return repository.findByDepartmentIgnoreCase(department, pageable);
+        }
+
+        if (position != null && !position.isEmpty()) {
+            return repository.findByPositionIgnoreCase(position, pageable);
+        }
+
+        return repository.findAll(pageable);
     }
 
-    /* ================================
-          SEARCH
-       ================================ */
     @Override
-    public Page<EmployeeDTO> searchEmployees(String keyword, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-
-        return repository
-                .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
-                        keyword, keyword, pageable
-                )
-                .map(mapper::toDTO);
+    public long getTotalEmployees() {
+        return repository.count();
     }
 
-    /* ================================
-          GET ONE
-       ================================ */
     @Override
-    public EmployeeDTO getEmployeeById(Long id) {
-        Employee employee = repository.findById(id)
+    public long getDepartmentsCount() {
+        return repository.findAll()
+                .stream()
+                .map(Employee::getDepartment)
+                .filter(d -> d != null && !d.isBlank())
+                .distinct()
+                .count();
+    }
+
+    @Override
+    public long getPositionsCount() {
+        return repository.findAll()
+                .stream()
+                .map(Employee::getPosition)
+                .filter(p -> p != null && !p.isBlank())
+                .distinct()
+                .count();
+    }
+
+    @Override
+    public Employee getEmployeeById(Long id) {
+        return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
-
-        return mapper.toDTO(employee);
     }
 
-    /* ================================
-          CREATE
-       ================================ */
     @Override
-    public EmployeeDTO createEmployee(EmployeeRequestDTO request) {
+    public Employee createEmployee(Employee employee) {
+        if (repository.existsByEmail(employee.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+        return repository.save(employee);
+    }
 
-        if (repository.existsByEmail(request.getEmail())) {
+    @Override
+    public Employee updateEmployee(Long id, Employee employeeDetails) {
+        Employee employee = getEmployeeById(id);
+
+        if (!employee.getEmail().equals(employeeDetails.getEmail()) &&
+                repository.existsByEmail(employeeDetails.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
 
-        Employee employee = mapper.toEntity(request);
-        return mapper.toDTO(repository.save(employee));
+        employee.setFirstName(employeeDetails.getFirstName());
+        employee.setLastName(employeeDetails.getLastName());
+        employee.setEmail(employeeDetails.getEmail());
+        employee.setPhoneNumber(employeeDetails.getPhoneNumber());
+        employee.setDepartment(employeeDetails.getDepartment());
+        employee.setPosition(employeeDetails.getPosition());
+        employee.setSalary(employeeDetails.getSalary());
+
+        return repository.save(employee);
     }
 
-    /* ================================
-          UPDATE
-       ================================ */
-    @Override
-    public EmployeeDTO updateEmployee(Long id, EmployeeRequestDTO request) {
-
-        Employee employee = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
-
-        if (!employee.getEmail().equals(request.getEmail())
-                && repository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
-        }
-
-        mapper.updateEntity(employee, request);
-        return mapper.toDTO(repository.save(employee));
-    }
-
-    /* ================================
-          DELETE
-       ================================ */
     @Override
     public void deleteEmployee(Long id) {
         if (!repository.existsById(id)) {
