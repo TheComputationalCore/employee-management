@@ -7,116 +7,164 @@
 </head>
 
 <body>
+
 <div th:fragment="content">
 
-    <div class="row g-4">
+    <div class="container py-4">
 
-        <!-- Left Panel -->
-        <div class="col-lg-6">
-            <div class="glass-card p-4 shadow-lg h-100">
+        <div class="row align-items-center justify-content-center">
 
-                <h3 class="fw-bold mb-3">
-                    <i class="bi bi-pencil-square me-2"></i>
-                    Edit Employee
-                </h3>
+            <!-- ================================== -->
+            <!-- Left Side Illustration / Info Card -->
+            <!-- ================================== -->
+            <div class="col-lg-5 mb-4">
+                <div class="glass-card p-4 text-center h-100">
 
-                <p class="text-muted">
-                    Update details and save changes.  
-                    Employee ID:
-                    <span class="fw-bold" th:text="${employee.id}"></span>
-                </p>
+                    <img src="https://cdn3d.iconscout.com/3d/premium/thumb/edit-profile-3d-icon-download-in-png-blend-fbx-gltf-file-formats--user-account-avatar-editing-interface-pack-icons-10569650.png?f=webp"
+                         class="img-fluid mb-3"
+                         style="max-height: 260px">
 
-                <img src="https://cdn-icons-png.flaticon.com/512/1177/1177568.png"
-                     alt="Edit Illustration"
-                     class="img-fluid mt-3"
-                     style="max-width: 70%;">
+                    <h3 class="fw-bold">Edit Employee</h3>
+
+                    <p class="text-muted">
+                        Update employee information and save changes.
+                        Email validation and salary formatting apply automatically.
+                    </p>
+
+                </div>
             </div>
-        </div>
 
+            <!-- ================================== -->
+            <!-- Right Side: Edit Form              -->
+            <!-- ================================== -->
+            <div class="col-lg-7">
 
-        <!-- Right Panel — Form -->
-        <div class="col-lg-6">
-            <div class="glass-card p-4 shadow-lg">
+                <div class="glass-card p-4">
 
-                <form th:action="@{/web/employees/edit/{id}(id=${employee.id})}"
-                      th:object="${employee}" method="post"
-                      class="needs-validation" novalidate>
+                    <form th:action="@{/web/employees/edit/{id}(id=${employee.id})}"
+                          th:object="${employee}"
+                          method="post"
+                          class="needs-validation"
+                          novalidate>
 
-                    <input type="hidden" th:field="*{id}">
+                        <input type="hidden" th:field="*{id}">
 
-                    <div class="row g-3">
+                        <div class="row g-4">
 
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input th:field="*{firstName}" class="form-control floating-input" required>
-                                <label>First Name</label>
-                                <div class="invalid-feedback" th:errors="*{firstName}"></div>
+                            <!-- First Name -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text"
+                                           th:field="*{firstName}"
+                                           class="form-control floating-input"
+                                           required>
+                                    <label>First Name</label>
+                                    <div class="invalid-feedback"
+                                         th:errors="*{firstName}">
+                                        Required
+                                    </div>
+                                </div>
                             </div>
+
+                            <!-- Last Name -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text"
+                                           th:field="*{lastName}"
+                                           class="form-control floating-input"
+                                           required>
+                                    <label>Last Name</label>
+                                    <div class="invalid-feedback"
+                                         th:errors="*{lastName}">
+                                        Required
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email"
+                                           th:field="*{email}"
+                                           class="form-control floating-input"
+                                           required>
+                                    <label>Email</label>
+                                    <div class="invalid-feedback"
+                                         th:errors="*{email}">
+                                        Invalid or duplicate email
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="tel"
+                                           th:field="*{phoneNumber}"
+                                           class="form-control floating-input">
+                                    <label>Phone Number</label>
+                                </div>
+                            </div>
+
+                            <!-- Department -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text"
+                                           th:field="*{department}"
+                                           class="form-control floating-input">
+                                    <label>Department</label>
+                                </div>
+                            </div>
+
+                            <!-- Position -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text"
+                                           th:field="*{position}"
+                                           class="form-control floating-input">
+                                    <label>Position</label>
+                                </div>
+                            </div>
+
+                            <!-- Salary -->
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="number"
+                                           step="0.01"
+                                           th:field="*{salary}"
+                                           class="form-control floating-input"
+                                           required>
+                                    <label>Salary</label>
+                                    <div class="invalid-feedback"
+                                         th:errors="*{salary}">
+                                        Invalid salary
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input th:field="*{lastName}" class="form-control floating-input" required>
-                                <label>Last Name</label>
-                                <div class="invalid-feedback" th:errors="*{lastName}"></div>
-                            </div>
+                        <!-- Buttons -->
+                        <div class="mt-4 d-flex gap-3">
+                            <button class="btn btn-primary px-4">
+                                <i class="bi bi-check2-circle me-1"></i> Update
+                            </button>
+
+                            <a th:href="@{/web/}" class="btn btn-outline-secondary px-4">
+                                Cancel
+                            </a>
                         </div>
 
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input th:field="*{email}" type="email" class="form-control floating-input" required>
-                                <label>Email</label>
-                                <div class="invalid-feedback" th:errors="*{email}"></div>
-                            </div>
-                        </div>
+                    </form>
 
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input th:field="*{phoneNumber}" class="form-control floating-input">
-                                <label>Phone Number</label>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input th:field="*{department}" class="form-control floating-input">
-                                <label>Department</label>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input th:field="*{position}" class="form-control floating-input">
-                                <label>Position</label>
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input th:field="*{salary}" type="number" step="0.01"
-                                       class="form-control floating-input" required>
-                                <label>Salary</label>
-                                <div class="invalid-feedback" th:errors="*{salary}"></div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="mt-4 d-flex gap-3">
-                        <button class="btn btn-primary px-4">
-                            <i class="bi bi-check-circle me-1"></i>
-                            Update
-                        </button>
-                        <a th:href="@{/web/}" class="btn btn-outline-secondary px-4">Cancel</a>
-                    </div>
-
-                </form>
-
+                </div>
             </div>
+
         </div>
 
     </div>
 
 </div>
+
 </body>
 </html>
