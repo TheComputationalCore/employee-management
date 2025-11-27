@@ -1,158 +1,115 @@
 /* ==========================================================
-   DASHBOARD.CSS — Premium Gradient Cards + Dashboard UI
-   Matches layout.css + components.css
+   DASHBOARD.CSS — Cards, Gradients, Dashboard Styles
    ========================================================== */
 
-:root {
-    --radius: 16px;
-    --transition: 0.35s ease;
-
-    --blue-1: #4c6ef5;
-    --blue-2: #3b5bdb;
-
-    --purple-1: #8b5cf6;
-    --purple-2: #6d28d9;
-
-    --green-1: #10b981;
-    --green-2: #059669;
-
-    --glass-light: rgba(255,255,255,0.55);
-    --glass-dark: rgba(25,25,25,0.45);
-}
-
-/* ==========================================================
-   DASHBOARD CARD BASE
-   ========================================================== */
+/* ---------------------------- */
+/* Dashboard Metric Cards       */
+/* ---------------------------- */
 
 .dashboard-card {
     position: relative;
-    padding: 28px;
-    border-radius: var(--radius);
-    height: 150px;
-
+    padding: 24px;
+    border-radius: 18px;
     color: white;
+    overflow: hidden;
+    height: 150px;
 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 
-    overflow: hidden;
-    transition: var(--transition);
-
-    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    transition: transform 0.25s ease, box-shadow 0.3s ease;
 }
 
-/* Hover Animation */
+/* Hover */
 .dashboard-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+    transform: translateY(-6px);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.18);
 }
 
-/* Title */
+/* Card Title */
 .dashboard-card h5 {
     font-size: 1rem;
-    letter-spacing: 0.4px;
-    opacity: 0.9;
+    opacity: 0.92;
     font-weight: 500;
+    letter-spacing: 0.3px;
 }
 
+/* Card Value */
 .dashboard-card h2 {
     font-weight: 700;
-    font-size: 2.2rem;
+    font-size: 2.1rem;
+    margin-top: 8px;
 }
 
 /* Card Icon */
 .dashboard-card i {
     position: absolute;
-    right: 22px;
-    bottom: 22px;
-    font-size: 2.6rem;
-    opacity: 0.22;
-    transition: var(--transition);
+    bottom: 18px;
+    right: 18px;
+    font-size: 2.7rem;
+    opacity: 0.18;
+    transition: opacity 0.2s ease;
 }
 
 .dashboard-card:hover i {
-    opacity: 0.35;
+    opacity: 0.25;
 }
 
-/* ==========================================================
-   GRADIENT THEMES
-   ========================================================== */
+/* ---------------------------- */
+/* Gradient Styles              */
+/* ---------------------------- */
 
 .gradient-blue {
-    background: linear-gradient(135deg, var(--blue-1), var(--blue-2));
+    background: linear-gradient(135deg, #4285F4, #3367d6);
 }
 
 .gradient-purple {
-    background: linear-gradient(135deg, var(--purple-1), var(--purple-2));
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
 }
 
 .gradient-green {
-    background: linear-gradient(135deg, var(--green-1), var(--green-2));
+    background: linear-gradient(135deg, #10b981, #059669);
 }
 
-/* ==========================================================
-   DARK MODE OVERRIDES
-   ========================================================== */
-
-html.dark-mode .dashboard-card {
-    box-shadow: 0 8px 26px rgba(0,0,0,0.25);
+html.dark-mode .gradient-blue {
+    background: linear-gradient(135deg, #4b88ff, #274bbd);
 }
 
-html.dark-mode .dashboard-card:hover {
-    box-shadow: 0 14px 32px rgba(0,0,0,0.35);
+html.dark-mode .gradient-purple {
+    background: linear-gradient(135deg, #a78bfa, #5b21b6);
 }
 
-/* Icons slightly brighter in dark */
-html.dark-mode .dashboard-card i {
-    opacity: 0.32;
+html.dark-mode .gradient-green {
+    background: linear-gradient(135deg, #34d399, #047857);
 }
 
-/* ==========================================================
-   GRID SPACING
-   ========================================================== */
+/* ---------------------------- */
+/* Section Spacing              */
+/* ---------------------------- */
 
-@media (max-width: 992px) {
-    .dashboard-card {
-        height: 160px;
-    }
+.section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 15px;
 }
+
+html.dark-mode .section-title {
+    color: #f2f2f2;
+}
+
+/* ---------------------------- */
+/* Responsive Tweaks            */
+/* ---------------------------- */
 
 @media (max-width: 768px) {
     .dashboard-card {
         height: 170px;
+        padding: 20px;
     }
-}
 
-/* ==========================================================
-   TABLE + SEARCH CONTAINER SPACING
-   ========================================================== */
-
-.table-section {
-    margin-top: 40px;
-}
-
-/* Search Box Spacing */
-.search-box {
-    margin-top: 35px;
-    margin-bottom: 15px;
-}
-
-/* ==========================================================
-   EMPTY STATE
-   ========================================================== */
-
-.empty-state {
-    text-align: center;
-    padding: 40px 10px;
-    color: #777;
-}
-
-.empty-state i {
-    font-size: 3rem;
-    opacity: 0.35;
-}
-
-html.dark-mode .empty-state {
-    color: #ccc;
+    .dashboard-card h2 {
+        font-size: 1.8rem;
+    }
 }
