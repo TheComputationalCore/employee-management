@@ -1,25 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="layout :: content">
+      th:replace="layout :: layout(~{::title}, ~{::content})">
 
-<th:block th:with="pageTitle='Dashboard', content='this :: contentFragment'">
+<head>
+    <title>Dashboard</title>
+</head>
 
-<div th:fragment="contentFragment">
+<body>
 
+<div th:fragment="content">
+
+    <!-- ========================================= -->
+    <!-- DASHBOARD HEADER -->
+    <!-- ========================================= -->
     <div class="container-fluid px-4">
-
-        <!-- ========================== -->
-        <!-- Dashboard Header + Cards   -->
-        <!-- ========================== -->
         <h2 class="mb-4 fw-bold text-dark">Dashboard</h2>
 
-        <div class="row g-4">
+        <!-- ========================================= -->
+        <!-- DASHBOARD SUMMARY CARDS -->
+        <!-- ========================================= -->
+        <div class="row g-4 mb-4">
 
             <!-- Total Employees -->
             <div class="col-xl-4 col-md-6">
                 <div class="dashboard-card gradient-blue text-white">
                     <h5>Total Employees</h5>
-                    <h2 th:text="${totalEmployees}">0</h2>
+                    <h2 th:text="${totalItems}">0</h2>
                     <i class="bi bi-people-fill"></i>
                 </div>
             </div>
@@ -44,20 +50,20 @@
 
         </div>
 
-        <!-- ========================== -->
-        <!-- Search + Add Employee Btn  -->
-        <!-- ========================== -->
-
-        <div class="row align-items-center mt-5 mb-3">
-
+        <!-- ========================================= -->
+        <!-- SEARCH BAR + ADD EMPLOYEE -->
+        <!-- ========================================= -->
+        <div class="row align-items-center mb-3">
             <div class="col-md-6">
                 <form method="get" th:action="@{/web/}">
-                    <input type="hidden" name="sortField" th:value="${sortField}" />
-                    <input type="hidden" name="sortDir" th:value="${sortDir}" />
-                    <input type="text" name="keyword"
+                    <input type="hidden" name="sort" th:value="${sort}">
+                    <input type="hidden" name="dir" th:value="${dir}">
+
+                    <input name="search"
+                           th:value="${search}"
+                           type="text"
                            class="form-control search-input"
-                           placeholder="Search employees..."
-                           th:value="${keyword}">
+                           placeholder="Search employees...">
                 </form>
             </div>
 
@@ -67,152 +73,154 @@
                     Add Employee
                 </a>
             </div>
-
         </div>
 
-        <!-- ========================== -->
-        <!-- Employee Table             -->
-        <!-- ========================== -->
-        <div class="glass-table p-3 rounded shadow-sm">
-
+        <!-- ========================================= -->
+        <!-- TABLE -->
+        <!-- ========================================= -->
+        <div class="glass-table p-3 rounded">
             <div class="table-responsive">
+
                 <table class="table align-middle table-hover mb-0">
-
                     <thead>
-                        <tr>
-                            <!-- Sorting-enabled headers -->
-                            <th>
-                                <a th:href="@{/web/(page=0, sortField='id', sortDir=${reverseSortDir}, keyword=${keyword})}"
-                                   class="text-decoration-none text-dark">
-                                    ID
-                                    <span th:if="${sortField == 'id'}">
-                                        <i th:class="'bi ' + (sortDir == 'asc' ? 'bi-chevron-up' : 'bi-chevron-down')"></i>
-                                    </span>
-                                </a>
-                            </th>
+                    <tr>
+                        <th>#</th>
 
-                            <th>
-                                <a th:href="@{/web/(page=0, sortField='firstName', sortDir=${reverseSortDir}, keyword=${keyword})}"
-                                   class="text-decoration-none text-dark">
-                                    Employee
-                                    <span th:if="${sortField == 'firstName'}">
-                                        <i th:class="'bi ' + (sortDir == 'asc' ? 'bi-chevron-up' : 'bi-chevron-down')"></i>
-                                    </span>
-                                </a>
-                            </th>
+                        <!-- Sortable Column: Name -->
+                        <th>
+                            <a th:href="@{'/web/?page=' + ${currentPage} +
+                                             '&size=10&sort=name&dir=' + ${reverseDir} +
+                                             (search != null ? '&search=' + search : '')}">
+                                Name
+                                <i class="bi"
+                                   th:classappend="${sort == 'name'} ? (dir == 'asc' ? ' bi-caret-up-fill' : ' bi-caret-down-fill') : '' ">
+                                </i>
+                            </a>
+                        </th>
 
-                            <th>
-                                <a th:href="@{/web/(page=0, sortField='email', sortDir=${reverseSortDir}, keyword=${keyword})}"
-                                   class="text-decoration-none text-dark">
-                                    Email
-                                    <span th:if="${sortField == 'email'}">
-                                        <i th:class="'bi ' + (sortDir == 'asc' ? 'bi-chevron-up' : 'bi-chevron-down')"></i>
-                                    </span>
-                                </a>
-                            </th>
+                        <th>Email</th>
 
-                            <th>
-                                <a th:href="@{/web/(page=0, sortField='department', sortDir=${reverseSortDir}, keyword=${keyword})}"
-                                   class="text-decoration-none text-dark">
-                                    Department
-                                    <span th:if="${sortField == 'department'}">
-                                        <i th:class="'bi ' + (sortDir == 'asc' ? 'bi-chevron-up' : 'bi-chevron-down')"></i>
-                                    </span>
-                                </a>
-                            </th>
+                        <!-- Sortable Department -->
+                        <th>
+                            <a th:href="@{'/web/?page=' + ${currentPage} +
+                                             '&size=10&sort=department&dir=' + ${reverseDir} +
+                                             (search != null ? '&search=' + search : '')}">
+                                Department
+                                <i class="bi"
+                                   th:classappend="${sort == 'department'} ? (dir == 'asc' ? ' bi-caret-up-fill' : ' bi-caret-down-fill') : '' ">
+                                </i>
+                            </a>
+                        </th>
 
-                            <th>
-                                <a th:href="@{/web/(page=0, sortField='position', sortDir=${reverseSortDir}, keyword=${keyword})}"
-                                   class="text-decoration-none text-dark">
-                                    Position
-                                    <span th:if="${sortField == 'position'}">
-                                        <i th:class="'bi ' + (sortDir == 'asc' ? 'bi-chevron-up' : 'bi-chevron-down')"></i>
-                                    </span>
-                                </a>
-                            </th>
+                        <!-- Sortable Position -->
+                        <th>
+                            <a th:href="@{'/web/?page=' + ${currentPage} +
+                                             '&size=10&sort=position&dir=' + ${reverseDir} +
+                                             (search != null ? '&search=' + search : '')}">
+                                Position
+                                <i class="bi"
+                                   th:classappend="${sort == 'position'} ? (dir == 'asc' ? ' bi-caret-up-fill' : ' bi-caret-down-fill') : '' ">
+                                </i>
+                            </a>
+                        </th>
 
-                            <th>
-                                <a th:href="@{/web/(page=0, sortField='salary', sortDir=${reverseSortDir}, keyword=${keyword})}"
-                                   class="text-decoration-none text-dark">
-                                    Salary
-                                    <span th:if="${sortField == 'salary'}">
-                                        <i th:class="'bi ' + (sortDir == 'asc' ? 'bi-chevron-up' : 'bi-chevron-down')"></i>
-                                    </span>
-                                </a>
-                            </th>
+                        <!-- Sortable Salary -->
+                        <th class="text-end">
+                            <a th:href="@{'/web/?page=' + ${currentPage} +
+                                             '&size=10&sort=salary&dir=' + ${reverseDir} +
+                                             (search != null ? '&search=' + search : '')}">
+                                Salary
+                                <i class="bi"
+                                   th:classappend="${sort == 'salary'} ? (dir == 'asc' ? ' bi-caret-up-fill' : ' bi-caret-down-fill') : '' ">
+                                </i>
+                            </a>
+                        </th>
 
-                            <th class="text-end">Actions</th>
-                        </tr>
+                        <th class="text-end">Actions</th>
+                    </tr>
                     </thead>
 
                     <tbody>
+                    <tr th:each="employee : ${employees}">
+                        <td th:text="${employee.id}"></td>
 
-                        <tr th:each="emp : ${employees}">
-                            <td th:text="${emp.id}"></td>
-                            <td th:text="${emp.firstName + ' ' + emp.lastName}"></td>
-                            <td th:text="${emp.email}"></td>
-                            <td th:text="${emp.department}"></td>
-                            <td th:text="${emp.position}"></td>
-                            <td th:text="'$' + ${#numbers.formatDecimal(emp.salary, 0, 'COMMA', 2, 'POINT')}"></td>
+                        <td th:text="${employee.firstName + ' ' + employee.lastName}"></td>
 
-                            <td class="text-end">
+                        <td th:text="${employee.email}"></td>
 
-                                <a th:href="@{/web/employees/edit/{id}(id=${emp.id})}"
-                                   class="btn btn-sm btn-outline-warning me-2">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
+                        <td th:text="${employee.department}"></td>
 
-                                <a th:href="@{/web/employees/delete/{id}(id=${emp.id})}"
-                                   class="btn btn-sm btn-outline-danger delete-confirm">
-                                    <i class="bi bi-trash"></i>
-                                </a>
+                        <td th:text="${employee.position}"></td>
 
-                            </td>
-                        </tr>
+                        <td class="text-end"
+                            th:text="'$' + ${#numbers.formatDecimal(employee.salary, 0, 'COMMA', 2, 'POINT')}"></td>
 
-                        <!-- Empty State -->
-                        <tr th:if="${employees.size() == 0}">
-                            <td colspan="7" class="text-center py-4 text-muted">
-                                <i class="bi bi-person-x fs-3 d-block mb-2"></i>
-                                No employees found.
-                            </td>
-                        </tr>
+                        <!-- Actions -->
+                        <td class="text-end">
+                            <a th:href="@{/web/employees/edit/{id}(id=${employee.id})}"
+                               class="btn btn-sm btn-outline-warning me-2">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+
+                            <a th:href="@{/web/employees/delete/{id}(id=${employee.id})}"
+                               class="btn btn-sm btn-outline-danger delete-confirm">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+
+                    <!-- Empty State -->
+                    <tr th:if="${employees.size() == 0}">
+                        <td colspan="7" class="text-center py-4">
+                            <i class="bi bi-person-x fs-3 d-block mb-2"></i>
+                            No employees found.
+                        </td>
+                    </tr>
 
                     </tbody>
+
                 </table>
             </div>
-
         </div>
 
-        <!-- ========================== -->
-        <!-- Pagination Bar             -->
-        <!-- ========================== -->
-
+        <!-- ========================================= -->
+        <!-- PAGINATION -->
+        <!-- ========================================= -->
         <nav class="mt-4">
             <ul class="pagination justify-content-center">
 
                 <!-- Prev -->
-                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <li class="page-item" th:classappend="${currentPage == 0} ? ' disabled'">
                     <a class="page-link"
-                       th:href="@{/web/(page=${currentPage - 1}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword})}">
+                       th:href="@{'/web/?page=' + (${currentPage} - 1) +
+                                        '&size=10&sort=' + ${sort} +
+                                        '&dir=' + ${dir} +
+                                        (search != null ? '&search=' + search : '')}">
                         Previous
                     </a>
                 </li>
 
                 <!-- Page Numbers -->
                 <li class="page-item"
-                    th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                    th:classappend="${i == currentPage} ? 'active'">
+                    th:each="pageNum : ${#numbers.sequence(0, totalPages-1)}"
+                    th:classappend="${pageNum == currentPage} ? ' active'">
                     <a class="page-link"
-                       th:text="${i + 1}"
-                       th:href="@{/web/(page=${i}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword})}">
+                       th:text="${pageNum + 1}"
+                       th:href="@{'/web/?page=' + ${pageNum} +
+                                        '&size=10&sort=' + ${sort} +
+                                        '&dir=' + ${dir} +
+                                        (search != null ? '&search=' + search : '')}">
                     </a>
                 </li>
 
                 <!-- Next -->
-                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <li class="page-item"
+                    th:classappend="${currentPage >= totalPages-1} ? ' disabled'">
                     <a class="page-link"
-                       th:href="@{/web/(page=${currentPage + 1}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword})}">
+                       th:href="@{'/web/?page=' + (${currentPage} + 1) +
+                                        '&size=10&sort=' + ${sort} +
+                                        '&dir=' + ${dir} +
+                                        (search != null ? '&search=' + search : '')}">
                         Next
                     </a>
                 </li>
@@ -224,6 +232,5 @@
 
 </div>
 
-</th:block>
-
+</body>
 </html>
