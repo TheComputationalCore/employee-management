@@ -1,46 +1,107 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Employee Management System</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+      
 <body>
-    <div class="container mt-5">
-        <h1>Employee Management System</h1>
-        <div class="mb-3">
-            <a th:href="@{/web/employees/new}" class="btn btn-primary">Add New Employee</a>
+
+<section layout:fragment="content">
+
+    <!-- DASHBOARD HEADER -->
+    <div class="row dashboard-cards">
+
+        <!-- Total Employees -->
+        <div class="col-md-4">
+            <div class="dashboard-card glass shadow-sm">
+                <div class="card-icon gradient-bg">
+                    <i class="bi bi-people"></i>
+                </div>
+                <h5>Total Employees</h5>
+                <h2 th:text="${employees.size()}"></h2>
+            </div>
         </div>
-        <table class="table table-striped">
+
+        <!-- Departments Count -->
+        <div class="col-md-4">
+            <div class="dashboard-card glass shadow-sm">
+                <div class="card-icon gradient-bg-2">
+                    <i class="bi bi-building"></i>
+                </div>
+
+                <h5>Departments</h5>
+                <h2 th:text="${#lists.size(#sets.newHashSet(employees.?[department]))}"></h2>
+            </div>
+        </div>
+
+        <!-- Positions Count -->
+        <div class="col-md-4">
+            <div class="dashboard-card glass shadow-sm">
+                <div class="card-icon gradient-bg-3">
+                    <i class="bi bi-card-checklist"></i>
+                </div>
+
+                <h5>Positions</h5>
+                <h2 th:text="${#lists.size(#sets.newHashSet(employees.?[position]))}"></h2>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- SEARCH + ACTIONS -->
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+        <input type="text" id="searchInput" class="form-control w-50 shadow-sm"
+               placeholder="Search employees...">
+        
+        <a th:href="@{/web/employees/new}" class="btn btn-gradient float-btn shadow">
+            <i class="bi bi-plus-lg"></i> Add Employee
+        </a>
+    </div>
+
+
+    <!-- EMPLOYEE TABLE -->
+    <div class="table-responsive glass card p-3 shadow-sm">
+        <table class="table table-hover align-middle">
             <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Department</th>
-                    <th>Position</th>
-                    <th>Salary</th>
-                    <th>Actions</th>
-                </tr>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Position</th>
+                <th>Salary</th>
+                <th class="text-center">Actions</th>
+            </tr>
             </thead>
-            <tbody>
-                <tr th:each="employee : ${employees}">
-                    <td th:text="${employee.id}"></td>
-                    <td th:text="${employee.firstName + ' ' + employee.lastName}"></td>
-                    <td th:text="${employee.email}"></td>
-                    <td th:text="${employee.department}"></td>
-                    <td th:text="${employee.position}"></td>
-                    <td th:text="${'$' + #numbers.formatDecimal(employee.salary, 0, 'COMMA', 2, 'POINT')}"></td>
-                    <td>
-                        <a th:href="@{/web/employees/edit/{id}(id=${employee.id})}" class="btn btn-sm btn-warning">Edit</a>
-                        <a th:href="@{/web/employees/delete/{id}(id=${employee.id})}" class="btn btn-sm btn-danger" 
-                           onclick="return confirm('Are you sure you want to delete this employee?')">Delete</a>
-                    </td>
-                </tr>
+
+            <tbody id="employeeTable">
+            <tr th:each="employee : ${employees}">
+                <td th:text="${employee.id}"></td>
+                <td th:text="${employee.firstName + ' ' + employee.lastName}"></td>
+                <td th:text="${employee.email}"></td>
+                <td th:text="${employee.department}"></td>
+                <td th:text="${employee.position}"></td>
+                <td th:text="'$' + ${#numbers.formatDecimal(employee.salary, 0, 'COMMA', 2, 'POINT')}"></td>
+
+                <td class="text-center">
+                    <a th:href="@{/web/employees/edit/{id}(id=${employee.id})}"
+                       class="btn btn-sm btn-outline-primary me-2">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+
+                    <a th:href="@{/web/employees/delete/{id}(id=${employee.id})}"
+                       class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Are you sure you want to delete this employee?')">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </td>
+
+            </tr>
             </tbody>
         </table>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</section>
+
 </body>
-</html> 
+</html>
