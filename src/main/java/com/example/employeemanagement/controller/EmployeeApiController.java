@@ -2,66 +2,48 @@ package com.example.employeemanagement.controller;
 
 import com.example.employeemanagement.model.Employee;
 import com.example.employeemanagement.service.EmployeeService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/employees")
-@Tag(name = "Employee API", description = "REST API endpoints for employee management")
 public class EmployeeApiController {
 
-    private final EmployeeService employeeService;
-
-    @Autowired
-    public EmployeeApiController(EmployeeService employeeService) {
-        this.employeeService = employeeService;
-    }
+    private final EmployeeService service;
 
     @GetMapping
-    @Operation(summary = "Get paginated list of employees")
     public ResponseEntity<Page<Employee>> getEmployees(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        Page<Employee> employees = employeeService.getAllEmployeesPaginated(
-                PageRequest.of(page - 1, size)
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "firstName") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ) {
+        return ResponseEntity.ok(
+                service.getEmployeesPaginated(page, size, keyword, sortField, sortDir)
         );
-        return ResponseEntity.ok(employees);
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get employee by ID")
-    public ResponseEntity<Employee> getEmployee(@PathVariable Long id) {
-        return ResponseEntity.ok(employeeService.getEmployeeById(id));
+    public Employee get(@PathVariable Long id) {
+        return service.getEmployeeById(id);
     }
 
     @PostMapping
-    @Operation(summary = "Create a new employee")
-    public ResponseEntity<Employee> createEmployee(@Valid @RequestBody Employee employee) {
-        return ResponseEntity.ok(employeeService.createEmployee(employee));
+    public Employee create(@RequestBody Employee e) {
+        return service.createEmployee(e);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update an employee")
-    public ResponseEntity<Employee> updateEmployee(
-            @PathVariable Long id,
-            @Valid @RequestBody Employee employee) {
-
-        return ResponseEntity.ok(employeeService.updateEmployee(id, employee));
+    public Employee update(@PathVariable Long id, @RequestBody Employee e) {
+        return service.updateEmployee(id, e);
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete an employee")
-    public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
-        employeeService.deleteEmployee(id);
-        return ResponseEntity.ok().build();
+    public void delete(@PathVariable Long id) {
+        service.deleteEmployee(id);
     }
 }
