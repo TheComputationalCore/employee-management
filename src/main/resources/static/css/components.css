@@ -342,3 +342,71 @@ html.dark-mode .alert-danger {
     }
 }
 
+/* =====================================================
+   PREMIUM SPLIT VIEW
+===================================================== */
+
+.split-container {
+    display: flex;
+    gap: 25px;
+    margin-top: 20px;
+}
+
+/* Left: Form */
+.split-left {
+    flex: 0 0 60%;
+}
+
+/* Right: Preview */
+.split-right {
+    flex: 0 0 40%;
+    display: flex;
+    align-items: center;
+}
+
+/* Preview Card */
+.preview-card {
+    width: 100%;
+    border-radius: 18px;
+    text-align: center;
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(16px);
+    padding: 25px;
+}
+
+.preview-avatar i {
+    font-size: 4rem;
+    color: #6c63ff;
+    opacity: 0.85;
+}
+
+.preview-info .badge {
+    margin: 5px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    border-radius: 12px;
+}
+
+/* Soft Badge Colors */
+.bg-primary-soft {
+    background: rgba(76,110,245,0.15);
+    color: #4c6ef5;
+}
+
+.bg-purple-soft {
+    background: rgba(139,92,246,0.15);
+    color: #8b5cf6;
+}
+
+.bg-green-soft {
+    background: rgba(16,185,129,0.15);
+    color: #059669;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+    .split-container {
+        flex-direction: column;
+    }
+}
+
