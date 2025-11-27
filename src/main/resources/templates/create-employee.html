@@ -1,129 +1,140 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="layout :: content(~{::title}, ~{::content})">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: content">
 
-<head>
-    <title>Create Employee</title>
-</head>
+<th:block th:with="pageTitle='Add Employee', content='this :: contentFragment'">
 
-<body>
-
-<div th:fragment="content">
+<div th:fragment="contentFragment">
 
     <div class="split-container">
 
-        <!-- LEFT SECTION (Info Panel) -->
-        <div class="split-left gradient-purple">
-            <div class="info-content">
-                <h2 class="fw-bold text-white mb-3">
-                    <i class="bi bi-person-plus-fill me-2"></i>Add Employee
-                </h2>
+        <!-- ========================= -->
+        <!-- LEFT SIDE — FORM          -->
+        <!-- ========================= -->
+        <div class="split-left glass-card p-4 shadow-lg">
 
-                <p class="text-white-50">
-                    Create a new employee record using the form on the right.  
-                    All changes are validated and saved securely.
-                </p>
+            <h3 class="fw-bold mb-4">
+                <i class="bi bi-person-plus me-2"></i>
+                Add New Employee
+            </h3>
 
-                <ul class="text-white-50 mt-4">
-                    <li>✔ Modern Floating Inputs</li>
-                    <li>✔ Auto Formatting (Phone + Salary)</li>
-                    <li>✔ SweetAlert Delete Protection</li>
-                    <li>✔ Dark Mode Compatible</li>
-                </ul>
-            </div>
+            <form th:action="@{/web/employees/new}" th:object="${employee}"
+                  method="post" class="needs-validation" novalidate>
+
+                <div class="row g-4">
+
+                    <!-- FIRST NAME -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" th:field="*{firstName}" id="preview_firstName"
+                                   class="form-control floating-input preview-field" required>
+                            <label>First Name</label>
+                        </div>
+                    </div>
+
+                    <!-- LAST NAME -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" th:field="*{lastName}" id="preview_lastName"
+                                   class="form-control floating-input preview-field" required>
+                            <label>Last Name</label>
+                        </div>
+                    </div>
+
+                    <!-- EMAIL -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="email" th:field="*{email}" id="preview_email"
+                                   class="form-control floating-input preview-field" required>
+                            <label>Email</label>
+                        </div>
+                    </div>
+
+                    <!-- PHONE -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="tel" th:field="*{phoneNumber}" id="preview_phone"
+                                   class="form-control floating-input preview-field">
+                            <label>Phone</label>
+                        </div>
+                    </div>
+
+                    <!-- DEPARTMENT -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" th:field="*{department}" id="preview_department"
+                                   class="form-control floating-input preview-field">
+                            <label>Department</label>
+                        </div>
+                    </div>
+
+                    <!-- POSITION -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" th:field="*{position}" id="preview_position"
+                                   class="form-control floating-input preview-field">
+                            <label>Position</label>
+                        </div>
+                    </div>
+
+                    <!-- SALARY -->
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="number" step="0.01" th:field="*{salary}" id="preview_salary"
+                                   class="form-control floating-input preview-field" required>
+                            <label>Salary</label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="d-flex gap-3 mt-4">
+                    <button class="btn btn-primary px-4">
+                        <i class="bi bi-check2-circle me-1"></i> Save
+                    </button>
+                    <a th:href="@{/web/}" class="btn btn-outline-secondary px-4">
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
         </div>
 
-        <!-- RIGHT SECTION (Form Area) -->
+        <!-- ========================= -->
+        <!-- RIGHT SIDE — LIVE PREVIEW -->
+        <!-- ========================= -->
         <div class="split-right">
 
-            <div class="glass-card p-4 shadow-lg">
+            <div class="preview-card glass-card shadow p-4 text-center">
 
-                <h3 class="fw-bold mb-4">
-                    Employee Details
-                </h3>
+                <div class="preview-avatar mb-3">
+                    <i class="bi bi-person-circle"></i>
+                </div>
 
-                <form th:action="@{/web/employees/new}" th:object="${employee}"
-                      method="post" class="needs-validation" novalidate>
+                <h4 id="card_name" class="fw-bold">Employee Name</h4>
+                <p id="card_email" class="text-muted mb-1">email@example.com</p>
+                <p id="card_phone" class="text-muted mb-3">000-000-0000</p>
 
-                    <div class="row g-4">
+                <div class="preview-info">
+                    <span id="card_department" class="badge bg-primary-soft">
+                        Department
+                    </span>
 
-                        <!-- First Name -->
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" th:field="*{firstName}" class="form-control floating-input" required>
-                                <label>First Name</label>
-                                <div class="invalid-feedback" th:errors="*{firstName}"></div>
-                            </div>
-                        </div>
+                    <span id="card_position" class="badge bg-purple-soft">
+                        Position
+                    </span>
 
-                        <!-- Last Name -->
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" th:field="*{lastName}" class="form-control floating-input" required>
-                                <label>Last Name</label>
-                                <div class="invalid-feedback" th:errors="*{lastName}"></div>
-                            </div>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="email" th:field="*{email}" class="form-control floating-input" required>
-                                <label>Email Address</label>
-                                <div class="invalid-feedback" th:errors="*{email}"></div>
-                            </div>
-                        </div>
-
-                        <!-- Phone -->
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="tel" th:field="*{phoneNumber}" class="form-control floating-input">
-                                <label>Phone Number</label>
-                            </div>
-                        </div>
-
-                        <!-- Department -->
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" th:field="*{department}" class="form-control floating-input">
-                                <label>Department</label>
-                            </div>
-                        </div>
-
-                        <!-- Position -->
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" th:field="*{position}" class="form-control floating-input">
-                                <label>Position</label>
-                            </div>
-                        </div>
-
-                        <!-- Salary -->
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input type="number" th:field="*{salary}" step="0.01"
-                                       class="form-control floating-input" required>
-                                <label>Salary</label>
-                                <div class="invalid-feedback" th:errors="*{salary}"></div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="mt-4 d-flex gap-3">
-                        <button class="btn btn-primary px-4">Save Employee</button>
-                        <a th:href="@{/web/}" class="btn btn-outline-secondary px-4">Cancel</a>
-                    </div>
-
-                </form>
+                    <span id="card_salary" class="badge bg-green-soft">
+                        $0.00
+                    </span>
+                </div>
 
             </div>
 
         </div>
-
     </div>
 
 </div>
 
-</body>
+</th:block>
+
 </html>
