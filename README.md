@@ -9,13 +9,6 @@ Supports full CRUD operations, validation, REST APIs, and Swagger documentation.
 
 ---
 
-## 🎥 Demo (Short Walkthrough)
-
-📺 **YouTube Demo:**  
-https://youtu.be/TXTjFwRVCm0
-
----
-
 ## 🔥 Highlights
 
 - ✔️ Full CRUD — Create / Read / Update / Delete employees  
