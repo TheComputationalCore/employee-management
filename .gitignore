@@ -1,0 +1,14 @@
+# Build output
+target/
+*.jar
+
+# IDE files
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# logs/temp
+*.log
+tmp/
