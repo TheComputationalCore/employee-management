@@ -1,14 +1,41 @@
-# Build output
+# ===== BUILD ARTIFACTS =====
 target/
 *.jar
+*.war
 
-# IDE files
+# ===== IDE FILES =====
 .idea/
 *.iml
+.vscode/
+*.class
 
-# macOS
+# ===== OS FILES =====
 .DS_Store
+Thumbs.db
 
-# logs/temp
+# ===== LOGS / TEMP =====
 *.log
 tmp/
+*.tmp
+
+# ===== ENVIRONMENTS =====
+.env
+.env.local
+.env.*.local
+
+# ===== USER UPLOADS (CRITICAL) =====
+uploads/
+uploads/**
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx
+
+# ===== OTHER LARGE/BINARY FILES =====
+*.zip
+*.tar.gz
+*.png
+*.jpg
+*.jpeg
+*.gif
