@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main ]
   schedule:
-    - cron: '0 2 * * *' # nightly scan (UTC) - optional
+    - cron: '0 2 * * *' # nightly scan (UTC)
   workflow_dispatch:
 
 concurrency:
@@ -35,17 +35,24 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
+          # restrict to languages you want analyzed; add others as needed
           languages: java
-          # queries: security-extended  # optionally enable extra packs
 
-      # Prefer the official autobuild action when possible; it tries to detect and build.
+          # optional: select query packs to expand coverage
+          # e.g. 'security-and-quality' or 'security-extended'
+          # queries: security-and-quality
+
+      # autobuild tries to detect & build projects automatically
       - name: Autobuild (CodeQL)
         uses: github/codeql-action/autobuild@v3
 
-      # If you prefer to run your own build (e.g. custom flags), comment out autobuild above
-      # and uncomment the manual build step below:
+      # If autobuild doesn't correctly build your Maven multi-module project,
+      # comment out the autobuild step above and run a manual build like this:
       # - name: Build project (manual)
-      #   run: mvn -B -U -DskipTests package
+      #   run: mvn -B -DskipTests package
+      #   # avoid -U in normal CI (forces remote resolution each run)
+      #   # if you need special flags or multi-module targets, put them here
 
       - name: Run CodeQL analysis
         uses: github/codeql-action/analyze@v3
+        # the analyze action will automatically upload results to GitHub (SARIF)
