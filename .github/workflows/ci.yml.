@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ '17', '21' ] # adjust to supported JDKs
+        java: [ '17', '21' ]
 
     steps:
       - name: Checkout
@@ -30,7 +30,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Cache Maven local repository
+      - name: Cache Maven repo
         uses: actions/cache@v4
         with:
           path: ~/.m2/repository
@@ -38,28 +38,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Set up Maven settings (optional)
-        if: ${{ secrets.MAVEN_SETTINGS != '' }}
-        run: |
-          echo "${{ secrets.MAVEN_SETTINGS }}" > $GITHUB_WORKSPACE/settings.xml
-
       - name: Build and run tests
         run: mvn -B -U test package --file ./pom.xml
         env:
           MAVEN_OPTS: -Xmx1024m
 
-      - name: Archive build (artifact) on success
+      - name: Upload build artifact (success)
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact
           path: target/*.jar
 
-      - name: Upload test-results on failure
+      - name: Upload test logs (failure)
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: test-fail-logs
           path: target/surefire-reports/**
 
-  # Optional lint/static-analysis job can be added here (Spotless/Checkstyle/PMD).
+  # Add linting/static analysis job later if desired.
