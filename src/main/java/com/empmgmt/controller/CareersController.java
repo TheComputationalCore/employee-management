@@ -2,24 +2,21 @@ package com.empmgmt.controller;
 
 import com.empmgmt.model.Application;
 import com.empmgmt.model.Job;
-
 import com.empmgmt.repository.ApplicationRepository;
 import com.empmgmt.repository.JobRepository;
-
 import com.empmgmt.service.impl.AIResumeScoringService;
 import com.empmgmt.util.ResumeParser;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller
@@ -31,7 +28,6 @@ public class CareersController {
     private final ApplicationRepository appRepo;
     private final AIResumeScoringService aiScoringService;
 
-
     /* ---------------------------------------------------
      * PUBLIC JOB LISTING PAGE
      * --------------------------------------------------- */
@@ -40,7 +36,6 @@ public class CareersController {
         model.addAttribute("jobs", jobRepo.findByActiveTrue());
         return "careers/list";
     }
-
 
     /* ---------------------------------------------------
      * JOB DETAILS
@@ -51,7 +46,6 @@ public class CareersController {
         return "careers/details";
     }
 
-
     /* ---------------------------------------------------
      * APPLY PAGE
      * --------------------------------------------------- */
@@ -60,7 +54,6 @@ public class CareersController {
         model.addAttribute("job", jobRepo.findById(jobId).orElseThrow());
         return "careers/apply";
     }
-
 
     /* ---------------------------------------------------
      * SUBMIT APPLICATION + AI PROCESSING + SAVING
@@ -76,30 +69,51 @@ public class CareersController {
     ) throws Exception {
 
         /* --------------------------
-           1. SAVE RESUME TO DISK
+           1. SAVE RESUME TO DISK (SAFE)
         -------------------------- */
         String uploadDir = "uploads/resumes/";
         Files.createDirectories(Path.of(uploadDir));
 
-        // Sanitize uploaded filename to prevent path traversal and other unsafe filenames
+        // Validate original filename presence
         String originalFilename = resume.getOriginalFilename();
-        if (originalFilename == null) {
+        if (originalFilename == null || originalFilename.isBlank()) {
             throw new IllegalArgumentException("Invalid uploaded file: missing filename");
         }
-        // Only allow a base filename, no separator or ".."
+
+        // Reject path traversal / separators
         if (originalFilename.contains("..") || originalFilename.contains("/") || originalFilename.contains("\\")) {
             throw new IllegalArgumentException("Invalid filename: path sequences are forbidden");
         }
-        // Optionally only keep the file extension from original filename and generate the rest
+
+        // Extract and sanitize extension
         String safeExtension = "";
         int extDot = originalFilename.lastIndexOf('.');
         if (extDot != -1 && extDot < originalFilename.length() - 1) {
-            // Keep only the file extension and ensure it is a safe form
             safeExtension = originalFilename.substring(extDot).replaceAll("[^\\.a-zA-Z0-9]", "");
         }
-        String storedFilename = System.currentTimeMillis() + "-" + Math.abs(originalFilename.hashCode()) + safeExtension;
-        String filePath = uploadDir + storedFilename;
-        Files.write(Path.of(filePath), resume.getBytes());
+
+        // Optionally restrict allowed file extensions for greater safety
+        // Adjust allowed set as required for your app
+        String extLower = safeExtension.toLowerCase();
+        if (!extLower.isEmpty()) {
+            if (!extLower.equals(".pdf") && !extLower.equals(".doc") && !extLower.equals(".docx") && !extLower.equals(".txt")) {
+                throw new IllegalArgumentException("Unsupported file type: " + safeExtension);
+            }
+        } else {
+            // If no extension, optionally reject
+            throw new IllegalArgumentException("Uploaded file must have an extension (e.g. .pdf, .docx)");
+        }
+
+        // Build a safe, unique stored filename — use UUID so attacker-controlled name isn't used directly
+        String storedFilename = System.currentTimeMillis() + "-" + UUID.randomUUID() + safeExtension;
+
+        // Use Path API to avoid string-concat path issues
+        Path storedPath = Path.of(uploadDir).resolve(storedFilename);
+
+        // Write file atomically (overwrites if exists; UUID prevents collisions)
+        Files.write(storedPath, resume.getBytes());
+
+        String filePath = storedPath.toString();
 
 
         /* --------------------------
@@ -171,7 +185,6 @@ public class CareersController {
            9. SEND TRACKING ID TO PAGE
         -------------------------- */
         model.addAttribute("trackingId", saved.getId());
-
 
         return "careers/submitted";
     }
