@@ -7,6 +7,17 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# Least-privilege permissions for the workflow
+permissions:
+  contents: read        # read-only access to repo contents (default safe)
+  checks: read          # allow reading check runs if needed
+  actions: read         # read access for actions metadata
+  # do NOT grant write permissions (e.g. contents: write) unless required
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-test:
     name: Build & Test (Java ${{ matrix.java }})
@@ -44,14 +55,14 @@ jobs:
           MAVEN_OPTS: -Xmx1024m
 
       - name: Upload build artifact (success)
-        if: success()
+        if: ${{ success() }}
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact
           path: target/*.jar
 
       - name: Upload test logs (failure)
-        if: failure()
+        if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         with:
           name: test-fail-logs
