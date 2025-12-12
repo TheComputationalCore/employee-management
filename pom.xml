@@ -23,11 +23,10 @@
         <java.version>17</java.version>
         <mapstruct.version>1.6.3</mapstruct.version>
 
-        <!-- control plugin versions centrally -->
+        <!-- centralized versions -->
         <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
 
-        <!-- final name for jar produced by mvn package -->
         <project.build.finalName>${project.artifactId}-${project.version}</project.build.finalName>
     </properties>
 
@@ -74,7 +73,7 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- MYSQL runtime -->
+        <!-- MYSQL -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
@@ -102,39 +101,42 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- SWAGGER / OpenAPI UI -->
+        <!-- OPENAPI UI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>3.0.0</version>
         </dependency>
 
-        <!-- DEVTOOLS (runtime scope for local dev only) -->
+        <!-- DEVTOOLS -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- FLYWAY for DB migrations -->
+        <!-- FLYWAY -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
 
-        <!-- FILE HANDLING & DOCUMENT PROCESSING -->
+        <!-- PDF EXPORTING (LEGACY ITEXT API SUPPORT) -->
+        <!-- This fixes your GitHub Actions / CodeQL build failures -->
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>1.3.39</version>
+        </dependency>
+
+        <!-- PDFBOX (EXTRA FILE HANDLING) -->
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
             <version>3.0.6</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.github.librepdf</groupId>
-            <artifactId>openpdf</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-
+        <!-- EXCEL EXPORT -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
@@ -153,7 +155,7 @@
             <artifactId>thymeleaf-extras-springsecurity6</artifactId>
         </dependency>
 
-        <!-- H2 test DB -->
+        <!-- H2 (TEST DB) -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -178,21 +180,20 @@
     <!-- BUILD + PLUGINS -->
     <build>
         <finalName>${project.build.finalName}</finalName>
+
         <plugins>
 
-            <!-- SPRING BOOT MAVEN PLUGIN -->
+            <!-- SPRING BOOT PLUGIN -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <!-- Prevent devtools from being packaged into the final jar -->
                     <excludeDevtools>true</excludeDevtools>
-                    <!-- Use a stable final name -->
                     <finalName>${project.build.finalName}</finalName>
                 </configuration>
             </plugin>
 
-            <!-- MAVEN COMPILER (with annotation processors for Lombok & MapStruct) -->
+            <!-- COMPILER -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -216,13 +217,12 @@
                 </configuration>
             </plugin>
 
-            <!-- MAVEN SUREFIRE (unit test runner config) -->
+            <!-- SUREFIRE (TESTS) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin.version}</version>
                 <configuration>
-                    <!-- sensible defaults for CI; adapt if you need parallelization -->
                     <forkCount>1C</forkCount>
                     <reuseForks>true</reuseForks>
                     <trimStackTrace>true</trimStackTrace>
