@@ -11,9 +11,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StringUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
@@ -74,13 +76,18 @@ public class CareersController {
         String uploadDir = "uploads/resumes/";
         Files.createDirectories(Path.of(uploadDir));
 
-        // Validate original filename presence
-        String originalFilename = resume.getOriginalFilename();
+        // basic emptiness check
+        if (resume == null || resume.isEmpty()) {
+            throw new IllegalArgumentException("No file uploaded");
+        }
+
+        // Normalize the original filename (defense in depth)
+        String originalFilename = StringUtils.cleanPath(resume.getOriginalFilename());
         if (originalFilename == null || originalFilename.isBlank()) {
             throw new IllegalArgumentException("Invalid uploaded file: missing filename");
         }
 
-        // Reject path traversal / separators
+        // Reject path traversal / separators (must be a single filename)
         if (originalFilename.contains("..") || originalFilename.contains("/") || originalFilename.contains("\\")) {
             throw new IllegalArgumentException("Invalid filename: path sequences are forbidden");
         }
@@ -107,14 +114,19 @@ public class CareersController {
         // Build a safe, unique stored filename — use UUID so attacker-controlled name isn't used directly
         String storedFilename = System.currentTimeMillis() + "-" + UUID.randomUUID() + safeExtension;
 
-        // Use Path API to avoid string-concat path issues
-        Path storedPath = Path.of(uploadDir).resolve(storedFilename);
+        // Resolve upload directory and destination path robustly
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        Path destination = uploadPath.resolve(storedFilename).normalize();
 
-        // Write file atomically (overwrites if exists; UUID prevents collisions)
-        Files.write(storedPath, resume.getBytes());
+        // Ensure the destination is inside the designated upload directory (defense-in-depth)
+        if (!destination.startsWith(uploadPath)) {
+            throw new IllegalArgumentException("Invalid destination path");
+        }
 
-        String filePath = storedPath.toString();
+        // Write file
+        Files.write(destination, resume.getBytes());
 
+        String filePath = destination.toString();
 
         /* --------------------------
            2. PARSE RESUME TEXT
@@ -124,7 +136,6 @@ public class CareersController {
         Set<String> parsedSkills = ResumeParser.extractSkills(text);
         int expYears = ResumeParser.extractExperienceYears(text);
         String education = ResumeParser.extractEducation(text);
-
 
         /* --------------------------
            3. CREATE BASE APPLICATION
@@ -144,13 +155,11 @@ public class CareersController {
         app.setExperienceYears(expYears);
         app.setEducation(education);
 
-
         /* --------------------------
            4. JOB REQUIREMENTS
         -------------------------- */
         Job job = jobRepo.findById(jobId).orElseThrow();
         Set<String> requiredSkills = ResumeParser.splitCsvSkills(job.getRequiredSkills());
-
 
         /* --------------------------
            5. AI SCORING
@@ -158,13 +167,11 @@ public class CareersController {
         int aiScore = aiScoringService.score(app, job);
         app.setAiScore(aiScore);
 
-
         /* --------------------------
            6. MISSING SKILLS DETECTION
         -------------------------- */
         Set<String> missing = ResumeParser.detectMissingSkills(parsedSkills, requiredSkills);
         app.setMissingSkills(String.join(", ", missing));
-
 
         /* --------------------------
            7. AI SUMMARY GENERATION
@@ -174,12 +181,10 @@ public class CareersController {
         );
         app.setAiSummary(summary);
 
-
         /* --------------------------
            8. SAVE APPLICATION
         -------------------------- */
         Application saved = appRepo.save(app);
-
 
         /* --------------------------
            9. SEND TRACKING ID TO PAGE
