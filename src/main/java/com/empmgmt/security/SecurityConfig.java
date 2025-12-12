@@ -1,9 +1,10 @@
 package com.empmgmt.security;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import org.springframework.http.HttpMethod;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -18,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.http.HttpMethod;
 
 @Configuration
 @RequiredArgsConstructor
@@ -35,6 +35,7 @@ public class SecurityConfig {
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 )
 
+                /* AUTHORIZATION RULES */
                 .authorizeHttpRequests(auth -> auth
 
                         /* STATIC FILES */
@@ -60,14 +61,14 @@ public class SecurityConfig {
                         /*       ATTENDANCE          */
                         /* ========================== */
 
-                        /* EMPLOYEE self-attendance */
+                        /* EMPLOYEE SELF */
                         .requestMatchers(
                                 "/web/attendance/my",
                                 "/web/attendance/clock-in",
                                 "/web/attendance/clock-out"
                         ).hasRole("EMPLOYEE")
 
-                        /* ADMIN/HR attendance mgmt */
+                        /* ADMIN/HR */
                         .requestMatchers(
                                 "/web/attendance",
                                 "/web/attendance/**"
@@ -77,19 +78,19 @@ public class SecurityConfig {
                         /*           LEAVES           */
                         /* ========================== */
 
-                        /* EMPLOYEE — leave pages */
+                        /* EMPLOYEE - views & apply */
                         .requestMatchers(HttpMethod.GET,
                                 "/web/leave/apply",
                                 "/web/leave/my",
                                 "/web/leave/my/**"
                         ).hasRole("EMPLOYEE")
 
-                        /* EMPLOYEE — submit leave */
+                        /* EMPLOYEE - submit */
                         .requestMatchers(HttpMethod.POST,
                                 "/web/leave/apply"
                         ).hasRole("EMPLOYEE")
 
-                        /* ADMIN/HR — leave mgmt */
+                        /* ADMIN/HR */
                         .requestMatchers(
                                 "/web/leave",
                                 "/web/leave/calendar",
@@ -101,46 +102,38 @@ public class SecurityConfig {
                         /*           PAYROLL          */
                         /* ========================== */
 
-                        /* EMPLOYEE — view own payroll */
                         .requestMatchers("/web/payroll/my").hasRole("EMPLOYEE")
-
-                        /* ADMIN/HR — payroll mgmt */
                         .requestMatchers("/web/payroll/**").hasAnyRole("ADMIN", "HR")
 
                         /* ========================== */
                         /*    PERFORMANCE / KPI       */
                         /* ========================== */
 
-/*         PERFORMANCE            */
-/* ============================== */
+                        /* EMPLOYEE */
+                        .requestMatchers(
+                                "/web/performance/my",
+                                "/web/performance/my/**",
+                                "/web/performance/self/**"
+                        ).hasRole("EMPLOYEE")
 
-/* EMPLOYEE — self review + my reviews */
-                                .requestMatchers(
-                                        "/web/performance/my",
-                                        "/web/performance/my/**",
-                                        "/web/performance/self/**"
-                                ).hasRole("EMPLOYEE")
+                        /* ADMIN/HR */
+                        .requestMatchers(
+                                "/web/performance",
+                                "/web/performance/",
+                                "/web/performance/create",
+                                "/web/performance/create/**",
+                                "/web/performance/manager/**"
+                        ).hasAnyRole("ADMIN", "HR")
 
-/* ADMIN/HR — manage performance */
-                                .requestMatchers(
-                                        "/web/performance",
-                                        "/web/performance/",
-                                        "/web/performance/create",
-                                        "/web/performance/create/**",
-                                        "/web/performance/manager/**"
-                                ).hasAnyRole("ADMIN", "HR")
-
-
-
-                                /* ONBOARDING */
+                        /* ONBOARDING */
                         .requestMatchers("/web/onboarding/**")
-                        .hasAnyRole("ADMIN", "HR")
+                                .hasAnyRole("ADMIN", "HR")
 
                         /* RECRUITMENT */
                         .requestMatchers("/web/recruitment/**")
-                        .hasAnyRole("ADMIN", "HR")
+                                .hasAnyRole("ADMIN", "HR")
 
-                        /* EVERYTHING ELSE */
+                        /* EVERYTHING ELSE REQUIRES LOGIN */
                         .anyRequest().authenticated()
                 )
 
@@ -163,22 +156,30 @@ public class SecurityConfig {
                         .permitAll()
                 );
 
+        /* REGISTER AUTH PROVIDER WITH SECURITY */
+        http.authenticationProvider(authenticationProvider());
+
         return http.build();
     }
 
+    /* PASSWORD ENCODER */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /* CORRECT SPRING SECURITY 6 PROVIDER */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(customUserDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
+
+        // NEW constructor in Spring Security 6:
+        DaoAuthenticationProvider provider =
+                new DaoAuthenticationProvider(passwordEncoder(), customUserDetailsService);
+
         return provider;
     }
 
+    /* AUTHENTICATION MANAGER */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
             throws Exception {
