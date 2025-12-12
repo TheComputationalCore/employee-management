@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"        # Location of pom.xml
+    schedule:
+      interval: "weekly"  # "daily", "weekly", or "monthly"
+    open-pull-requests-limit: 5
+    # Optionally: allow auto-merge for low-risk updates (if you want)
+    # automerged_updates:
+    #   - match:
+    #       dependency_type: "direct"
