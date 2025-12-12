@@ -7,12 +7,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
-# Least-privilege permissions for the workflow
 permissions:
-  contents: read        # read-only access to repo contents (default safe)
-  checks: read          # allow reading check runs if needed
-  actions: read         # read access for actions metadata
-  # do NOT grant write permissions (e.g. contents: write) unless required
+  contents: read
+  checks: read
+  actions: read
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -31,8 +29,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        # fetch-depth: 0   # uncomment if your build needs full git history
 
       - name: Set up JDK ${{ matrix.java }}
         uses: actions/setup-java@v4
@@ -41,25 +38,19 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Cache Maven repo
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
       - name: Build and run tests
-        run: mvn -B -U test package --file ./pom.xml
+        run: mvn -B test package --file ./pom.xml
         env:
           MAVEN_OPTS: -Xmx1024m
 
-      - name: Upload build artifact (success)
+      - name: Upload build artifacts (success)
         if: ${{ success() }}
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifact
-          path: target/*.jar
+          name: build-artifacts
+          path: |
+            **/target/*.jar
+            target/*.jar
 
       - name: Upload test logs (failure)
         if: ${{ failure() }}
@@ -68,4 +59,11 @@ jobs:
           name: test-fail-logs
           path: target/surefire-reports/**
 
-  # Add linting/static analysis job later if desired.
+      - name: Upload test reports (JUnit annotation)
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: JUnit Reports
+          path: target/surefire-reports/*.xml
+          # if you have surefire in module directories:
+          # path: '**/target/surefire-reports/*.xml'
