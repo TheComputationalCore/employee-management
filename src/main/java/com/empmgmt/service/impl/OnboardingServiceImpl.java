@@ -136,8 +136,14 @@ public class OnboardingServiceImpl implements OnboardingService {
         try {
             String folder = "uploads/onboarding/";
             Files.createDirectories(Path.of(folder));
-            String fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
-            Path filePath = Path.of(folder + fileName);
+            String originalFilename = file.getOriginalFilename();
+            if (originalFilename == null || originalFilename.isBlank() ||
+                    originalFilename.contains("..") || originalFilename.contains("/") || originalFilename.contains("\\")) {
+                throw new IllegalArgumentException("Invalid file name");
+            }
+            // Prefer only the last path component (extra safety, not strictly needed if we reject above)
+            String safeFileName = System.currentTimeMillis() + "-" + Path.of(originalFilename).getFileName().toString().replaceAll("[^a-zA-Z0-9.\\-_]", "_");
+            Path filePath = Path.of(folder + safeFileName);
             Files.write(filePath, file.getBytes());
             uploadDocument(taskId, filePath.toString());
         } catch (Exception e) {
