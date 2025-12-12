@@ -1,23 +1,65 @@
-name: Java CI
+name: CI
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  build:
+  build-and-test:
+    name: Build & Test (Java ${{ matrix.java }})
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ '17', '21' ] # adjust to supported JDKs
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Setup JDK 17
+      - name: Set up JDK ${{ matrix.java }}
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: 17
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+          cache: maven
 
-      - name: Build and test
-        run: mvn -B -DskipTests=false test package
+      - name: Cache Maven local repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Set up Maven settings (optional)
+        if: ${{ secrets.MAVEN_SETTINGS != '' }}
+        run: |
+          echo "${{ secrets.MAVEN_SETTINGS }}" > $GITHUB_WORKSPACE/settings.xml
+
+      - name: Build and run tests
+        run: mvn -B -U test package --file ./pom.xml
+        env:
+          MAVEN_OPTS: -Xmx1024m
+
+      - name: Archive build (artifact) on success
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: target/*.jar
+
+      - name: Upload test-results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-fail-logs
+          path: target/surefire-reports/**
+
+  # Optional lint/static-analysis job can be added here (Spotless/Checkstyle/PMD).
