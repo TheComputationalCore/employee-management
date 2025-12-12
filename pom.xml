@@ -73,10 +73,18 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- MYSQL -->
+        <!-- MYSQL (keep for local or mysql deployments) -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- POSTGRESQL (for Back4App / Back4App Containers / other Postgres hosts) -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.6.0</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -121,8 +129,7 @@
             <artifactId>flyway-core</artifactId>
         </dependency>
 
-        <!-- PDF EXPORTING (LEGACY ITEXT API SUPPORT) -->
-        <!-- This fixes your GitHub Actions / CodeQL build failures -->
+        <!-- PDF EXPORTING (openpdf compatible with iText-style imports) -->
         <dependency>
             <groupId>com.github.librepdf</groupId>
             <artifactId>openpdf</artifactId>
