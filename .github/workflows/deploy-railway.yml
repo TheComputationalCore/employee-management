@@ -1,0 +1,35 @@
+name: Deploy to Railway (manual)
+
+on:
+  workflow_dispatch:          # manual trigger from Actions UI
+  # or to auto-deploy only for tags:
+  # push:
+  #   tags:
+  #     - 'v*.*.*'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+
+      - name: Build
+        run: mvn -B -DskipTests=true package
+
+      - name: Install Railway CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/railwayapp/cli/master/install.sh | sh
+          railway --version
+
+      - name: Railway login & deploy
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          railway login --apiKey $RAILWAY_TOKEN
+          railway up --detach
