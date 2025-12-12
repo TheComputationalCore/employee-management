@@ -81,7 +81,24 @@ public class CareersController {
         String uploadDir = "uploads/resumes/";
         Files.createDirectories(Path.of(uploadDir));
 
-        String filePath = uploadDir + System.currentTimeMillis() + "-" + resume.getOriginalFilename();
+        // Sanitize uploaded filename to prevent path traversal and other unsafe filenames
+        String originalFilename = resume.getOriginalFilename();
+        if (originalFilename == null) {
+            throw new IllegalArgumentException("Invalid uploaded file: missing filename");
+        }
+        // Only allow a base filename, no separator or ".."
+        if (originalFilename.contains("..") || originalFilename.contains("/") || originalFilename.contains("\\")) {
+            throw new IllegalArgumentException("Invalid filename: path sequences are forbidden");
+        }
+        // Optionally only keep the file extension from original filename and generate the rest
+        String safeExtension = "";
+        int extDot = originalFilename.lastIndexOf('.');
+        if (extDot != -1 && extDot < originalFilename.length() - 1) {
+            // Keep only the file extension and ensure it is a safe form
+            safeExtension = originalFilename.substring(extDot).replaceAll("[^\\.a-zA-Z0-9]", "");
+        }
+        String storedFilename = System.currentTimeMillis() + "-" + Math.abs(originalFilename.hashCode()) + safeExtension;
+        String filePath = uploadDir + storedFilename;
         Files.write(Path.of(filePath), resume.getBytes());
 
 
