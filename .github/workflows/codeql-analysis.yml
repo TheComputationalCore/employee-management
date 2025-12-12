@@ -1,25 +1,22 @@
 name: "CodeQL"
-
 on:
   push:
     branches: [ main ]
   pull_request:
-    # The branches below must be a subset of the branches above
     branches: [ main ]
   schedule:
-    - cron: '0 3 * * 1' # weekly run (Mon at 03:00 UTC)
+    - cron: '0 2 * * *' # nightly scan (UTC) - optional
+  workflow_dispatch:
 
 jobs:
   analyze:
-    name: Analyze (CodeQL)
+    name: CodeQL Analysis
     runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
       security-events: write
-    strategy:
-      matrix:
-        language: [ 'java' ]
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,12 +24,12 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
-          languages: ${{ matrix.language }}
-          # Uncomment and set to true for finer cache control
-          # config-file: .github/codeql/codeql-config.yml
+          languages: java
+          # queries: security-extended # optionally add query packs
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+      - name: Autobuild / Build
+        run: |
+          mvn -B -U -DskipTests package
 
-      - name: Perform CodeQL Analysis
+      - name: Run CodeQL analysis
         uses: github/codeql-action/analyze@v2
