@@ -16,8 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.Principal;
 import java.time.LocalDate;
+import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -131,20 +131,33 @@ public class OnboardingServiceImpl implements OnboardingService {
         taskRepo.save(task);
     }
 
+    /**
+     * Safe file upload:
+     *  - create directory if missing
+     *  - validate original filename is present and does not contain traversal characters
+     *  - only use the last path component and replace unsafe chars
+     */
     @Override
     public void uploadFile(Long taskId, MultipartFile file) {
         try {
             String folder = "uploads/onboarding/";
             Files.createDirectories(Path.of(folder));
+
             String originalFilename = file.getOriginalFilename();
-            if (originalFilename == null || originalFilename.isBlank() ||
-                    originalFilename.contains("..") || originalFilename.contains("/") || originalFilename.contains("\\")) {
+            if (originalFilename == null || originalFilename.isBlank()
+                    || originalFilename.contains("..")
+                    || originalFilename.contains("/") || originalFilename.contains("\\")) {
                 throw new IllegalArgumentException("Invalid file name");
             }
-            // Prefer only the last path component (extra safety, not strictly needed if we reject above)
-            String safeFileName = System.currentTimeMillis() + "-" + Path.of(originalFilename).getFileName().toString().replaceAll("[^a-zA-Z0-9.\\-_]", "_");
+
+            // Only take the last path component and strip unsafe characters.
+            // Allowed characters: letters, numbers, dot, underscore, hyphen.
+            String safeFileName = System.currentTimeMillis() + "-" +
+                    Path.of(originalFilename).getFileName().toString().replaceAll("[^a-zA-Z0-9._-]", "_");
+
             Path filePath = Path.of(folder + safeFileName);
             Files.write(filePath, file.getBytes());
+
             uploadDocument(taskId, filePath.toString());
         } catch (Exception e) {
             throw new RuntimeException("File upload failed", e);
@@ -166,7 +179,6 @@ public class OnboardingServiceImpl implements OnboardingService {
     public Long getEmployeeIdFromPrincipal(Principal principal) {
         if (principal == null) return null;
         String username = principal.getName(); // usually email in Spring Security
-        // You should have a method in EmployeeRepo: findByEmail(String email)
         return employeeRepo.findByEmail(username)
                 .map(Employee::getId)
                 .orElseThrow(() -> new IllegalStateException("Employee not found for principal: " + username));
