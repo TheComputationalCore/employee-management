@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<div th:insert="layout/main :: content">
+
+    <h2>Assign KPI to Employee</h2>
+
+    <form method="post">
+
+        <div class="mb-3">
+            <label>Select Employee</label>
+            <select class="form-select" name="employeeId">
+                <option th:each="e : ${employees}"
+                        th:value="${e.id}"
+                        th:text="${e.firstName + ' ' + e.lastName}">
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Select KPI</label>
+            <select class="form-select" name="kpiId">
+                <option th:each="k : ${kpis}"
+                        th:value="${k.id}"
+                        th:text="${k.name + ' (' + k.weight + '%)'}">
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Target Value</label>
+            <input type="number" name="targetValue" step="0.1" class="form-control" required>
+        </div>
+
+        <button class="btn btn-primary">Assign KPI</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

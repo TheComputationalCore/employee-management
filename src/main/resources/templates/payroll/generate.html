@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+    <title>Generate Payroll</title>
+</head>
+
+<body>
+
+<main layout:fragment="content">
+
+    <h2 class="fw-semibold mb-4">
+        <i data-feather="plus-circle" class="me-2"></i>
+        Generate Payroll
+    </h2>
+
+    <form th:action="@{/web/payroll/generate}" method="post" class="p-4 border rounded shadow-sm">
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Employee</label>
+            <select name="employeeId" class="form-select" required>
+                <option value="">-- Select Employee --</option>
+                <option th:each="e : ${employees}"
+                        th:value="${e.id}"
+                        th:text="${e.firstName + ' ' + e.lastName + ' (ID: ' + e.id + ')'}"></option>
+            </select>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Month</label>
+                <select name="month" class="form-select" required>
+                    <option>January</option>
+                    <option>February</option>
+                    <option>March</option>
+                    <option>April</option>
+                    <option>May</option>
+                    <option>June</option>
+                    <option>July</option>
+                    <option>August</option>
+                    <option>September</option>
+                    <option>October</option>
+                    <option>November</option>
+                    <option>December</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Year</label>
+                <input type="number" name="year" min="2000" max="2100"
+                       class="form-control" required>
+            </div>
+        </div>
+
+        <button class="btn btn-success">
+            <i data-feather="check-circle" class="me-1"></i>
+            Generate
+        </button>
+
+    </form>
+
+</main>
+
+<script>feather.replace();</script>
+
+</body>
+</html>

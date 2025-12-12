@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<div th:insert="layout/main :: content">
+
+    <div class="d-flex justify-content-between mb-3">
+        <h2>KPI List</h2>
+
+        <div>
+            <a class="btn btn-info"
+               th:href="@{/web/export/kpi/all/excel}">
+                Export All KPIs (Excel)
+            </a>
+
+            <a class="btn btn-primary" th:href="@{/web/kpi/create}">
+                Add KPI
+            </a>
+        </div>
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>KPI Name</th>
+            <th>Description</th>
+            <th>Weight (%)</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="k : ${kpis}">
+            <td th:text="${k.name}"></td>
+            <td th:text="${k.description}"></td>
+            <td th:text="${k.weight}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>

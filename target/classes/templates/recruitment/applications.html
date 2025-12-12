@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<div layout:fragment="content">
+
+    <style>
+        .score-badge {
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .missing-skill {
+            background: #ffe6e6;
+            color: #b30000;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            margin-right: 4px;
+        }
+        .skill-badge {
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            margin-right: 4px;
+        }
+        .progress {
+            height: 8px;
+            border-radius: 6px;
+        }
+    </style>
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-semibold">
+            Applications for: <span th:text="${job.title}"></span>
+        </h2>
+
+        <a class="btn btn-success"
+           th:href="@{'/web/recruitment/smart-shortlist/' + ${job.id}}">
+            ⭐ Smart Shortlist
+        </a>
+    </div>
+
+    <div class="card shadow-sm p-3" style="border-radius: 16px;">
+        <div class="table-responsive">
+
+            <table class="table table-hover" id="appTable">
+                <thead class="table-light">
+                <tr>
+                    <th>AI Score</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Skills</th>
+                    <th>Missing Skills</th>
+                    <th>Experience</th>
+                    <th>Education</th>
+                    <th>Resume</th>
+                    <th>Status</th>
+                    <th style="width: 140px;">Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="app : ${apps}">
+
+                    <!-- AI Score -->
+                    <td style="width: 200px;">
+                        <div th:if="${app.aiScore != null}">
+                            <span class="score-badge"
+                                  th:text="${app.aiScore} + '%'"
+                                  th:class="${'score-badge ' +
+                                            (app.aiScore >= 80 ? 'bg-success text-white' :
+                                             (app.aiScore >= 60 ? 'bg-warning text-dark' :
+                                                                  'bg-danger text-white'))}">
+                            </span>
+
+                            <div class="progress mt-2">
+                                <div class="progress-bar"
+                                     role="progressbar"
+                                     th:style="'width:' + ${app.aiScore} + '%;'">
+                                </div>
+                            </div>
+
+                            <button class="btn btn-sm btn-outline-info mt-2"
+                                    data-bs-toggle="modal"
+                                    th:data-bs-target="'#aiScoreModal-' + ${app.id}">
+                                Breakdown
+                            </button>
+                        </div>
+
+                        <span th:if="${app.aiScore == null}"
+                              class="badge bg-secondary">N/A</span>
+
+                        <!-- AI SCORE MODAL -->
+                        <div class="modal fade"
+                             th:id="'aiScoreModal-' + ${app.id}"
+                             tabindex="-1">
+
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">AI Score Breakdown</h5>
+                                        <button type="button" class="btn-close"
+                                                data-bs-dismiss="modal"></button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <p><strong>Parsed Skills:</strong></p>
+                                        <p th:text="${app.parsedSkills}"></p>
+
+                                        <p><strong>Experience:</strong>
+                                            <span th:text="${app.experienceYears}"></span>
+                                        </p>
+
+                                        <p><strong>Education:</strong>
+                                            <span th:text="${app.education}"></span>
+                                        </p>
+
+                                        <hr>
+
+                                        <p><strong>Missing Skills:</strong></p>
+                                        <span th:each="ms : ${#strings.arraySplit(app.missingSkills, ',')}"
+                                              th:text="${ms}" class="missing-skill"></span>
+
+                                        <hr>
+
+                                        <p><strong>AI Summary:</strong></p>
+                                        <p th:text="${app.aiSummary}"></p>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Name -->
+                    <td th:text="${app.fullName}"></td>
+
+                    <!-- Email -->
+                    <td th:text="${app.email}"></td>
+
+                    <!-- Skills -->
+                    <td>
+                        <span th:each="s : ${#strings.arraySplit(app.parsedSkills, ',')}"
+                              th:text="${s}" class="skill-badge"></span>
+                    </td>
+
+                    <!-- Missing Skills -->
+                    <td>
+                        <span th:each="m : ${#strings.arraySplit(app.missingSkills, ',')}"
+                              th:text="${m}" class="missing-skill"></span>
+                    </td>
+
+                    <!-- Experience -->
+                    <td th:text="${app.experienceYears + ' yrs'}"></td>
+
+                    <!-- Education -->
+                    <td th:text="${app.education}"></td>
+
+                    <!-- Resume -->
+                    <td>
+                        <div th:if="${app.resumePath != null}">
+                            <a class="btn btn-sm btn-primary"
+                               th:href="@{'/web/recruitment/resume/' + ${app.id}}"
+                               target="_blank">
+                                View
+                            </a>
+                        </div>
+
+                        <span th:if="${app.resumePath == null}" class="text-muted">
+                            No Resume
+                        </span>
+                    </td>
+
+                    <!-- Status Badge -->
+                    <td>
+                        <span th:text="${app.status}"
+                              th:class="${'badge ' +
+                                        (app.status == 'Hired' ? 'bg-success' :
+                                         (app.status == 'Rejected' ? 'bg-danger' :
+                                          (app.status == 'Shortlisted' ? 'bg-primary' :
+                                                                         'bg-secondary'))) }">
+                        </span>
+                    </td>
+
+                    <!-- Actions -->
+                    <td>
+                        <a class="btn btn-sm btn-info mb-1"
+                           th:href="@{'/web/recruitment/candidate/' + ${app.id}}">
+                            Profile
+                        </a>
+
+                        <form th:action="@{'/web/recruitment/applications/status/' + ${app.id}}"
+                              method="post">
+
+                            <select class="form-control form-control-sm" name="status">
+                                <option>Applied</option>
+                                <option>Shortlisted</option>
+                                <option>Interview Scheduled</option>
+                                <option>Interviewing</option>
+                                <option>Hired</option>
+                                <option>Rejected</option>
+                            </select>
+
+                            <button class="btn btn-sm btn-success mt-2">Update</button>
+                        </form>
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+        feather.replace();
+
+        // SORT BY AI SCORE DESC on page load
+        const table = document.getElementById("appTable").querySelector("tbody");
+        let rows = Array.from(table.querySelectorAll("tr"));
+
+        rows.sort((a, b) => {
+            let aScore = Number(a.querySelector(".score-badge")?.textContent.replace('%','') || 0);
+            let bScore = Number(b.querySelector(".score-badge")?.textContent.replace('%','') || 0);
+            return bScore - aScore;
+        });
+
+        rows.forEach(r => table.appendChild(r));
+    </script>
+</div>
+
+</html>

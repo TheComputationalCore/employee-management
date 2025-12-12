@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<div th:insert="layout/main :: content">
+
+    <h2 class="mb-4">Performance Analytics</h2>
+
+    <div class="row">
+
+        <!-- Radar Chart -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow p-3">
+                <h5 class="text-center">KPI Weighted Score Distribution</h5>
+                <canvas id="radarChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Bar Chart -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow p-3">
+                <h5 class="text-center">KPI Achieved vs Target</h5>
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script th:inline="javascript">
+
+    const labels = [[${allKPIs.stream().map(k -> k.kpiName).toList()}]];
+    const finalScores = [[${allKPIs.stream().map(k -> k.finalScore).toList()}]];
+
+    new Chart(document.getElementById('radarChart'), {
+        type: 'radar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Weighted Score (%)',
+                data: finalScores,
+                fill: true,
+                tension: 0.3
+            }]
+        }
+    });
+
+    const achieved = [[${allKPIs.stream().map(k -> k.achievedManager != null ? k.achievedManager : k.achievedSelf).toList()}]];
+    const targets = [[${allKPIs.stream().map(k -> k.targetValue).toList()}]];
+
+    new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                { label: "Achieved", data: achieved },
+                { label: "Target", data: targets }
+            ]
+        }
+    });
+
+</script>
+
+</body>
+</html>

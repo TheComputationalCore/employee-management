@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<div th:insert="layout/main :: content">
+
+    <h2>Add New KPI</h2>
+
+    <form method="post">
+
+        <div class="mb-3">
+            <label>Name</label>
+            <input class="form-control" name="name" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Description</label>
+            <textarea class="form-control" name="description"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label>Weight (%)</label>
+            <input class="form-control" type="number" name="weight" min="1" max="100" required>
+        </div>
+
+        <button class="btn btn-primary">Save KPI</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

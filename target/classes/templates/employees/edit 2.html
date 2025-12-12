@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<main layout:fragment="content" class="px-4">
+
+    <h2 class="fw-semibold mb-4">Edit Employee</h2>
+
+    <div class="card p-4">
+
+        <form th:action="@{/web/employees/edit/{id}(id=${employee.id})}"
+              th:object="${employee}"
+              method="post">
+
+            <div class="row g-4">
+
+                <!-- FIRST NAME -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">First Name</label>
+                    <div class="input-group modern-input">
+                        <span class="input-group-text"><i data-feather="user"></i></span>
+                        <input type="text" class="form-control" th:field="*{firstName}">
+                    </div>
+                </div>
+
+                <!-- LAST NAME -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Last Name</label>
+                    <div class="input-group modern-input">
+                        <span class="input-group-text"><i data-feather="user"></i></span>
+                        <input type="text" class="form-control" th:field="*{lastName}">
+                    </div>
+                </div>
+
+                <!-- EMAIL -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Email</label>
+                    <div class="input-group modern-input">
+                        <span class="input-group-text"><i data-feather="mail"></i></span>
+                        <input type="email" class="form-control" th:field="*{email}">
+                    </div>
+                </div>
+
+                <!-- PHONE -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Phone</label>
+                    <div class="input-group modern-input">
+                        <span class="input-group-text"><i data-feather="phone"></i></span>
+                        <input type="text" class="form-control" th:field="*{phone}">
+                    </div>
+                </div>
+
+                <!-- DEPARTMENT -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Department</label>
+                    <div class="input-group modern-input">
+                        <span class="input-group-text"><i data-feather="grid"></i></span>
+                        <select class="form-select" th:field="*{department}">
+                            <option value="">Select Department</option>
+                            <option th:each="dept : ${departments}"
+                                    th:value="${dept.name}"
+                                    th:selected="${dept.name == employee.department}"
+                                    th:text="${dept.name}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- POSITION -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Position</label>
+                    <div class="input-group modern-input">
+                        <span class="input-group-text"><i data-feather="briefcase"></i></span>
+                        <input type="text" class="form-control" th:field="*{position}">
+                    </div>
+                </div>
+
+                <!-- SALARY -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Salary</label>
+                    <div class="input-group modern-input">
+                        <span class="input-group-text"><i data-feather="dollar-sign"></i></span>
+                        <input type="number" class="form-control" th:field="*{salary}">
+                    </div>
+                </div>
+
+            </div>
+
+            <hr class="my-4">
+
+            <div class="d-flex justify-content-end gap-3">
+                <a href="/web/employees" class="btn btn-light border">Cancel</a>
+                <button class="btn btn-primary px-4">Update Employee</button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <script>
+        feather.replace();
+    </script>
+
+</main>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+    <title>My Payroll</title>
+
+    <style>
+        .payroll-card {
+            border-radius: 14px;
+            background: var(--card-bg);
+            padding: 20px;
+            border: 1px solid var(--border);
+            transition: .2s ease;
+        }
+        .payroll-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+
+<main layout:fragment="content">
+
+    <h2 class="fw-semibold mb-4">
+        <i data-feather="credit-card" class="me-2"></i>
+        My Payroll
+    </h2>
+
+    <div class="row g-4">
+
+        <div class="col-md-4" th:each="p : ${payrolls}">
+            <div class="payroll-card shadow-sm">
+
+                <h5 th:text="${p.month + ' ' + p.year}"></h5>
+
+                <p class="text-muted small mt-2">
+                    Base Salary: <span th:text="${p.baseSalary}"></span><br>
+                    Allowances: <span th:text="${p.allowances}"></span><br>
+                    Deductions: <span th:text="${p.deductions}"></span><br>
+                    <strong>Net Pay: <span th:text="${p.netPay}"></span></strong>
+                </p>
+
+                <span class="badge"
+                      th:classappend="${p.paid} ? ' bg-success' : ' bg-warning text-dark'"
+                      th:text="${p.paid} ? 'Paid' : 'Pending'"></span>
+
+                <hr>
+
+                <a class="btn btn-outline-primary w-100"
+                   th:href="@{'/web/export/payroll/pdf/' + ${p.id}}">
+                    <i data-feather="download" class="me-1"></i> Download Slip
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<script>feather.replace();</script>
+
+</body>
+</html>

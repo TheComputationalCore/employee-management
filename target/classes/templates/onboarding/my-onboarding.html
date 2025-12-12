@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/main}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>My Onboarding</title>
+</head>
+
+<div layout:fragment="content">
+
+    <h2 class="mb-4">My Onboarding</h2>
+
+    <!-- Progress Card -->
+    <div class="card shadow-sm p-4 mb-4">
+        <h5>Your Onboarding Progress</h5>
+
+        <div class="d-flex align-items-center mt-3">
+            <div style="width: 120px; height: 120px;">
+                <canvas id="progressChart"></canvas>
+            </div>
+            <div class="ms-4">
+                <p class="mb-1"><strong>Overall Completion</strong></p>
+                <h3 class="mb-0" th:text="${progress} + '%'">0%</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task List -->
+    <div class="row">
+        <div class="col-12" th:each="t : ${tasks}">
+            <div class="card p-4 shadow-sm mb-3">
+
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <h5 th:text="${t.title}">Submit Aadhaar Card</h5>
+                        <p class="text-muted mb-0" th:text="${t.description}">Upload a clear copy of your Aadhaar</p>
+                    </div>
+
+                    <div>
+                        <span th:if="${t.completed}"
+                              class="badge bg-success fs-6 px-3 py-2">Completed</span>
+                        <span th:if="${!t.completed && t.required}"
+                              class="badge bg-warning text-dark fs-6 px-3 py-2">Required</span>
+                        <span th:if="${!t.completed && !t.required}"
+                              class="badge bg-secondary fs-6 px-3 py-2">Optional</span>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div th:if="${!t.completed}">
+
+                    <!-- File Upload for Required Tasks -->
+                    <div th:if="${t.required && t.filePath == null}" class="mt-3">
+                        <form th:action="@{'/web/onboarding/task/upload/' + ${t.id}}"
+                              method="post"
+                              enctype="multipart/form-data"
+                              class="d-flex gap-2 align-items-end">
+
+                            <div class="flex-grow-1">
+                                <label class="form-label">Upload Document</label>
+                                <input type="file" name="file" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-outline-primary">
+                                Upload
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Mark as Complete Button -->
+                    <form th:action="@{'/web/onboarding/task/complete/' + ${t.id}}"
+                          method="post"
+                          class="mt-3">
+                        <button type="submit" class="btn btn-success">
+                            Mark as Completed
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Show Uploaded File -->
+                <div th:if="${t.filePath != null}" class="mt-3">
+                    <a th:href="@{'/' + ${t.filePath}}"
+                       target="_blank"
+                       class="btn btn-outline-secondary">
+                        View Uploaded Document
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Completion Message -->
+    <div th:if="${progress == 100}"
+         class="alert alert-success text-center mt-5 p-4">
+        <h4>Congratulations! You've completed all onboarding tasks!</h4>
+        <p>HR will review in progress. You will receive access soon.</p>
+    </div>
+
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+    const progress = /*[[${progress}]]*/ 0;
+
+    new Chart(document.getElementById('progressChart'), {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [progress, 100 - progress],
+                backgroundColor: ['#28a745', '#e9ecef'],
+                borderWidth: 0,
+                borderRadius: 8
+            }]
+        },
+        options: {
+            cutout: '75%',
+            plugins: {
+                legend: { display: false },
+                tooltip: { enabled: false }
+            }
+        }
+    });
+
+    // Add percentage in center
+    const ctx = document.getElementById('progressChart');
+    const chart = Chart.getChart(ctx);
+    if (chart) {
+        chart.options.plugins = chart.options.plugins || {};
+        chart.options.plugins.title = {
+            display: true,
+            text: progress + '%',
+            color: '#28a745',
+            font: { size: 24, weight: 'bold' },
+            position: 'center'
+        };
+        chart.update();
+    }
+</script>
+
+</html>

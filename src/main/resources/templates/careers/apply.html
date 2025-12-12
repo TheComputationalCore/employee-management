@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <style>
+        .apply-wrapper {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            max-width: 750px;
+            margin: auto;
+        }
+
+        .section-label {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .progress-header {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 18px 22px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div layout:fragment="content">
+
+    <div class="progress-header">
+        <h3>
+            Apply for
+            <span th:text="${job.title}"></span>
+        </h3>
+        <small class="d-block mt-1">
+            Fill in your details below. Our HR team will contact you if shortlisted.
+        </small>
+    </div>
+
+    <div class="apply-wrapper">
+
+        <form th:action="@{'/careers/apply/' + ${job.id}}"
+              method="post"
+              enctype="multipart/form-data">
+
+            <div class="mb-3">
+                <label class="section-label">Full Name</label>
+                <input name="name" class="form-control" placeholder="John Doe" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="section-label">Email</label>
+                <input name="email" type="email" class="form-control" placeholder="john@example.com" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="section-label">Phone</label>
+                <input name="phone" class="form-control" placeholder="+91 98765 43210" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="section-label">Resume (PDF Only)</label>
+                <input type="file" name="resume" accept="application/pdf" class="form-control" required>
+                <small class="text-muted">Max size: 5MB</small>
+            </div>
+
+            <div class="mb-3">
+                <label class="section-label">Cover Letter (Optional)</label>
+                <textarea name="coverLetter" rows="4" class="form-control"
+                          placeholder="Write a short introduction..."></textarea>
+            </div>
+
+            <button class="btn btn-primary w-100 mt-3 py-2">
+                <i data-feather="send" class="me-1"></i> Submit Application
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script> feather.replace(); </script>
+
+</body>
+</html>

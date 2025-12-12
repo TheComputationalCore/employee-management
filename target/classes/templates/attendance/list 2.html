@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<main layout:fragment="content" class="p-4">
+
+    <h3 class="fw-semibold mb-4">Attendance Records</h3>
+
+    <form method="get" class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <label class="form-label">Employee ID</label>
+            <input type="number" name="empId" class="form-control" th:value="${empId}">
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Date</label>
+            <input type="date" name="date" class="form-control" th:value="${date}">
+        </div>
+
+        <div class="col-md-4 align-self-end">
+            <button class="btn btn-primary w-100">Apply Filters</button>
+        </div>
+
+    </form>
+
+
+    <div class="card p-4">
+        <table class="table table-bordered table-hover">
+
+            <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Employee</th>
+                <th>Date</th>
+                <th>Check In</th>
+                <th>Check Out</th>
+                <th>Total Hours</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:each="r : ${list}">
+                <td th:text="${r.id}"></td>
+                <td th:text="${r.employeeId}"></td>
+                <td th:text="${r.date}"></td>
+                <td th:text="${r.checkIn ?: '-'}"></td>
+                <td th:text="${r.checkOut ?: '-'}"></td>
+                <td th:text="${r.totalHours ?: '-'}"></td>
+
+                <td>
+                    <span class="badge"
+                          th:classappend="${r.status == 'PRESENT' ? 'bg-success' :
+                                          (r.status == 'LATE' ? 'bg-warning' : 'bg-danger')}">
+                        <span th:text="${r.status}"></span>
+                    </span>
+                </td>
+            </tr>
+
+            <tr th:if="${list == null or list.isEmpty()}">
+                <td colspan="7" class="text-center text-muted">No records found</td>
+            </tr>
+
+            </tbody>
+
+        </table>
+    </div>
+
+</main>
+</html>

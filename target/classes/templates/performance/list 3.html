@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+    <title>Performance Reviews</title>
+
+    <style>
+        .perf-card {
+            padding: 18px;
+            border-radius: 14px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            transition: .2s ease;
+        }
+        .perf-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+
+        .badge-status {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: .8rem;
+        }
+    </style>
+</head>
+
+<body>
+
+<main layout:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-semibold">Performance Reviews</h2>
+
+        <a class="btn btn-primary" th:href="@{/web/performance/create}">
+            <i data-feather="plus-circle" class="me-1"></i>
+            New Review Cycle
+        </a>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4" th:each="r : ${reviews}">
+            <div class="perf-card shadow-sm">
+
+                <h5 th:text="${r.cycle}"></h5>
+
+                <p class="text-muted small">
+                    Employee ID:
+                    <b th:text="${r.employeeId}"></b>
+                </p>
+
+                <!-- STATUS BADGE -->
+                <span class="badge-status"
+                      th:classappend="${r.status=='COMPLETED'      ? 'bg-success text-light' :
+                                      r.status=='SELF_SUBMITTED' ? 'bg-info text-dark' :
+                                      r.status=='MANAGER_REVIEWED' ? 'bg-primary text-light' :
+                                                                     'bg-warning text-dark'}"
+                      th:text="${r.status}">
+                </span>
+
+                <hr>
+
+                <a class="btn btn-outline-primary btn-sm w-100"
+                   th:href="@{'/web/performance/manager/' + ${r.id}}">
+                    <i data-feather="edit-2" class="me-1"></i>
+                    Review
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    feather.replace();
+</script>
+
+</body>
+</html>

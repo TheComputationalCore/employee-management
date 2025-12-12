@@ -1,0 +1,343 @@
+/* =========================================================
+   GLOBAL ROOT VARIABLES
+========================================================= */
+:root {
+    --primary: #4f46e5;
+    --primary-light: #eef2ff;
+    --accent: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --info: #0ea5e9;
+
+    --bg: #f8fafc;
+    --sidebar-bg: #ffffff;
+    --card-bg: #ffffff;
+    --border: #e5e7eb;
+    --text: #111827;
+
+    --radius: 12px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-md: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+/* =========================================================
+   DARK MODE OVERRIDES
+========================================================= */
+body.dark-mode {
+    --bg: #111827;
+    --sidebar-bg: #1f2937;
+    --card-bg: #1f2937;
+    --border: #374151;
+    --text: #f3f4f6;
+
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+    --shadow-md: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+/* =========================================================
+   GLOBALS
+========================================================= */
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+h1, h2, h3, h4, h5 {
+    font-weight: 600;
+}
+
+/* =========================================================
+   SIDEBAR STYLING
+========================================================= */
+.sidebar {
+    width: 240px;
+    position: fixed;
+    inset: 0 auto 0 0;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+    padding: 20px;
+    z-index: 200;
+    transition: width .25s ease, background .25s;
+    box-shadow: var(--shadow-sm);
+}
+
+.sidebar-header .logo {
+    color: var(--primary);
+}
+
+.sidebar .nav-link {
+    padding: 12px 15px;
+    font-weight: 500;
+    color: var(--text);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background .2s, color .2s, padding .2s;
+}
+
+.sidebar .nav-link i {
+    stroke-width: 2px;
+    width: 20px;
+}
+
+.sidebar .nav-link:hover {
+    background: var(--primary);
+    color: #fff !important;
+    box-shadow: 0 3px 12px rgba(79,70,229,0.3);
+}
+
+/* Active Link Style (Recommended) */
+.sidebar .nav-link.active {
+    background: var(--primary);
+    color: white !important;
+}
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+.topbar {
+    height: 60px;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    inset: 0 0 auto 0;
+    z-index: 150;
+    transition: background .25s, border-color .25s;
+}
+
+.theme-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* User box */
+.user-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    transition: background .25s;
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-avatar i {
+    color: #fff;
+}
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+.main-content {
+    margin-left: 240px;
+    transition: margin-left .3s ease;
+}
+
+.content-wrapper {
+    padding: 32px;
+}
+
+/* =========================================================
+   CARDS
+========================================================= */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 20px;
+    transition: border-color .25s, box-shadow .25s, background .25s;
+}
+
+.card:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+}
+
+/* Light pastel icon bubble */
+.card-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: var(--primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 1.2rem;
+}
+
+/* =========================================================
+   TABLES
+========================================================= */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+table thead {
+    background: var(--primary-light);
+    font-weight: 600;
+}
+
+table thead th {
+    padding: 12px;
+    color: var(--primary);
+}
+
+table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background .15s ease;
+}
+
+table tbody tr:hover {
+    background: rgba(79,70,229,0.06);
+}
+
+table td {
+    padding: 12px;
+    color: var(--text);
+    vertical-align: middle;
+}
+
+/* =========================================================
+   BUTTONS (GLOBAL UTILITIES)
+========================================================= */
+.btn-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background: #4338ca;
+    border-color: #4338ca;
+}
+
+.btn-danger {
+    background: var(--danger);
+    border-color: var(--danger);
+}
+
+.btn-success {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+/* =========================================================
+   RESPONSIVE SIDEBAR
+========================================================= */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 70px;
+        padding: 15px;
+    }
+
+    .sidebar .nav-link span {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 70px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        transform: translateX(-100%);
+        width: 240px;
+        transition: transform .3s ease;
+    }
+
+    body.sidebar-open .sidebar {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+/* Form Input Modern Look */
+.modern-input .input-group-text {
+    background: var(--primary-light);
+    border: 1px solid var(--border);
+    border-right: none;
+    color: var(--primary);
+}
+
+.modern-input .form-control,
+.modern-input .form-select {
+    border-left: none;
+    border-color: var(--border);
+    padding: 10px 12px;
+    border-radius: var(--radius);
+}
+
+.modern-input .form-control:focus,
+.modern-input .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79,70,229,0.15);
+}
+
+.modern-input {
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+/* Modern Input Styles */
+.modern-input {
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    transition: all .25s ease;
+    background: var(--card-bg);
+}
+
+.modern-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+    outline: none;
+}
+
+/* Audit Box */
+.audit-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+}
+
+/* Buttons */
+.btn-outline-secondary {
+    border-radius: var(--radius);
+    font-weight: 500;
+    padding: 10px 18px;
+}
+
+.btn-primary {
+    border-radius: var(--radius);
+    padding: 10px 24px;
+    font-weight: 600;
+}

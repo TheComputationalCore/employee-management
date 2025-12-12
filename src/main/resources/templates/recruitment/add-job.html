@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<div layout:fragment="content" class="container-fluid">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-semibold">Add Job Posting</h3>
+        <a th:href="@{/web/recruitment/jobs}" class="btn btn-outline-secondary">
+            <i data-feather="arrow-left" class="me-1"></i> Back
+        </a>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="card p-4 shadow-sm" style="border-radius: 16px;">
+        <form th:action="@{/web/recruitment/jobs/add}" method="post">
+
+            <!-- ROW 1 -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="fw-medium">Job Title</label>
+                    <input class="form-control" name="title" placeholder="Software Engineer" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="fw-medium">Department</label>
+                    <input class="form-control" name="department" placeholder="IT / HR / Sales" required>
+                </div>
+            </div>
+
+            <!-- ROW 2 -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="fw-medium">Employment Type</label>
+                    <select class="form-select" name="employmentType" required>
+                        <option disabled selected>Select employment type</option>
+                        <option>Full-time</option>
+                        <option>Part-time</option>
+                        <option>Contract</option>
+                        <option>Internship</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="fw-medium">Location</label>
+                    <input class="form-control" name="location" placeholder="Bangalore / Remote / Hybrid">
+                </div>
+            </div>
+
+            <!-- ROW 3 -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="fw-medium">Experience Required (years)</label>
+                    <input type="number" class="form-control" name="experienceRequired" min="0" placeholder="2">
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label class="fw-medium">Salary Min</label>
+                    <input type="number" class="form-control" name="salaryMin" placeholder="30000">
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label class="fw-medium">Salary Max</label>
+                    <input type="number" class="form-control" name="salaryMax" placeholder="60000">
+                </div>
+            </div>
+
+            <!-- DESCRIPTION -->
+            <div class="mb-4">
+                <label class="fw-medium">Job Description</label>
+                <textarea class="form-control" name="description" rows="5"
+                          placeholder="Write roles, responsibilities, requirements..."></textarea>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary px-4">
+                    <i data-feather="save" class="me-1"></i> Save Job
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+<style>
+    label {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+    }
+</style>
+
+</html>

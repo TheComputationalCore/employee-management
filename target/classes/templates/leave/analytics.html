@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+    <title>Leave Analytics</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <style>
+        .analytics-card {
+            padding: 24px;
+            border-radius: 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            margin-bottom: 25px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            transition: .2s ease;
+        }
+
+        .analytics-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+        }
+
+        .stat-box {
+            padding: 18px;
+            border-radius: 14px;
+            background: var(--warning-light);
+            border: 1px solid var(--border);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .chart-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<main layout:fragment="content">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-semibold">
+            <i data-feather="bar-chart-2" class="me-2"></i>
+            Leave Analytics
+        </h2>
+
+        <a class="btn btn-outline-primary" th:href="@{/web/leave}">
+            <i data-feather="arrow-left" class="me-1"></i> Back
+        </a>
+    </div>
+
+    <!-- KPI STAT -->
+    <div class="stat-box mb-4">
+        <h6 class="mb-1 text-dark">Pending Leave Requests</h6>
+        <div class="stat-value text-warning" th:text="${pending}"></div>
+    </div>
+
+    <!-- CHARTS ROW 1 -->
+    <div class="row g-4">
+
+        <!-- Leave Type Distribution -->
+        <div class="col-md-6">
+            <div class="analytics-card">
+                <div class="chart-title">
+                    <i data-feather="pie-chart" class="me-2"></i>
+                    Leave Type Distribution
+                </div>
+                <canvas id="typeChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Monthly Trend -->
+        <div class="col-md-6">
+            <div class="analytics-card">
+                <div class="chart-title">
+                    <i data-feather="trending-up" class="me-2"></i>
+                    Monthly Leave Trend
+                </div>
+                <canvas id="monthlyChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CHARTS ROW 2 -->
+    <div class="row g-4 mt-2">
+
+        <!-- Department Stats -->
+        <div class="col-md-12">
+            <div class="analytics-card">
+                <div class="chart-title">
+                    <i data-feather="grid" class="me-2"></i>
+                    Department Leave Count
+                </div>
+                <canvas id="deptChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    feather.replace();
+</script>
+
+<!-- Thymeleaf Inline JS -->
+<script th:inline="javascript">
+    const typeLabels   = /*[[${typeDist.keySet()}]]*/ [];
+    const typeValues   = /*[[${typeDist.values()}]]*/ [];
+
+    const monthLabels  = /*[[${monthly.keySet()}]]*/ [];
+    const monthValues  = /*[[${monthly.values()}]]*/ [];
+
+    const deptLabels   = /*[[${deptStats.keySet()}]]*/ [];
+    const deptValues   = /*[[${deptStats.values()}]]*/ [];
+
+    /* ------------------ TYPE PIE CHART ------------------ */
+    new Chart(document.getElementById('typeChart'), {
+        type: 'pie',
+        data: {
+            labels: typeLabels,
+            datasets: [{
+                data: typeValues,
+                borderWidth: 0
+            }]
+        }
+    });
+
+    /* ------------------ MONTHLY LINE CHART ------------------ */
+    new Chart(document.getElementById('monthlyChart'), {
+        type: 'line',
+        data: {
+            labels: monthLabels,
+            datasets: [{
+                data: monthValues,
+                tension: 0.35,
+                fill: false
+            }]
+        }
+    });
+
+    /* ------------------ DEPARTMENT BAR CHART ------------------ */
+    new Chart(document.getElementById('deptChart'), {
+        type: 'bar',
+        data: {
+            labels: deptLabels,
+            datasets: [{
+                data: deptValues,
+                borderRadius: 6
+            }]
+        }
+    });
+</script>
+
+</body>
+</html>

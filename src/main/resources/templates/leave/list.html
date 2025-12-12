@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+    <title>Leave List</title>
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <style>
+        .leave-card {
+            border-radius: 14px;
+            padding: 22px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            transition: 0.25s ease;
+        }
+
+        .leave-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+
+        .badge-status {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .action-btn {
+            padding: 4px 10px !important;
+            font-size: 0.8rem !important;
+        }
+
+        table th {
+            background: var(--primary-subtle);
+        }
+    </style>
+</head>
+
+<body>
+
+<main layout:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-semibold">
+            <i data-feather="clipboard" class="me-2"></i>
+            All Leave Requests
+        </h2>
+
+        <div>
+            <a class="btn btn-success me-2" th:href="@{/web/export/leave/excel}">
+                <i data-feather="file-text" class="me-1"></i> Excel
+            </a>
+
+            <a class="btn btn-danger" th:href="@{/web/export/leave/pdf}">
+                <i data-feather="file" class="me-1"></i> PDF
+            </a>
+        </div>
+    </div>
+
+    <div class="leave-card">
+        <table class="table table-hover align-middle">
+            <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Type</th>
+                <th>Dates</th>
+                <th>Reason</th>
+                <th>Status</th>
+
+                <!-- FIXED (NO ESCAPING ERROR) -->
+                <th th:if="${#authorization.expression('hasAnyRole(''ADMIN'',''HR'')')}">
+                    Actions
+                </th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:each="l : ${leaves}">
+
+                <!-- EMPLOYEE -->
+                <td><strong th:text="${l.employeeId}"></strong></td>
+
+                <!-- TYPE -->
+                <td th:text="${l.type}"></td>
+
+                <!-- DATE RANGE -->
+                <td>
+                    <i data-feather="calendar" style="width:15px;height:15px;"></i>
+                    <span th:text="${l.startDate + ' → ' + l.endDate}"></span>
+                </td>
+
+                <!-- REASON -->
+                <td th:text="${l.reason}"></td>
+
+                <!-- STATUS BADGE (SAFE EXPRESSION) -->
+                <td>
+                    <span class="badge-status"
+                          th:class="${l.status.name() == 'APPROVED' ? 'badge-status bg-success' :
+                                     l.status.name() == 'REJECTED' ? 'badge-status bg-danger' :
+                                     'badge-status bg-warning text-dark'}"
+                          th:text="${l.status}">
+                    </span>
+                </td>
+
+                <!-- ACTION BUTTONS -->
+                <td th:if="${#authorization.expression('hasAnyRole(''ADMIN'',''HR'')')}">
+
+                    <!-- APPROVE -->
+                    <a th:if="${l.status.name() == 'PENDING'}"
+                       class="btn btn-sm btn-success action-btn"
+                       th:href="@{'/web/leave/approve/' + ${l.id}}">
+                        <i data-feather="check"></i>
+                    </a>
+
+                    <!-- REJECT -->
+                    <a th:if="${l.status.name() == 'PENDING'}"
+                       class="btn btn-sm btn-danger action-btn ms-1"
+                       th:href="@{'/web/leave/reject/' + ${l.id}}">
+                        <i data-feather="x"></i>
+                    </a>
+
+                    <!-- DOWNLOAD SUMMARY -->
+                    <a class="btn btn-sm btn-info action-btn ms-1"
+                       th:href="@{'/web/export/leave/employee/' + ${l.employeeId}}">
+                        <i data-feather="download"></i>
+                    </a>
+
+                </td>
+
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+</main>
+
+<script>
+    feather.replace();
+</script>
+
+</body>
+</html>

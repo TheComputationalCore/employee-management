@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+    <title>Create Performance Review</title>
+
+    <style>
+        .cycle-hint {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+<main layout:fragment="content">
+
+    <h2 class="fw-semibold mb-4">
+        <i data-feather="plus-circle" class="me-2"></i>
+        Create Performance Review
+    </h2>
+
+    <div class="card p-4 shadow-sm" style="border-radius:14px;">
+
+        <form method="post" th:action="@{/web/performance/create}">
+
+            <!-- EMPLOYEE DROPDOWN -->
+            <label class="form-label fw-semibold">Employee</label>
+            <select name="employeeId" class="form-control" required>
+                <option value="" disabled selected>Select Employee</option>
+
+                <option th:each="e : ${employees}"
+                        th:value="${e.id}"
+                        th:text="${e.firstName + ' ' + e.lastName}">
+                </option>
+            </select>
+
+            <!-- REVIEW CYCLE -->
+            <label class="form-label fw-semibold mt-3">Review Cycle</label>
+            <input type="text"
+                   class="form-control"
+                   name="cycle"
+                   placeholder="Example: Q1-2025"
+                   required>
+
+            <div class="cycle-hint">
+                Suggested formats: Q1-2025, Q2-2025, H1-2025, YEAR-2025
+            </div>
+
+            <button class="btn btn-primary w-100 mt-4">
+                <i data-feather="check-circle" class="me-1"></i>
+                Create Review
+            </button>
+
+        </form>
+
+    </div>
+
+</main>
+
+</body>
+
+<script>
+    feather.replace();
+</script>
+
+</html>

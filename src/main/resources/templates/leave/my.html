@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<head>
+    <title>My Leaves</title>
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+
+<body>
+
+<main layout:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-semibold">
+            <i data-feather="calendar" class="me-2"></i> My Leave Requests
+        </h2>
+
+        <a class="btn btn-primary" th:href="@{/web/leave/apply}">
+            <i data-feather="plus-circle" class="me-1"></i> Apply Leave
+        </a>
+    </div>
+
+    <div class="card p-3">
+        <table class="table table-hover align-middle">
+            <thead>
+            <tr>
+                <th>Type</th>
+                <th>Dates</th>
+                <th>Reason</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="l : ${leaves}">
+                <td th:text="${l.type}"></td>
+                <td th:text="${l.startDate + ' → ' + l.endDate}"></td>
+                <td th:text="${l.reason}"></td>
+
+                <td>
+                    <span class="badge-status"
+                          th:classappend="${l.status.name() == 'APPROVED' ? ' bg-success' :
+                                           (l.status.name() == 'REJECTED' ? ' bg-danger' :
+                                            ' bg-warning text-dark')}"
+                          th:text="${l.status}">
+                    </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</main>
+
+<script>feather.replace();</script>
+
+</body>
+</html>

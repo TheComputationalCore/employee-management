@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<main layout:fragment="content" class="dashboard px-4">
+
+    <h2 class="fw-semibold mb-4">Dashboard</h2>
+
+    <!-- KPI CARDS -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+            <div class="card kpi-card p-4">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <p class="text-muted small mb-1">Total Employees</p>
+                        <h3 th:text="${stats.totalEmployees}"></h3>
+                    </div>
+                    <div class="card-icon"><i data-feather="users"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card kpi-card p-4">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <p class="text-muted small mb-1">Active Onboarding</p>
+                        <h3 th:text="${stats.onboardingActive}"></h3>
+                    </div>
+                    <div class="card-icon"><i data-feather="layers"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card kpi-card p-4">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <p class="text-muted small mb-1">Pending Leaves</p>
+                        <h3 th:text="${stats.pendingLeaves}"></h3>
+                    </div>
+                    <div class="card-icon"><i data-feather="calendar"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card kpi-card p-4">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <p class="text-muted small mb-1">Open Positions</p>
+                        <h3 th:text="${stats.openJobs}"></h3>
+                    </div>
+                    <div class="card-icon"><i data-feather="briefcase"></i></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CHARTS -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-8">
+            <div class="card p-4">
+                <h5>Employee Growth</h5>
+                <canvas id="employeeGrowthChart"></canvas>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-4">
+                <h5>Leave Breakdown</h5>
+                <canvas id="leavePieChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Pipeline + Onboarding -->
+    <div class="row g-4">
+
+        <div class="col-md-7">
+            <div class="card p-4">
+                <h5>Recruitment Pipeline</h5>
+
+                <div class="pipeline d-flex justify-content-between">
+
+                    <div class="text-center">
+                        <span class="text-muted small">Applied</span>
+                        <h4 th:text="${stats.appliedCount}"></h4>
+                    </div>
+
+                    <div class="text-center">
+                        <span class="text-muted small">Screening</span>
+                        <h4 th:text="${stats.screeningCount}"></h4>
+                    </div>
+
+                    <div class="text-center">
+                        <span class="text-muted small">Interview</span>
+                        <h4 th:text="${stats.interviewCount}"></h4>
+                    </div>
+
+                    <div class="text-center">
+                        <span class="text-muted small">Offers</span>
+                        <h4 th:text="${stats.offerCount}"></h4>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Onboarding Summary -->
+        <div class="col-md-5">
+            <div class="card p-4">
+                <h5>Onboarding Summary</h5>
+
+                <div th:each="o : ${onboardingList}" class="mb-3 pb-3 border-bottom">
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong th:text="${o.employeeName}"></strong>
+                            <small class="text-muted d-block" th:text="${o.employeeEmail}"></small>
+                        </div>
+                        <div style="width:70px;height:70px;">
+                            <canvas th:id="'donut-' + ${o.id}"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- CHART SCRIPTS -->
+    <script>
+        // Employee Growth
+        new Chart(document.getElementById("employeeGrowthChart"), {
+            type: "line",
+            data: {
+                labels: /*[[${stats.months}]]*/ [],
+                datasets: [{
+                    label: "Employees",
+                    data: /*[[${stats.employeeCounts}]]*/ [],
+                    borderColor: "#4f46e5",
+                    borderWidth: 3,
+                    tension: 0.3,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // Leave breakdown
+        new Chart(document.getElementById("leavePieChart"), {
+            type: "pie",
+            data: {
+                labels: ["Approved", "Pending", "Rejected"],
+                datasets: [{
+                    data: [
+                        /*[[${stats.leavesApproved}]]*/,
+                        /*[[${stats.leavesPending}]]*/,
+                        /*[[${stats.leavesRejected}]]*/
+                    ],
+                    backgroundColor: ["#10b981", "#f59e0b", "#ef4444"]
+                }]
+            }
+        });
+    </script>
+
+</main>
+</html>

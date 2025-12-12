@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+
+<!-- ======================= -->
+<!-- PAGE CONTENT -->
+<!-- ======================= -->
+<div layout:fragment="content">
+
+    <style>
+        .page-card {
+            background: var(--card-bg);
+            padding: 28px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        }
+
+        .timeline {
+            border-left: 3px solid var(--primary);
+            padding-left: 16px;
+        }
+
+        .timeline-item {
+            padding: 10px 0;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: -11px;
+            top: 10px;
+            width: 14px;
+            height: 14px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+
+        .label {
+            font-weight: 600;
+        }
+
+        .meta {
+            font-size: 0.85rem;
+            color: gray;
+        }
+    </style>
+
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">
+            <i data-feather="calendar" class="me-1"></i>
+            Interview History
+        </h2>
+
+        <a class="btn btn-primary"
+           th:href="@{'/web/recruitment/interview/schedule/' + ${application.id}}">
+            <i data-feather="plus" class="me-1"></i> Schedule Interview
+        </a>
+    </div>
+
+
+    <!-- APPLICATION INFO -->
+    <div class="page-card mb-4">
+        <h4 class="fw-semibold" th:text="${application.fullName}"></h4>
+
+        <p class="text-muted mb-0">
+            <i data-feather="briefcase" class="me-1"></i>
+            <span th:text="${job.title}"></span>
+        </p>
+    </div>
+
+
+    <!-- INTERVIEW LIST -->
+    <div class="page-card">
+        <h5 class="fw-semibold mb-3">
+            <i data-feather="clock" class="me-2"></i>
+            Completed & Scheduled Interviews
+        </h5>
+
+        <div th:if="${interviews.size() == 0}">
+            <p class="text-muted">No interviews recorded.</p>
+        </div>
+
+        <div th:if="${interviews.size() > 0}" class="timeline">
+
+            <div class="timeline-item" th:each="i : ${interviews}">
+
+                <!-- Interview Type -->
+                <div class="label" th:text="${i.type}"></div>
+
+                <!-- Date & Time -->
+                <div class="meta mt-1">
+                    <i data-feather="calendar" class="me-1" style="width:14px;"></i>
+                    <span th:text="${i.date}"></span>
+
+                    &nbsp;&nbsp;
+
+                    <i data-feather="clock" class="me-1" style="width:14px;"></i>
+                    <span th:text="${i.time}"></span>
+                </div>
+
+                <!-- Location -->
+                <div class="meta mt-1">
+                    <i data-feather="map-pin" class="me-1" style="width:14px;"></i>
+                    <span th:text="${i.location}"></span>
+                </div>
+
+                <!-- Notes -->
+                <p class="mt-2" th:if="${i.notes != null}">
+                    <strong>Notes:</strong>
+                    <span th:text="${i.notes}"></span>
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================= -->
+<!-- SCRIPTS -->
+<!-- ======================= -->
+<div layout:fragment="scripts">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script> feather.replace(); </script>
+</div>
+
+</html>
