@@ -3,8 +3,6 @@ package com.empmgmt.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "employees")
@@ -41,25 +39,13 @@ public class Employee extends BaseEntity {
     @Column(nullable = false)
     private EmployeeStatus status;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "created_by", nullable = false)
-    private String createdBy;
-
     // =========================================================
-    // JPA LIFECYCLE SAFETY (CRITICAL)
+    // SAFETY NET ONLY FOR STATUS
     // =========================================================
     @PrePersist
     public void prePersist() {
         if (status == null) {
             status = EmployeeStatus.ACTIVE;
-        }
-        if (createdAt == null) {
-            createdAt = LocalDateTime.now();
-        }
-        if (createdBy == null) {
-            createdBy = "SYSTEM";
         }
     }
 }
