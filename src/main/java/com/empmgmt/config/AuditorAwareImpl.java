@@ -1,6 +1,7 @@
 package com.empmgmt.config;
 
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -13,12 +14,17 @@ public class AuditorAwareImpl implements AuditorAware<String> {
     @Override
     public Optional<String> getCurrentAuditor() {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
 
-        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+        if (authentication == null ||
+            !authentication.isAuthenticated() ||
+            authentication instanceof AnonymousAuthenticationToken) {
+
             return Optional.of("SYSTEM");
         }
 
-        return Optional.of(auth.getName());
+        return Optional.ofNullable(authentication.getName());
     }
 }
