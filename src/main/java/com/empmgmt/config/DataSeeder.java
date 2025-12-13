@@ -1,6 +1,7 @@
 package com.empmgmt.config;
 
 import com.empmgmt.model.Employee;
+import com.empmgmt.model.EmployeeStatus;
 import com.empmgmt.model.Role;
 import com.empmgmt.security.model.User;
 import com.empmgmt.security.repository.UserRepository;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDateTime;
 
 @Configuration
 @RequiredArgsConstructor
@@ -27,6 +30,8 @@ public class DataSeeder implements CommandLineRunner {
             return; // Prevent reseeding
         }
 
+        LocalDateTime now = LocalDateTime.now();
+
         // ==========================================================================
         // CREATE EMPLOYEES
         // ==========================================================================
@@ -39,6 +44,9 @@ public class DataSeeder implements CommandLineRunner {
                         .department("HR")
                         .position("Administrator")
                         .salary(0.0)
+                        .status(EmployeeStatus.ACTIVE)          // ✅ REQUIRED
+                        .createdAt(now)                          // ✅ REQUIRED
+                        .createdBy("SYSTEM")                     // ✅ REQUIRED
                         .build()
         );
 
@@ -50,6 +58,9 @@ public class DataSeeder implements CommandLineRunner {
                         .department("HR")
                         .position("HR Manager")
                         .salary(0.0)
+                        .status(EmployeeStatus.ACTIVE)
+                        .createdAt(now)
+                        .createdBy("SYSTEM")
                         .build()
         );
 
@@ -61,6 +72,9 @@ public class DataSeeder implements CommandLineRunner {
                         .department("IT")
                         .position("Developer")
                         .salary(30000.0)
+                        .status(EmployeeStatus.ACTIVE)
+                        .createdAt(now)
+                        .createdBy("SYSTEM")
                         .build()
         );
 
