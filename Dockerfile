@@ -1,36 +1,22 @@
-# ============================
-# Build stage
-# ============================
-FROM maven:3.9.9-eclipse-temurin-17 AS build
+# ===============================
+# Employee Management System
+# Render Free Tier – Java 17
+# ===============================
 
-WORKDIR /app
-
-# Copy pom first (better caching)
-COPY pom.xml .
-RUN mvn -B -q dependency:go-offline
-
-# Copy source
-COPY src ./src
-
-# Build jar
-RUN mvn -B -DskipTests clean package
-
-
-# ============================
-# Runtime stage
-# ============================
 FROM eclipse-temurin:17-jre
 
+# App directory
 WORKDIR /app
 
-# Copy built jar
-COPY --from=build /app/target/*.jar app.jar
+# Copy pre-built Spring Boot JAR
+# IMPORTANT: JAR must already exist in target/
+COPY target/*.jar app.jar
 
-# Render provides PORT at runtime
+# Render injects PORT at runtime
 EXPOSE 8080
 
-# JVM optimizations for Render free tier
-ENV JAVA_TOOL_OPTIONS="-Xms128m -Xmx512m -XX:+UseG1GC"
+# JVM tuning for Render Free tier (512MB RAM)
+ENV JAVA_TOOL_OPTIONS="-Xms128m -Xmx384m -XX:+UseG1GC -XX:MaxMetaspaceSize=128m -XX:+UseStringDeduplication"
 
-# Start app
+# Start application
 ENTRYPOINT ["java", "-jar", "app.jar"]
