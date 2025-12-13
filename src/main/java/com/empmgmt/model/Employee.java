@@ -3,6 +3,8 @@ package com.empmgmt.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "employees")
@@ -37,15 +39,13 @@ public class Employee extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EmployeeStatus status;
+    private EmployeeStatus status = EmployeeStatus.ACTIVE;
 
-    // =========================================================
-    // SAFETY NET ONLY FOR STATUS
-    // =========================================================
-    @PrePersist
-    public void prePersist() {
-        if (status == null) {
-            status = EmployeeStatus.ACTIVE;
-        }
-    }
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "created_by", nullable = false)
+    private String createdBy;
+
 }
