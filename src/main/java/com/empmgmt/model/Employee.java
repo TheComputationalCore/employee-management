@@ -39,8 +39,7 @@ public class Employee extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EmployeeStatus status = EmployeeStatus.ACTIVE;
-
+    private EmployeeStatus status;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -48,4 +47,19 @@ public class Employee extends BaseEntity {
     @Column(name = "created_by", nullable = false)
     private String createdBy;
 
+    // =========================================================
+    // JPA LIFECYCLE SAFETY (CRITICAL)
+    // =========================================================
+    @PrePersist
+    public void prePersist() {
+        if (status == null) {
+            status = EmployeeStatus.ACTIVE;
+        }
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (createdBy == null) {
+            createdBy = "SYSTEM";
+        }
+    }
 }
