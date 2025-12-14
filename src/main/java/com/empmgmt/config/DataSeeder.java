@@ -31,10 +31,11 @@ public class DataSeeder implements CommandLineRunner {
         }
 
         LocalDateTime now = LocalDateTime.now();
+        String defaultPassword = encoder.encode("employee123");
 
-        // ==========================================================================
+        // =========================
         // CREATE EMPLOYEES
-        // ==========================================================================
+        // =========================
 
         Employee adminEmp = employeeRepo.save(
                 Employee.builder()
@@ -44,9 +45,9 @@ public class DataSeeder implements CommandLineRunner {
                         .department("HR")
                         .position("Administrator")
                         .salary(0.0)
-                        .status(EmployeeStatus.ACTIVE)          // ✅ REQUIRED
-                        .createdAt(now)                          // ✅ REQUIRED
-                        .createdBy("SYSTEM")                     // ✅ REQUIRED
+                        .status(EmployeeStatus.ACTIVE)
+                        .createdAt(now)
+                        .createdBy("SYSTEM")
                         .build()
         );
 
@@ -78,41 +79,40 @@ public class DataSeeder implements CommandLineRunner {
                         .build()
         );
 
-        // ==========================================================================
-        // CREATE USERS LINKED TO EMPLOYEES
-        // ==========================================================================
+        // =========================
+        // CREATE USERS
+        // =========================
 
-        User admin = User.builder()
-                .username("admin")
-                .password(encoder.encode("admin123"))
-                .role(Role.ROLE_ADMIN)
-                .employee(adminEmp)
-                .build();
+        userRepo.save(
+                User.builder()
+                        .username("admin")
+                        .password(defaultPassword)
+                        .role(Role.ROLE_ADMIN)
+                        .employee(adminEmp)
+                        .build()
+        );
 
-        User hr = User.builder()
-                .username("hr")
-                .password(encoder.encode("hr123"))
-                .role(Role.ROLE_HR)
-                .employee(hrEmp)
-                .build();
+        userRepo.save(
+                User.builder()
+                        .username("hr")
+                        .password(defaultPassword)
+                        .role(Role.ROLE_HR)
+                        .employee(hrEmp)
+                        .build()
+        );
 
-        User employee = User.builder()
-                .username("employee")
-                .password(encoder.encode("emp123"))
-                .role(Role.ROLE_EMPLOYEE)
-                .employee(employeeEmp)
-                .build();
-
-        userRepo.save(admin);
-        userRepo.save(hr);
-        userRepo.save(employee);
+        userRepo.save(
+                User.builder()
+                        .username("employee")
+                        .password(defaultPassword)
+                        .role(Role.ROLE_EMPLOYEE)
+                        .employee(employeeEmp)
+                        .build()
+        );
 
         System.out.println("=========================================================");
         System.out.println(" USERS + EMPLOYEES SEEDED ");
-        System.out.println("=========================================================");
-        System.out.println("ADMIN: admin / admin123");
-        System.out.println("HR: hr / hr123");
-        System.out.println("EMPLOYEE: employee / emp123");
+        System.out.println(" Password for ALL users: employee123 ");
         System.out.println("=========================================================");
     }
 }
