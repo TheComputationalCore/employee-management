@@ -1,37 +1,41 @@
 # =========================
-# Build stage
+# BUILD STAGE
 # =========================
 FROM maven:3.9.9-eclipse-temurin-17 AS build
 
 WORKDIR /app
 
-# Reduce Maven memory usage (CRITICAL for Render free tier)
+# IMPORTANT: limit memory for Render free tier
 ENV MAVEN_OPTS="-Xms128m -Xmx384m -XX:+UseG1GC"
 
-# Copy pom first (dependency caching)
+# Copy pom.xml first (layer caching)
 COPY pom.xml .
-RUN mvn -B -q dependency:go-offline
 
-# Copy source
+# Download dependencies only
+RUN mvn -B dependency:go-offline
+
+# Copy source code
 COPY src ./src
 
-# Build JAR
-RUN mvn -B -DskipTests package
+# Build application
+RUN mvn -B -DskipTests clean package
+
 
 # =========================
-# Runtime stage
+# RUNTIME STAGE
 # =========================
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:17-jre-jammy
 
 WORKDIR /app
 
-# Copy only the JAR (small final image)
+# Copy built JAR
 COPY --from=build /app/target/*.jar app.jar
 
-# Render provides PORT
+# Render injects PORT dynamically
 EXPOSE 8080
 
-# JVM tuning for Render free tier
+# JVM tuning (Render-safe)
 ENV JAVA_TOOL_OPTIONS="-Xms128m -Xmx384m -XX:+UseG1GC -XX:MaxMetaspaceSize=128m"
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# IMPORTANT: no shell, no sh - keeps signals clean
+ENTRYPOINT ["java","-jar","/app/app.jar"]
