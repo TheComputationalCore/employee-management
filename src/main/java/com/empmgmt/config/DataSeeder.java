@@ -10,12 +10,14 @@ import com.empmgmt.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
-@Configuration
+@Component
+@Profile("dev") // 🔴 CRITICAL: NEVER RUN IN PROD
 @RequiredArgsConstructor
 public class DataSeeder implements CommandLineRunner {
 
@@ -27,15 +29,11 @@ public class DataSeeder implements CommandLineRunner {
     public void run(String... args) {
 
         if (userRepo.count() > 0) {
-            return; // Prevent reseeding
+            return;
         }
 
         LocalDateTime now = LocalDateTime.now();
         String defaultPassword = encoder.encode("employee123");
-
-        // =========================
-        // CREATE EMPLOYEES
-        // =========================
 
         Employee adminEmp = employeeRepo.save(
                 Employee.builder()
@@ -79,10 +77,6 @@ public class DataSeeder implements CommandLineRunner {
                         .build()
         );
 
-        // =========================
-        // CREATE USERS
-        // =========================
-
         userRepo.save(
                 User.builder()
                         .username("admin")
@@ -111,7 +105,7 @@ public class DataSeeder implements CommandLineRunner {
         );
 
         System.out.println("=========================================================");
-        System.out.println(" USERS + EMPLOYEES SEEDED ");
+        System.out.println(" USERS + EMPLOYEES SEEDED (DEV ONLY) ");
         System.out.println(" Password for ALL users: employee123 ");
         System.out.println("=========================================================");
     }
