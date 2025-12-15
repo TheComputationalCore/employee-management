@@ -25,9 +25,13 @@
     <!-- ========================= -->
     <properties>
         <java.version>17</java.version>
+
+        <!-- Tooling -->
         <mapstruct.version>1.6.3</mapstruct.version>
         <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
+
+        <!-- Build -->
         <project.build.finalName>${project.artifactId}-${project.version}</project.build.finalName>
     </properties>
 
@@ -36,16 +40,12 @@
     <!-- ========================= -->
     <dependencies>
 
-        <!-- WEB -->
+        <!-- ========================= -->
+        <!-- SPRING CORE -->
+        <!-- ========================= -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- THYMELEAF -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
         <!-- SECURITY -->
@@ -54,7 +54,7 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- JPA -->
+        <!-- DATA JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -66,32 +66,37 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- ACTUATOR -->
+        <!-- THYMELEAF -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <!-- THYMELEAF EXTRAS -->
+        <dependency>
+            <groupId>nz.net.ultraq.thymeleaf</groupId>
+            <artifactId>thymeleaf-layout-dialect</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
         </dependency>
 
         <!-- ========================= -->
         <!-- DATABASE -->
         <!-- ========================= -->
 
-        <!-- PostgreSQL (Neon / Prod) -->
+        <!-- PostgreSQL ONLY (Neon / Prod) -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- MySQL (Local optional) -->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- ========================= -->
-        <!-- FLYWAY (SPRING BOOT 4 REQUIRED) -->
+        <!-- FLYWAY (REQUIRED FOR BOOT 4) -->
         <!-- ========================= -->
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -101,6 +106,39 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+
+        <!-- ========================= -->
+        <!-- API DOCS -->
+        <!-- ========================= -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
+        <!-- ========================= -->
+        <!-- DOCUMENT GENERATION -->
+        <!-- ========================= -->
+
+        <!-- PDF -->
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>1.3.39</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.6</version>
+        </dependency>
+
+        <!-- EXCEL -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.5.1</version>
         </dependency>
 
         <!-- ========================= -->
@@ -128,43 +166,12 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- OPENAPI -->
+        <!-- ========================= -->
+        <!-- MONITORING (LIMITED) -->
+        <!-- ========================= -->
         <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-
-        <!-- PDF -->
-        <dependency>
-            <groupId>com.github.librepdf</groupId>
-            <artifactId>openpdf</artifactId>
-            <version>1.3.39</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
-            <version>3.0.6</version>
-        </dependency>
-
-        <!-- EXCEL -->
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>5.5.1</version>
-        </dependency>
-
-        <!-- THYMELEAF EXTRAS -->
-        <dependency>
-            <groupId>nz.net.ultraq.thymeleaf</groupId>
-            <artifactId>thymeleaf-layout-dialect</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.thymeleaf.extras</groupId>
-            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <!-- ========================= -->
@@ -196,7 +203,7 @@
     <build>
         <finalName>${project.build.finalName}</finalName>
 
-        <!-- 🔥 CRITICAL: ENSURE RESOURCES ARE PACKAGED -->
+        <!-- ENSURE MIGRATIONS & TEMPLATES ARE PACKAGED -->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
