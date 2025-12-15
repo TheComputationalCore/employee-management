@@ -60,8 +60,11 @@
             justify-content: center;
             margin: 0 auto 15px auto;
             color: var(--primary);
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.2;
+            padding: 6px;
         }
 
         @keyframes fadeIn {
@@ -83,28 +86,52 @@
         Sign in to continue
     </p>
 
+    <!-- ===================== -->
     <!-- LOGIN FORM -->
+    <!-- ===================== -->
     <form th:action="@{/do-login}" method="post">
+
+        <!-- ✅ REQUIRED CSRF TOKEN -->
+        <input type="hidden"
+               th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}" />
 
         <div class="mb-3">
             <label class="fw-semibold">Username</label>
-            <input class="form-control" type="text" name="username" placeholder="Enter username" required>
+            <input class="form-control"
+                   type="text"
+                   name="username"
+                   placeholder="Enter username"
+                   required
+                   autofocus>
         </div>
 
         <div class="mb-3">
             <label class="fw-semibold">Password</label>
-            <input class="form-control" type="password" name="password" placeholder="Enter password" required>
+            <input class="form-control"
+                   type="password"
+                   name="password"
+                   placeholder="Enter password"
+                   required>
         </div>
 
-        <button class="btn btn-primary w-100 login-btn">Login</button>
+        <button class="btn btn-primary w-100 login-btn" type="submit">
+            Login
+        </button>
 
-        <!-- ERROR -->
-        <div th:if="${param.error}" class="alert alert-danger mt-3 py-2">
+        <!-- ===================== -->
+        <!-- ERROR MESSAGE -->
+        <!-- ===================== -->
+        <div th:if="${param.error}"
+             class="alert alert-danger mt-3 py-2 text-center">
             Invalid username or password
         </div>
 
-        <!-- LOGOUT -->
-        <div th:if="${param.logout}" class="alert alert-info mt-3 py-2">
+        <!-- ===================== -->
+        <!-- LOGOUT MESSAGE -->
+        <!-- ===================== -->
+        <div th:if="${param.logout}"
+             class="alert alert-info mt-3 py-2 text-center">
             Logged out successfully
         </div>
 
