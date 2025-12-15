@@ -1,10 +1,8 @@
 -- =========================================================
 -- EMPLOYEE MANAGEMENT SYSTEM
 -- Flyway V1 - Initial Schema (FINAL)
--- Target: Spring Boot + Hibernate + PostgreSQL (Neon)
+-- PostgreSQL / Neon
 -- =========================================================
-
-SET timezone = 'UTC';
 
 -- =========================================================
 -- EMPLOYEES
@@ -19,14 +17,17 @@ CREATE TABLE employees (
 
     department VARCHAR(255) NOT NULL,
     position   VARCHAR(255) NOT NULL,
-    salary     DOUBLE PRECISION,
+    salary     NUMERIC(12,2),
 
-    status     VARCHAR(50) NOT NULL DEFAULT 'ACTIVE',
+    status VARCHAR(50) NOT NULL DEFAULT 'ACTIVE',
 
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_by VARCHAR(255) NOT NULL,
+    created_by VARCHAR(255) NOT NULL DEFAULT 'system',
     updated_at TIMESTAMP,
-    updated_by VARCHAR(255)
+    updated_by VARCHAR(255),
+
+    CONSTRAINT chk_employees_status
+        CHECK (status IN ('ACTIVE', 'INACTIVE', 'SUSPENDED'))
 );
 
 CREATE INDEX idx_employees_department ON employees(department);
@@ -44,11 +45,16 @@ CREATE TABLE users (
 
     employee_id BIGINT UNIQUE,
 
+    CONSTRAINT chk_users_role
+        CHECK (role IN ('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE')),
+
     CONSTRAINT fk_users_employee
         FOREIGN KEY (employee_id)
         REFERENCES employees(id)
         ON DELETE SET NULL
 );
+
+CREATE INDEX idx_users_employee_id ON users(employee_id);
 
 -- =========================================================
 -- DEPARTMENTS
@@ -59,8 +65,8 @@ CREATE TABLE departments (
     name VARCHAR(255) NOT NULL UNIQUE,
     description VARCHAR(255),
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_by VARCHAR(255),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_by VARCHAR(255) NOT NULL DEFAULT 'system',
     updated_at TIMESTAMP,
     updated_by VARCHAR(255)
 );
@@ -83,8 +89,8 @@ CREATE TABLE jobs (
     benefits TEXT,
 
     experience_required INTEGER,
-    salary_min DOUBLE PRECISION,
-    salary_max DOUBLE PRECISION,
+    salary_min NUMERIC(12,2),
+    salary_max NUMERIC(12,2),
 
     active BOOLEAN NOT NULL DEFAULT TRUE
 );
@@ -124,8 +130,15 @@ CREATE TABLE applications (
     hired_at TIMESTAMP,
     rejected_at TIMESTAMP,
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status_updated_at TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status_updated_at TIMESTAMP,
+
+    CONSTRAINT fk_applications_job
+        FOREIGN KEY (job_id)
+        REFERENCES jobs(id),
+
+    CONSTRAINT chk_applications_status
+        CHECK (status IN ('APPLIED', 'SHORTLISTED', 'INTERVIEW', 'HIRED', 'REJECTED'))
 );
 
 CREATE INDEX idx_applications_status ON applications(status);
@@ -155,11 +168,16 @@ CREATE TABLE candidates (
 CREATE TABLE candidate_notes (
     id BIGSERIAL PRIMARY KEY,
 
-    application_id BIGINT,
+    application_id BIGINT NOT NULL,
     note TEXT,
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_by VARCHAR(255)
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_by VARCHAR(255) NOT NULL DEFAULT 'system',
+
+    CONSTRAINT fk_candidate_notes_application
+        FOREIGN KEY (application_id)
+        REFERENCES applications(id)
+        ON DELETE CASCADE
 );
 
 -- =========================================================
@@ -168,12 +186,17 @@ CREATE TABLE candidate_notes (
 CREATE TABLE candidate_scores (
     id BIGSERIAL PRIMARY KEY,
 
-    application_id BIGINT,
+    application_id BIGINT NOT NULL,
 
-    skills_score DOUBLE PRECISION,
-    experience_score DOUBLE PRECISION,
-    resume_score DOUBLE PRECISION,
-    final_score DOUBLE PRECISION
+    skills_score NUMERIC(5,2),
+    experience_score NUMERIC(5,2),
+    resume_score NUMERIC(5,2),
+    final_score NUMERIC(5,2),
+
+    CONSTRAINT fk_candidate_scores_application
+        FOREIGN KEY (application_id)
+        REFERENCES applications(id)
+        ON DELETE CASCADE
 );
 
 -- =========================================================
@@ -187,12 +210,12 @@ CREATE TABLE attendance (
 
     check_in TIME,
     check_out TIME,
-    total_hours DOUBLE PRECISION,
+    total_hours NUMERIC(5,2),
 
     status VARCHAR(50),
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_by VARCHAR(255),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_by VARCHAR(255) NOT NULL DEFAULT 'system',
     updated_at TIMESTAMP,
     updated_by VARCHAR(255),
 
@@ -202,7 +225,10 @@ CREATE TABLE attendance (
     CONSTRAINT fk_attendance_employee
         FOREIGN KEY (employee_id)
         REFERENCES employees(id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT chk_attendance_status
+        CHECK (status IN ('PRESENT', 'ABSENT', 'LEAVE'))
 );
 
 CREATE INDEX idx_attendance_employee ON attendance(employee_id);
@@ -226,6 +252,8 @@ CREATE TABLE leave_balances (
         ON DELETE CASCADE
 );
 
+CREATE INDEX idx_leave_balances_employee ON leave_balances(employee_id);
+
 -- =========================================================
 -- LEAVE REQUESTS
 -- =========================================================
@@ -241,16 +269,21 @@ CREATE TABLE leave_requests (
     reason VARCHAR(255),
     status VARCHAR(50),
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_by VARCHAR(255),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_by VARCHAR(255) NOT NULL DEFAULT 'system',
     updated_at TIMESTAMP,
     updated_by VARCHAR(255),
 
     CONSTRAINT fk_leave_request_employee
         FOREIGN KEY (employee_id)
         REFERENCES employees(id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT chk_leave_requests_status
+        CHECK (status IN ('PENDING', 'APPROVED', 'REJECTED'))
 );
+
+CREATE INDEX idx_leave_requests_employee ON leave_requests(employee_id);
 
 -- =========================================================
 -- PAYROLL
@@ -263,10 +296,10 @@ CREATE TABLE payroll (
     pay_month VARCHAR(20),
     pay_year INTEGER,
 
-    base_salary DOUBLE PRECISION,
-    allowances DOUBLE PRECISION,
-    deductions DOUBLE PRECISION,
-    net_pay DOUBLE PRECISION,
+    base_salary NUMERIC(12,2),
+    allowances NUMERIC(12,2),
+    deductions NUMERIC(12,2),
+    net_pay NUMERIC(12,2),
 
     paid BOOLEAN NOT NULL DEFAULT FALSE,
     payment_date DATE,
@@ -289,7 +322,7 @@ CREATE TABLE kpis (
 
     name VARCHAR(255) NOT NULL,
     description VARCHAR(255),
-    weight DOUBLE PRECISION
+    weight NUMERIC(5,2)
 );
 
 -- =========================================================
@@ -301,10 +334,10 @@ CREATE TABLE employee_kpis (
     employee_id BIGINT NOT NULL,
     kpi_id BIGINT NOT NULL,
 
-    target_value DOUBLE PRECISION,
-    achieved_self DOUBLE PRECISION,
-    achieved_manager DOUBLE PRECISION,
-    final_score DOUBLE PRECISION,
+    target_value NUMERIC(6,2),
+    achieved_self NUMERIC(6,2),
+    achieved_manager NUMERIC(6,2),
+    final_score NUMERIC(6,2),
 
     CONSTRAINT fk_employee_kpi_employee
         FOREIGN KEY (employee_id)
@@ -316,6 +349,9 @@ CREATE TABLE employee_kpis (
         REFERENCES kpis(id)
         ON DELETE CASCADE
 );
+
+CREATE INDEX idx_employee_kpis_employee ON employee_kpis(employee_id);
+CREATE INDEX idx_employee_kpis_kpi ON employee_kpis(kpi_id);
 
 -- =========================================================
 -- PERFORMANCE REVIEWS
@@ -334,15 +370,18 @@ CREATE TABLE performance_reviews (
     manager_rating INTEGER,
     manager_comments TEXT,
 
-    final_score DOUBLE PRECISION,
+    final_score NUMERIC(6,2),
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
 
     CONSTRAINT fk_performance_employee
         FOREIGN KEY (employee_id)
         REFERENCES employees(id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT chk_performance_status
+        CHECK (status IN ('DRAFT', 'SUBMITTED', 'COMPLETED'))
 );
 
 CREATE INDEX idx_performance_employee ON performance_reviews(employee_id);
@@ -367,7 +406,15 @@ CREATE TABLE interviews (
     interview_time TIME,
     interview_date_time TIMESTAMP,
 
-    notes TEXT
+    notes TEXT,
+
+    CONSTRAINT fk_interviews_application
+        FOREIGN KEY (application_id)
+        REFERENCES applications(id),
+
+    CONSTRAINT fk_interviews_job
+        FOREIGN KEY (job_id)
+        REFERENCES jobs(id)
 );
 
 -- =========================================================
@@ -379,10 +426,14 @@ CREATE TABLE offer_letters (
     application_id BIGINT,
 
     position VARCHAR(255),
-    salary DOUBLE PRECISION,
+    salary NUMERIC(12,2),
     joining_date DATE,
 
-    file_path VARCHAR(255)
+    file_path VARCHAR(255),
+
+    CONSTRAINT fk_offer_letters_application
+        FOREIGN KEY (application_id)
+        REFERENCES applications(id)
 );
 
 -- =========================================================
@@ -393,7 +444,7 @@ CREATE TABLE onboarding_flows (
 
     employee_id BIGINT NOT NULL,
 
-    created_at DATE DEFAULT CURRENT_DATE,
+    created_at DATE NOT NULL DEFAULT CURRENT_DATE,
     completed_at DATE,
     completed BOOLEAN NOT NULL DEFAULT FALSE,
 
@@ -421,8 +472,8 @@ CREATE TABLE onboarding_template_tasks (
 CREATE TABLE onboarding_tasks (
     id BIGSERIAL PRIMARY KEY,
 
-    employee_id BIGINT,
-    flow_id BIGINT,
+    employee_id BIGINT NOT NULL,
+    flow_id BIGINT NOT NULL,
 
     title VARCHAR(255) NOT NULL,
     description TEXT,
@@ -434,6 +485,11 @@ CREATE TABLE onboarding_tasks (
     completed BOOLEAN NOT NULL DEFAULT FALSE,
 
     file_path VARCHAR(255),
+
+    CONSTRAINT fk_onboarding_task_employee
+        FOREIGN KEY (employee_id)
+        REFERENCES employees(id)
+        ON DELETE CASCADE,
 
     CONSTRAINT fk_onboarding_task_flow
         FOREIGN KEY (flow_id)
@@ -450,5 +506,5 @@ CREATE TABLE email_logs (
     to_email VARCHAR(255),
     subject VARCHAR(255),
     body TEXT,
-    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    sent_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
