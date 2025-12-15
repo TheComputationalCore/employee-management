@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -10,9 +11,9 @@
     <version>2.0.0</version>
     <packaging>jar</packaging>
 
-    <!-- ========================= -->
+    <!-- ================================================= -->
     <!-- SPRING BOOT 4 -->
-    <!-- ========================= -->
+    <!-- ================================================= -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -20,24 +21,25 @@
         <relativePath/>
     </parent>
 
-    <!-- ========================= -->
+    <!-- ================================================= -->
     <!-- PROPERTIES -->
-    <!-- ========================= -->
+    <!-- ================================================= -->
     <properties>
         <java.version>17</java.version>
 
         <!-- Tooling -->
         <mapstruct.version>1.6.3</mapstruct.version>
+        <flyway.version>10.16.0</flyway.version>
+
         <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
 
-        <!-- Build -->
         <project.build.finalName>${project.artifactId}-${project.version}</project.build.finalName>
     </properties>
 
-    <!-- ========================= -->
+    <!-- ================================================= -->
     <!-- DEPENDENCIES -->
-    <!-- ========================= -->
+    <!-- ================================================= -->
     <dependencies>
 
         <!-- ========================= -->
@@ -72,7 +74,7 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
-        <!-- THYMELEAF EXTRAS -->
+        <!-- THYMELEAF LAYOUTS -->
         <dependency>
             <groupId>nz.net.ultraq.thymeleaf</groupId>
             <artifactId>thymeleaf-layout-dialect</artifactId>
@@ -87,8 +89,6 @@
         <!-- ========================= -->
         <!-- DATABASE -->
         <!-- ========================= -->
-
-        <!-- PostgreSQL ONLY (Neon / Prod) -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -96,16 +96,18 @@
         </dependency>
 
         <!-- ========================= -->
-        <!-- FLYWAY (REQUIRED FOR BOOT 4) -->
+        <!-- FLYWAY (EXPLICIT FOR BOOT 4) -->
         <!-- ========================= -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
+            <version>${flyway.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
+            <version>${flyway.version}</version>
         </dependency>
 
         <!-- ========================= -->
@@ -120,8 +122,6 @@
         <!-- ========================= -->
         <!-- DOCUMENT GENERATION -->
         <!-- ========================= -->
-
-        <!-- PDF -->
         <dependency>
             <groupId>com.github.librepdf</groupId>
             <artifactId>openpdf</artifactId>
@@ -134,7 +134,6 @@
             <version>3.0.6</version>
         </dependency>
 
-        <!-- EXCEL -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
@@ -144,15 +143,12 @@
         <!-- ========================= -->
         <!-- UTILITIES -->
         <!-- ========================= -->
-
-        <!-- LOMBOK -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
 
-        <!-- MAPSTRUCT -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
@@ -167,7 +163,7 @@
         </dependency>
 
         <!-- ========================= -->
-        <!-- MONITORING (LIMITED) -->
+        <!-- ACTUATOR -->
         <!-- ========================= -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -177,12 +173,6 @@
         <!-- ========================= -->
         <!-- TEST -->
         <!-- ========================= -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -197,13 +187,12 @@
 
     </dependencies>
 
-    <!-- ========================= -->
+    <!-- ================================================= -->
     <!-- BUILD -->
-    <!-- ========================= -->
+    <!-- ================================================= -->
     <build>
         <finalName>${project.build.finalName}</finalName>
 
-        <!-- ENSURE MIGRATIONS & TEMPLATES ARE PACKAGED -->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
