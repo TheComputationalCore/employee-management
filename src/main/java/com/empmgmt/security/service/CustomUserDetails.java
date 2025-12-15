@@ -1,10 +1,11 @@
 package com.empmgmt.security.service;
 
 import com.empmgmt.security.model.User;
-import org.springframework.security.core.*;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
@@ -16,9 +17,11 @@ public class CustomUserDetails implements UserDetails {
     }
 
     @Override
-    public List<? extends GrantedAuthority> getAuthorities() {
-        // DB already stores ROLE_ADMIN / ROLE_HR / ROLE_EMPLOYEE
-        return List.of(new SimpleGrantedAuthority(user.getRole()));
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // ENUM → String
+        return List.of(
+                new SimpleGrantedAuthority(user.getRole().name())
+        );
     }
 
     @Override public String getPassword() { return user.getPassword(); }
