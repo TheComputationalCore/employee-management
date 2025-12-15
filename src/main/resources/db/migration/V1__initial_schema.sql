@@ -1,11 +1,12 @@
 -- =========================================================
 -- EMPLOYEE MANAGEMENT SYSTEM
--- Initial PostgreSQL Schema (Flyway V1)
+-- Flyway V1 (FINAL, CLEAN, PRODUCTION-READY)
+-- Target: Spring Boot 4 + Hibernate 6 + Neon PostgreSQL
 -- =========================================================
 
--- =========================================================
--- EMPLOYEES
--- =========================================================
+/* =========================================================
+   EMPLOYEES
+   ========================================================= */
 CREATE TABLE employees (
     id BIGSERIAL PRIMARY KEY,
 
@@ -20,20 +21,19 @@ CREATE TABLE employees (
 
     status     VARCHAR(50) NOT NULL DEFAULT 'ACTIVE',
 
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL,
     created_by VARCHAR(255) NOT NULL,
-
     updated_at TIMESTAMP,
     updated_by VARCHAR(255)
 );
 
-CREATE INDEX idx_employees_email ON employees(email);
 CREATE INDEX idx_employees_department ON employees(department);
 CREATE INDEX idx_employees_status ON employees(status);
 
--- =========================================================
--- USERS
--- =========================================================
+
+/* =========================================================
+   USERS
+   ========================================================= */
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
 
@@ -42,59 +42,61 @@ CREATE TABLE users (
     role     VARCHAR(50)  NOT NULL,
 
     employee_id BIGINT UNIQUE,
-
     CONSTRAINT fk_users_employee
         FOREIGN KEY (employee_id)
         REFERENCES employees(id)
         ON DELETE SET NULL
 );
 
--- =========================================================
--- DEPARTMENTS
--- =========================================================
+
+/* =========================================================
+   DEPARTMENTS
+   ========================================================= */
 CREATE TABLE departments (
     id BIGSERIAL PRIMARY KEY,
 
     name VARCHAR(255) NOT NULL UNIQUE,
     description VARCHAR(255),
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP,
     created_by VARCHAR(255),
-
     updated_at TIMESTAMP,
     updated_by VARCHAR(255)
 );
 
--- =========================================================
--- JOBS
--- =========================================================
+
+/* =========================================================
+   JOBS
+   ========================================================= */
 CREATE TABLE jobs (
     id BIGSERIAL PRIMARY KEY,
 
-    title VARCHAR(255) NOT NULL,
-    department VARCHAR(255) NOT NULL,
+    title VARCHAR(255),
+    department VARCHAR(255),
+    employment_type VARCHAR(255),
+    location VARCHAR(255),
 
     description TEXT,
-    responsibilities TEXT,
     required_skills TEXT,
+    responsibilities TEXT,
     qualifications TEXT,
     benefits TEXT,
 
-    employment_type VARCHAR(255),
     experience_required INTEGER,
-
     salary_min DOUBLE PRECISION,
     salary_max DOUBLE PRECISION,
 
-    location VARCHAR(255),
     active BOOLEAN DEFAULT TRUE
 );
 
--- =========================================================
--- APPLICATIONS
--- =========================================================
+
+/* =========================================================
+   APPLICATIONS
+   ========================================================= */
 CREATE TABLE applications (
     id BIGSERIAL PRIMARY KEY,
+
+    job_id BIGINT,
 
     full_name VARCHAR(255),
     email VARCHAR(255),
@@ -117,21 +119,24 @@ CREATE TABLE applications (
     resume_path VARCHAR(255),
 
     status VARCHAR(50),
-    status_updated_at TIMESTAMP,
 
-    interview_scheduled_at TIMESTAMP,
     shortlisted_at TIMESTAMP,
+    interview_scheduled_at TIMESTAMP,
     hired_at TIMESTAMP,
     rejected_at TIMESTAMP,
 
-    job_id BIGINT,
-
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at DATE,
+    status_updated_at DATE
 );
 
--- =========================================================
--- CANDIDATES
--- =========================================================
+CREATE INDEX idx_applications_status ON applications(status);
+CREATE INDEX idx_applications_job_id ON applications(job_id);
+CREATE INDEX idx_applications_created_at ON applications(created_at);
+
+
+/* =========================================================
+   CANDIDATES
+   ========================================================= */
 CREATE TABLE candidates (
     id BIGSERIAL PRIMARY KEY,
 
@@ -146,36 +151,39 @@ CREATE TABLE candidates (
     stage VARCHAR(50)
 );
 
--- =========================================================
--- CANDIDATE NOTES
--- =========================================================
+
+/* =========================================================
+   CANDIDATE NOTES
+   ========================================================= */
 CREATE TABLE candidate_notes (
     id BIGSERIAL PRIMARY KEY,
 
     application_id BIGINT,
     note TEXT,
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP,
     created_by VARCHAR(255)
 );
 
--- =========================================================
--- CANDIDATE SCORES
--- =========================================================
+
+/* =========================================================
+   CANDIDATE SCORES
+   ========================================================= */
 CREATE TABLE candidate_scores (
     id BIGSERIAL PRIMARY KEY,
 
     application_id BIGINT,
 
-    experience_score DOUBLE PRECISION NOT NULL,
-    resume_score     DOUBLE PRECISION NOT NULL,
-    skills_score     DOUBLE PRECISION NOT NULL,
-    final_score      DOUBLE PRECISION NOT NULL
+    skills_score DOUBLE PRECISION,
+    experience_score DOUBLE PRECISION,
+    resume_score DOUBLE PRECISION,
+    final_score DOUBLE PRECISION
 );
 
--- =========================================================
--- ATTENDANCE
--- =========================================================
+
+/* =========================================================
+   ATTENDANCE
+   ========================================================= */
 CREATE TABLE attendance (
     id BIGSERIAL PRIMARY KEY,
 
@@ -188,30 +196,35 @@ CREATE TABLE attendance (
 
     status VARCHAR(50),
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP,
     created_by VARCHAR(255),
-
     updated_at TIMESTAMP,
     updated_by VARCHAR(255),
 
-    CONSTRAINT uk_attendance_employee_date UNIQUE (employee_id, date),
+    CONSTRAINT uk_attendance_employee_date
+        UNIQUE (employee_id, date),
+
     CONSTRAINT fk_attendance_employee
         FOREIGN KEY (employee_id)
         REFERENCES employees(id)
         ON DELETE CASCADE
 );
 
--- =========================================================
--- LEAVE BALANCES
--- =========================================================
+CREATE INDEX idx_attendance_employee ON attendance(employee_id);
+CREATE INDEX idx_attendance_date ON attendance(date);
+
+
+/* =========================================================
+   LEAVE BALANCES
+   ========================================================= */
 CREATE TABLE leave_balances (
     id BIGSERIAL PRIMARY KEY,
 
     employee_id BIGINT NOT NULL,
     type VARCHAR(50),
 
-    total_days INTEGER,
-    used_days INTEGER,
+    total_days INTEGER DEFAULT 0,
+    used_days INTEGER DEFAULT 0,
 
     CONSTRAINT fk_leave_balance_employee
         FOREIGN KEY (employee_id)
@@ -219,24 +232,24 @@ CREATE TABLE leave_balances (
         ON DELETE CASCADE
 );
 
--- =========================================================
--- LEAVE REQUESTS
--- =========================================================
+
+/* =========================================================
+   LEAVE REQUESTS
+   ========================================================= */
 CREATE TABLE leave_requests (
     id BIGSERIAL PRIMARY KEY,
 
     employee_id BIGINT NOT NULL,
+    type VARCHAR(50),
 
     start_date DATE,
     end_date DATE,
 
     reason VARCHAR(255),
-    type VARCHAR(50),
     status VARCHAR(50),
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP,
     created_by VARCHAR(255),
-
     updated_at TIMESTAMP,
     updated_by VARCHAR(255),
 
@@ -246,23 +259,24 @@ CREATE TABLE leave_requests (
         ON DELETE CASCADE
 );
 
--- =========================================================
--- PAYROLL
--- =========================================================
+
+/* =========================================================
+   PAYROLL
+   ========================================================= */
 CREATE TABLE payroll (
     id BIGSERIAL PRIMARY KEY,
 
     employee_id BIGINT NOT NULL,
 
     month VARCHAR(20),
-    year INTEGER NOT NULL,
+    year INTEGER,
 
     base_salary DOUBLE PRECISION,
     allowances DOUBLE PRECISION,
     deductions DOUBLE PRECISION,
     net_pay DOUBLE PRECISION,
 
-    paid BOOLEAN NOT NULL DEFAULT FALSE,
+    paid BOOLEAN DEFAULT FALSE,
     payment_date DATE,
     generated_date DATE,
 
@@ -272,9 +286,13 @@ CREATE TABLE payroll (
         ON DELETE CASCADE
 );
 
--- =========================================================
--- KPIS
--- =========================================================
+CREATE INDEX idx_payroll_employee ON payroll(employee_id);
+CREATE INDEX idx_payroll_year_month ON payroll(year, month);
+
+
+/* =========================================================
+   KPIS
+   ========================================================= */
 CREATE TABLE kpis (
     id BIGSERIAL PRIMARY KEY,
 
@@ -283,9 +301,10 @@ CREATE TABLE kpis (
     weight DOUBLE PRECISION
 );
 
--- =========================================================
--- EMPLOYEE KPIS
--- =========================================================
+
+/* =========================================================
+   EMPLOYEE KPIS
+   ========================================================= */
 CREATE TABLE employee_kpis (
     id BIGSERIAL PRIMARY KEY,
 
@@ -308,38 +327,42 @@ CREATE TABLE employee_kpis (
         ON DELETE CASCADE
 );
 
--- =========================================================
--- PERFORMANCE REVIEWS
--- =========================================================
+
+/* =========================================================
+   PERFORMANCE REVIEWS
+   ========================================================= */
 CREATE TABLE performance_reviews (
     id BIGSERIAL PRIMARY KEY,
 
     employee_id BIGINT NOT NULL,
-
-    review_type VARCHAR(50),
     cycle VARCHAR(255),
-
-    self_rating INTEGER,
-    manager_rating INTEGER,
-    final_score DOUBLE PRECISION,
-
-    self_comments TEXT,
-    manager_comments TEXT,
-
+    review_type VARCHAR(50),
     status VARCHAR(50),
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    self_rating INTEGER,
+    self_comments TEXT,
+
+    manager_rating INTEGER,
+    manager_comments TEXT,
+
+    final_score DOUBLE PRECISION,
+
+    created_at TIMESTAMP,
     updated_at TIMESTAMP,
 
-    CONSTRAINT fk_performance_review_employee
+    CONSTRAINT fk_performance_employee
         FOREIGN KEY (employee_id)
         REFERENCES employees(id)
         ON DELETE CASCADE
 );
 
--- =========================================================
--- INTERVIEWS
--- =========================================================
+CREATE INDEX idx_performance_employee ON performance_reviews(employee_id);
+CREATE INDEX idx_performance_status ON performance_reviews(status);
+
+
+/* =========================================================
+   INTERVIEWS
+   ========================================================= */
 CREATE TABLE interviews (
     id BIGSERIAL PRIMARY KEY,
 
@@ -349,16 +372,22 @@ CREATE TABLE interviews (
     candidate_name VARCHAR(255),
     interviewer_name VARCHAR(255),
 
+    type VARCHAR(255),
     interview_type VARCHAR(255),
     location_or_link VARCHAR(255),
 
+    date DATE,
+    time TIME,
     interview_date_time TIMESTAMP,
+    interview_scheduled_at TIMESTAMP,
+
     notes TEXT
 );
 
--- =========================================================
--- OFFER LETTERS
--- =========================================================
+
+/* =========================================================
+   OFFER LETTERS
+   ========================================================= */
 CREATE TABLE offer_letters (
     id BIGSERIAL PRIMARY KEY,
 
@@ -371,43 +400,47 @@ CREATE TABLE offer_letters (
     file_path VARCHAR(255)
 );
 
--- =========================================================
--- ONBOARDING FLOWS
--- =========================================================
+
+/* =========================================================
+   ONBOARDING FLOWS
+   ========================================================= */
 CREATE TABLE onboarding_flows (
     id BIGSERIAL PRIMARY KEY,
 
     employee_id BIGINT NOT NULL,
 
-    completed BOOLEAN NOT NULL DEFAULT FALSE,
-
-    created_at DATE DEFAULT CURRENT_DATE,
+    created_at DATE,
     completed_at DATE,
+    completed BOOLEAN DEFAULT FALSE,
 
-    CONSTRAINT fk_onboarding_flow_employee
+    CONSTRAINT fk_onboarding_employee
         FOREIGN KEY (employee_id)
         REFERENCES employees(id)
         ON DELETE CASCADE
 );
 
--- =========================================================
--- ONBOARDING TEMPLATE TASKS
--- =========================================================
+
+/* =========================================================
+   ONBOARDING TEMPLATE TASKS
+   ========================================================= */
 CREATE TABLE onboarding_template_tasks (
     id BIGSERIAL PRIMARY KEY,
 
     title VARCHAR(255),
     description TEXT,
-
-    required BOOLEAN NOT NULL DEFAULT TRUE,
+    required BOOLEAN DEFAULT TRUE,
     sort_order INTEGER
 );
 
--- =========================================================
--- ONBOARDING TASKS
--- =========================================================
+
+/* =========================================================
+   ONBOARDING TASKS
+   ========================================================= */
 CREATE TABLE onboarding_tasks (
     id BIGSERIAL PRIMARY KEY,
+
+    employee_id BIGINT,
+    flow_id BIGINT,
 
     title VARCHAR(255) NOT NULL,
     description TEXT,
@@ -415,11 +448,8 @@ CREATE TABLE onboarding_tasks (
     assigned_to VARCHAR(255) NOT NULL,
     due_date DATE,
 
-    completed BOOLEAN NOT NULL DEFAULT FALSE,
-    required  BOOLEAN NOT NULL DEFAULT TRUE,
-
-    employee_id BIGINT,
-    flow_id BIGINT,
+    required BOOLEAN DEFAULT TRUE,
+    completed BOOLEAN DEFAULT FALSE,
 
     file_path VARCHAR(255),
 
@@ -429,15 +459,15 @@ CREATE TABLE onboarding_tasks (
         ON DELETE CASCADE
 );
 
--- =========================================================
--- EMAIL LOGS
--- =========================================================
+
+/* =========================================================
+   EMAIL LOGS
+   ========================================================= */
 CREATE TABLE email_logs (
     id BIGSERIAL PRIMARY KEY,
 
     to_email VARCHAR(255),
     subject VARCHAR(255),
     body TEXT,
-
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    timestamp TIMESTAMP
 );
