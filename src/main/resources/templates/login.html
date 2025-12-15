@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Login | EMS</title>
+    <title>Login | Employee Management System</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -10,7 +10,7 @@
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Custom Global Styles -->
+    <!-- Custom Styles -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
 
     <style>
@@ -24,115 +24,66 @@
         }
 
         .login-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
+            background: #ffffff;
             border-radius: 14px;
             padding: 35px;
             width: 100%;
             max-width: 400px;
-            box-shadow: var(--shadow-md);
-            animation: fadeIn 0.4s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
         }
 
-        .login-card h3 {
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .form-control {
-            border-radius: 10px;
-            padding: 10px 14px;
+        .logo {
+            font-size: 26px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
         }
 
         .login-btn {
-            padding: 10px;
             font-weight: 600;
-            border-radius: 10px;
-        }
-
-        .logo-circle {
-            width: 60px;
-            height: 60px;
-            background: var(--primary-light);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px auto;
-            color: var(--primary);
-            font-size: 14px;
-            font-weight: 600;
-            text-align: center;
-            line-height: 1.2;
-            padding: 6px;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 
-<body class="light-mode">
+<body>
 
 <div class="login-card">
 
-    <div class="logo-circle">TheComputationalCore</div>
+    <div class="logo">EMS</div>
+    <p class="text-center text-muted mb-4">Employee Management System</p>
 
-    <h3 class="text-center mb-3">Employee Management System</h3>
-
-    <p class="text-center text-muted mb-4" style="margin-top:-10px;">
-        Sign in to continue
-    </p>
-
-    <!-- ===================== -->
-    <!-- LOGIN FORM -->
-    <!-- ===================== -->
     <form th:action="@{/do-login}" method="post">
 
-        <!-- ✅ REQUIRED CSRF TOKEN -->
-        <input type="hidden"
-               th:name="${_csrf.parameterName}"
-               th:value="${_csrf.token}" />
-
         <div class="mb-3">
-            <label class="fw-semibold">Username</label>
-            <input class="form-control"
-                   type="text"
+            <label class="form-label fw-semibold">Username</label>
+            <input type="text"
                    name="username"
-                   placeholder="Enter username"
-                   required
-                   autofocus>
-        </div>
-
-        <div class="mb-3">
-            <label class="fw-semibold">Password</label>
-            <input class="form-control"
-                   type="password"
-                   name="password"
-                   placeholder="Enter password"
+                   class="form-control"
+                   placeholder="admin / hr / employee"
                    required>
         </div>
 
-        <button class="btn btn-primary w-100 login-btn" type="submit">
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Password</label>
+            <input type="password"
+                   name="password"
+                   class="form-control"
+                   placeholder="employee123"
+                   required>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 login-btn">
             Login
         </button>
 
-        <!-- ===================== -->
         <!-- ERROR MESSAGE -->
-        <!-- ===================== -->
-        <div th:if="${param.error}"
-             class="alert alert-danger mt-3 py-2 text-center">
+        <div th:if="${param.error}" class="alert alert-danger mt-3 py-2">
             Invalid username or password
         </div>
 
-        <!-- ===================== -->
         <!-- LOGOUT MESSAGE -->
-        <!-- ===================== -->
-        <div th:if="${param.logout}"
-             class="alert alert-info mt-3 py-2 text-center">
-            Logged out successfully
+        <div th:if="${param.logout}" class="alert alert-info mt-3 py-2">
+            You have been logged out successfully
         </div>
 
     </form>
