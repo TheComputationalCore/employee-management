@@ -293,4 +293,3 @@ This architecture:
 - Demonstrates **real-world engineering maturity**
 - Is ideal for **enterprise-grade HR platforms**
 
-> This document can be confidently used in **technical interviews, system design rounds, and portfolio reviews**.
