@@ -1,267 +1,293 @@
-# 🏢 Employee Management System (EMS)
 
-A **production-grade, enterprise-ready Employee Management System** built with **Spring Boot 4**, designed to handle the **complete employee lifecycle** — from recruitment and AI-powered resume screening to payroll, performance reviews, attendance, leave management, and onboarding.
+# 🚀 Employee Management System (EMS)
 
-This project demonstrates **real-world architecture**, **secure role-based access**, **AI-assisted recruitment**, and **cloud-native deployment** using **Docker, Render, and Neon PostgreSQL**.
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)
+![PostgreSQL](https://img.shields.io/badge/Database-Neon%20Postgres-blue)
+![Maven](https://img.shields.io/badge/Build-Maven-blueviolet)
+![License](https://img.shields.io/badge/License-MIT-green)
+![CI](https://github.com/TheComputationalCore/employee-management/actions/workflows/ci.yml/badge.svg)
+![Security](https://img.shields.io/badge/Security-Spring%20Security-red)
 
----
-
-## 🌐 Live Deployment
-
-🔗 **Production URL**:  
-https://employee-management-qhfh.onrender.com
-
-> Deployed on **Render** with **Neon Serverless PostgreSQL**
+> **Enterprise‑grade Employee Management System** with Recruitment, HR, Payroll, Performance, Attendance, Leave, Onboarding and AI‑assisted Resume Screening — built using **Spring Boot + Thymeleaf + Neon PostgreSQL**.
 
 ---
 
-## 🎯 Key Highlights
+## 📌 Table of Contents
 
-✔ Enterprise-grade HRMS architecture  
-✔ Role-based access: **Admin / HR / Employee**  
-✔ AI-powered resume parsing & scoring  
-✔ End-to-end recruitment pipeline  
-✔ Payroll generation & export  
-✔ Performance reviews (Self + Manager)  
-✔ Attendance & leave management  
-✔ Secure authentication (Spring Security)  
-✔ CI/CD with GitHub Actions  
-✔ Dockerized & cloud-ready  
-
----
-
-## 🧑‍💼 User Roles & Capabilities
-
-### 👑 Admin
-- Full system access
-- Manage employees & departments
-- Recruitment pipeline oversight
-- Payroll generation & approvals
-- Performance cycle creation
-- Dashboard & analytics
-
-### 🧑‍💻 HR
-- Employee & department management
-- Recruitment & interviews
-- AI-based candidate shortlisting
-- Onboarding workflows
-- Leave approvals
-- Payroll operations
-
-### 👤 Employee
-- View dashboard
-- Clock-in / clock-out attendance
-- Apply for leave
-- View payroll slips
-- Self performance reviews
-- Complete onboarding tasks
+- [Overview](#-overview)
+- [Key Features](#-key-features)
+- [User Roles](#-user-roles)
+- [Screenshots](#-screenshots)
+- [Architecture](#-architecture)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Database](#-database)
+- [Security](#-security)
+- [API Documentation](#-api-documentation)
+- [Setup & Installation](#-setup--installation)
+- [Environment Variables](#-environment-variables)
+- [CI/CD & Workflows](#-cicd--workflows)
+- [Deployment](#-deployment)
+- [Future Enhancements](#-future-enhancements)
+- [License](#-license)
 
 ---
 
-## 🧠 AI-Powered Recruitment
+## 🔍 Overview
 
-The system includes **resume intelligence** features:
+The **Employee Management System (EMS)** is a full‑stack, production‑ready HR platform designed to handle:
 
-- 📄 Resume upload (PDF/DOCX)
-- 🔍 Skill extraction
-- 🧮 Experience & education parsing
-- 🤖 AI match scoring (0–100)
-- ❌ Missing skill detection
-- ⚡ Smart auto-shortlisting
-- 📝 AI-generated candidate summaries
+- End‑to‑end recruitment lifecycle
+- Employee operations
+- Performance & KPI management
+- Payroll and attendance
+- Leave workflows
+- Secure role‑based access
+- AI‑powered resume parsing & scoring
 
-This enables **data-driven hiring decisions**.
+This project reflects **real‑world enterprise design patterns** with modular services, layered architecture, and scalable database design.
 
 ---
 
-## 🧩 Core Modules
+## ✨ Key Features
 
-| Module | Description |
-|------|------------|
-| Dashboard | Analytics & KPIs |
-| Employee | CRUD, search, soft delete |
-| Attendance | Clock-in / clock-out |
-| Leave | Apply, approve, analytics |
-| Payroll | Generate, export, mark paid |
-| Recruitment | Jobs, applications, interviews |
-| Performance | Self & manager reviews |
-| Onboarding | Tasks & templates |
-| AI Engine | Resume scoring & insights |
-| Security | Auth, roles, CSRF |
-| Audit | CreatedBy / UpdatedBy tracking |
+### 👥 Employee Management
+- Create, update, deactivate employees
+- Department & role assignment
+- Secure user linkage
+
+### 📄 Recruitment & Hiring
+- Job postings & careers portal
+- Resume upload (PDF)
+- AI‑based resume parsing & scoring
+- Shortlisting & interview scheduling
+- Offer letter PDF generation
+
+### 🤖 AI Resume Analysis
+- Skill extraction
+- Experience detection
+- Missing skill gap analysis
+- AI score (0–100)
+
+### 🕒 Attendance
+- Check‑in / check‑out
+- Daily attendance records
+- Status: Present / Absent / Half‑day
+
+### 🏖 Leave Management
+- Apply & approve leave
+- Leave balance tracking
+- Analytics dashboard
+- Excel & PDF exports
+
+### 💰 Payroll
+- Monthly payroll generation
+- Deductions & allowances
+- Net salary computation
+- Employee payroll view
+
+### 📈 Performance & KPIs
+- Self & manager reviews
+- KPI assignment
+- Weighted scoring
+- Review lifecycle tracking
+
+### 🧩 Onboarding
+- Onboarding flows
+- Task templates
+- File uploads
+- Completion tracking
+
+---
+
+## 👤 User Roles
+
+| Role | Capabilities |
+|----|----|
+| **ADMIN** | Full system access, configuration |
+| **HR** | Recruitment, onboarding, payroll, performance |
+| **EMPLOYEE** | Attendance, leave, payroll, self‑reviews |
+
+---
+
+## 🖼 Screenshots
+
+### Dashboard
+![Dashboard](docs/screenshots/dashboard1.png)
+![Dashboard](docs/screenshots/dashboard2.png)
+
+### Recruitment & AI
+![Applications](docs/screenshots/applications_1.png)
+![AI Score](docs/screenshots/ai_score_breakdown.png)
+![Smart Shortlist](docs/screenshots/smart_shortlist.png)
+
+### Employees & HR
+![Employees](docs/screenshots/employees1.png)
+![Departments](docs/screenshots/departments1.png)
+
+### Attendance & Leave
+![Attendance](docs/screenshots/attendance1.png)
+![Leave](docs/screenshots/leave_requests.png)
+
+### Payroll & Performance
+![Payroll](docs/screenshots/employee_payroll.png)
+![Performance](docs/screenshots/performance_reviews_1.png)
+
+---
+
+## 📐 Architecture
+
+### High‑Level Architecture (Mermaid)
+
+```mermaid
+flowchart TD
+    UI[Thymeleaf UI]
+    SEC[Spring Security]
+    CTRL[Controllers]
+    SVC[Service Layer]
+    REPO[JPA Repositories]
+    DB[(Neon PostgreSQL)]
+    FS[File Storage]
+
+    UI --> SEC --> CTRL --> SVC --> REPO --> DB
+    SVC --> FS
+```
+
+### Layered Design
+
+- **Controller** → Request handling
+- **Service** → Business logic
+- **Repository** → Data access
+- **Entity** → Domain model
 
 ---
 
 ## 🛠 Tech Stack
 
-### Backend
-- Java 17
-- Spring Boot 4
-- Spring MVC
-- Spring Data JPA
-- Spring Security (Session + CSRF)
-- MapStruct
-- Lombok
-
-### Frontend
-- Thymeleaf
-- Thymeleaf Layout Dialect
-- HTML / CSS
-
-### Database
-- **Neon PostgreSQL (Production)**
-- H2 (Dev)
-
-### DevOps
-- Docker
-- GitHub Actions (CI)
-- Render (Deployment)
-
-### Docs & Utilities
-- Swagger / OpenAPI
-- PDFBox
-- OpenPDF
-- Apache POI
+- **Backend**: Java 17, Spring Boot 3
+- **Frontend**: Thymeleaf, HTML, CSS
+- **Security**: Spring Security, BCrypt
+- **Database**: Neon PostgreSQL, H2 (dev)
+- **ORM**: Spring Data JPA / Hibernate
+- **Build**: Maven
+- **CI/CD**: GitHub Actions
+- **Docs**: Swagger OpenAPI
 
 ---
 
-## 🔐 Security Overview
+## 🗂 Project Structure
 
-- Session-based authentication
-- Cookie-based CSRF protection
-- Role-based authorization
-- Secure password hashing (BCrypt)
-- Auditing (createdBy / updatedBy)
-- Dev-only data seeding
-
----
-
-## 🧪 Default Dev Credentials (DEV profile only)
-
-| Username | Role | Password |
-|--------|------|----------|
-| admin | ADMIN | employee123 |
-| hr | HR | employee123 |
-| employee | EMPLOYEE | employee123 |
-
-> ⚠️ **Disabled in production**
-
----
-
-## ⚙️ Configuration & Profiles
-
-### Profiles
-- `dev` → H2 + Flyway
-- `prod` → Neon PostgreSQL (no Flyway)
-
-Set profile via environment variable:
-
-```bash
-SPRING_PROFILES_ACTIVE=dev
+```text
+employee-management/
+├── src/main/java/com/empmgmt
+│   ├── security
+│   ├── model
+│   ├── repository
+│   ├── service
+│   └── util
+├── src/main/resources
+│   ├── templates
+│   ├── static
+│   └── application*.properties
+├── docs/screenshots
+├── .github/workflows
+├── Dockerfile
+└── pom.xml
 ```
 
 ---
 
-## 🐳 Docker
+## 🗄 Database
 
-### Build
-```bash
-docker build -t employee-management .
-```
-
-### Run
-```bash
-docker run -p 8080:8080 employee-management
-```
+- **Production**: Neon PostgreSQL
+- **Dev**: H2 In‑Memory
+- **Schema Management**:
+  - Dev → Flyway enabled
+  - Prod → Hibernate `ddl-auto=update`
 
 ---
 
-## 🔄 CI/CD
+## 🔐 Security
 
-- Automated build via **GitHub Actions**
-- Docker image build
-- Production deployment on Render
-
-Workflow location:
-```
-.github/workflows/
-```
+- Spring Security form‑login
+- Role‑based authorization
+- CSRF protection (cookie‑based)
+- BCrypt password encoding
 
 ---
 
 ## 📘 API Documentation
 
-- **Detailed API docs**:  
-  👉 [api.md](./api.md)
+Swagger UI available at:
 
-- Swagger UI (runtime):
-  - `/swagger-ui.html`
-  - `/v3/api-docs`
+```
+/swagger-ui.html
+```
+
+OpenAPI JSON:
+
+```
+/v3/api-docs
+```
+
+> Full API reference can be added under `/docs/api.md`
 
 ---
 
-## 🗂 Repository Structure
+## ⚙ Setup & Installation
 
-```
-employee-management/
-├── README.md
-├── api.md
-├── pom.xml
-├── Dockerfile
-├── .github/workflows/
-├── src/
-│   └── main/
-│       ├── java/com/empmgmt/
-│       ├── resources/
-│       └── templates/
-└── target/
-```
-
----
-
-## 📸 Screenshots
-
-Screenshots are stored separately for documentation purposes and are **not part of runtime uploads**.
-
-Recommended structure:
-```
-docs/images/
+```bash
+git clone https://github.com/TheComputationalCore/employee-management.git
+cd employee-management
+mvn clean install
+mvn spring-boot:run
 ```
 
 ---
 
-## 📜 License
+## 🔑 Environment Variables
+
+```env
+SPRING_PROFILES_ACTIVE=prod
+SPRING_DATASOURCE_URL=
+SPRING_DATASOURCE_USERNAME=
+SPRING_DATASOURCE_PASSWORD=
+PORT=8080
+```
+
+---
+
+## 🔄 CI/CD & Workflows
+
+- **ci.yml** → Build & test
+- **codeql-analysis.yml** → Security scanning
+- **dependabot.yml** → Dependency updates
+
+---
+
+## 🚀 Deployment
+
+- Docker‑ready
+- Compatible with **Render**, **Railway**, **AWS**, **GCP**
+- Single JAR runtime
+
+---
+
+## 🧠 Future Enhancements
+
+- JWT‑based REST APIs
+- Microservices split
+- React frontend
+- Advanced AI resume scoring
+- Audit logs
+
+---
+
+## 📄 License
 
 This project is licensed under the **MIT License**.
 
-See: [LICENSE](./LICENSE)
-
 ---
 
-## 🚀 Why This Project Stands Out
-
-- Not a tutorial — a **real HRMS**
-- Covers **full employee lifecycle**
-- Demonstrates **secure, scalable design**
-- Includes **AI-driven features**
-- Cloud-deployed & production-ready
-
-Perfect for:
-- 💼 Portfolio projects
-- 🧑‍💻 Backend engineering roles
-- 🏢 Enterprise application demos
-
----
-
-## 🤝 Contributing
-
-Pull requests are welcome.  
-For major changes, please open an issue first to discuss proposed updates.
-
----
-
-## ⭐ Final Note
-
-This project reflects **real-world engineering practices**, not just framework usage.
-
-If you find it useful, consider giving it a ⭐ on GitHub.
+### ⭐ If you like this project, give it a star!
