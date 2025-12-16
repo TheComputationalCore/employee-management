@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  employee-management:
+    container_name: employee-management-prod
+    image: employee-management:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+
+    environment:
+      # ===============================
+      # SPRING PROFILE
+      # ===============================
+      SPRING_PROFILES_ACTIVE: prod
+
+      # ===============================
+      # DATABASE (Neon PostgreSQL)
+      # ===============================
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+
+      # ===============================
+      # JVM (Production Optimized)
+      # ===============================
+      JAVA_TOOL_OPTIONS: >
+        -Xms256m
+        -Xmx512m
+        -XX:+UseG1GC
+        -XX:MaxMetaspaceSize=256m
+        -XX:+ExitOnOutOfMemoryError
+
+    volumes:
+      # Persistent storage for resumes, offers, onboarding docs
+      - ./uploads:/app/uploads
+
+    restart: always
+
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - employee-prod-net
+
+networks:
+  employee-prod-net:
+    driver: bridge
