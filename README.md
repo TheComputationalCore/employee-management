@@ -10,13 +10,7 @@
 ![Build](https://img.shields.io/github/actions/workflow/status/TheComputationalCore/employee-management/ci.yml?branch=main)
 ![Tests](https://img.shields.io/badge/Tests-Passing-success)
 ![Code Quality](https://img.shields.io/badge/Code%20Quality-Enterprise--Grade-blue)
-![Repo Size](https://img.shields.io/github/repo-size/TheComputationalCore/employee-management)
-![Last Commit](https://img.shields.io/github/last-commit/TheComputationalCore/employee-management)
-![Commit Activity](https://img.shields.io/github/commit-activity/m/TheComputationalCore/employee-management)
-![Issues](https://img.shields.io/github/issues/TheComputationalCore/employee-management)
-![Pull Requests](https://img.shields.io/github/issues-pr/TheComputationalCore/employee-management)
 ![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-success)
-![Swagger](https://img.shields.io/badge/API-Swagger-blue?logo=swagger)
 ![REST](https://img.shields.io/badge/Architecture-RESTful-green)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-success)](https://employee-management-qhfh.onrender.com)
 ![Monolith](https://img.shields.io/badge/Architecture-Modular%20Monolith-blueviolet)
@@ -27,7 +21,7 @@
 ![ER Diagram](https://img.shields.io/badge/DB-ER%20Diagram-orange)
 ![Portfolio](https://img.shields.io/badge/Portfolio-Production%20Ready-success)
 ![Enterprise](https://img.shields.io/badge/Level-Enterprise%20Grade-blue)
-![Interview Ready](https://img.shields.io/badge/Interview-Ready-brightgreen)
+
 
 
 A **Employee Management System** built with **Spring Boot, Thymeleaf, Spring Security, PostgreSQL (Neon)** and deployed on **Render**.  
