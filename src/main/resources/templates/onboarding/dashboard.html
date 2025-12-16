@@ -4,12 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{/layout/main}">
 
-<head>
-    <title>Onboarding Dashboard</title>
-</head>
-
-<body>
-
+<!-- ================= CONTENT ================= -->
 <div layout:fragment="content">
 
     <h2 class="fw-semibold mb-4">Onboarding Dashboard</h2>
@@ -22,18 +17,21 @@
                 <p class="text-muted mb-0">Active Onboardings</p>
             </div>
         </div>
+
         <div class="col-md-3">
             <div class="card border-0 shadow-sm p-4 text-center">
                 <h2 class="fw-bold text-success" th:text="${stats.completed}">0</h2>
                 <p class="text-muted mb-0">Completed</p>
             </div>
         </div>
+
         <div class="col-md-3">
             <div class="card border-0 shadow-sm p-4 text-center">
                 <h2 class="fw-bold text-danger" th:text="${stats.overdue}">0</h2>
                 <p class="text-muted mb-0">Overdue Tasks</p>
             </div>
         </div>
+
         <div class="col-md-3">
             <div class="card border-0 shadow-sm p-4 text-center">
                 <h2 class="fw-bold text-warning" th:text="${stats.pending}">0</h2>
@@ -101,7 +99,7 @@
 
 </div>
 
-<!-- PAGE SCRIPTS -->
+<!-- ================= PAGE SCRIPTS ================= -->
 <div layout:fragment="scripts">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -128,5 +126,4 @@
     </script>
 </div>
 
-</body>
 </html>
