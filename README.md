@@ -5,7 +5,7 @@
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-blue)
 ![Docker](https://img.shields.io/badge/Docker-Ready-blue)
-![CI](https://github.com/<TheComputationalCore>/employee-management/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/TheComputationalCore/employee-management/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 A **full‑stack, enterprise‑grade Employee Management System** built with **Spring Boot, Thymeleaf, Spring Security, PostgreSQL (Neon)** and deployed on **Render**.  
