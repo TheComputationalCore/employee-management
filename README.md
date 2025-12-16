@@ -5,13 +5,13 @@
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-blue)
 ![Docker](https://img.shields.io/badge/Docker-Ready-blue)
-![CI](https://github.com/<your-username>/employee-management/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/<TheComputationalCore>/employee-management/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 A **full‑stack, enterprise‑grade Employee Management System** built with **Spring Boot, Thymeleaf, Spring Security, PostgreSQL (Neon)** and deployed on **Render**.  
 This system covers the **complete employee lifecycle** — from recruitment and onboarding to payroll, performance reviews, and analytics.
 
-🌐 **Live Demo**: https://employee-management-qhfh.onrender.com
+🌐 **Live Deployment**: https://employee-management-qhfh.onrender.com
 
 ---
 
@@ -274,13 +274,5 @@ This project is licensed under the **MIT License**.
 You are free to use, modify, and distribute this project.
 
 ---
-
-## ⭐ Final Note
-
-This project is:
-- ✔ Production‑ready
-- ✔ Recruiter‑ready
-- ✔ Portfolio‑grade
-- ✔ Enterprise‑style architecture
 
 If you like this project, please ⭐ the repository!
