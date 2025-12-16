@@ -278,7 +278,7 @@ SPRING_DATASOURCE_PASSWORD=secret
 SPRING_PROFILES_ACTIVE=prod
 ```
 
-## ⚙️ Environment Profiles
+##  Environment Profiles
 
 | Profile | DB | Usage |
 |------|----|------|
