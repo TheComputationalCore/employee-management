@@ -11,36 +11,26 @@ import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-    /* =========================================================
-       BASIC LOOKUPS
-    ========================================================= */
-
     boolean existsByEmail(String email);
 
     Optional<Employee> findByEmail(String email);
 
-    Page<Employee> findByStatus(EmployeeStatus status, Pageable pageable);
-
-    /* =========================================================
-       ACTIVE EMPLOYEE SEARCH (SAFE FOR POSTGRES + NEON)
-       ✔ No LOWER() on nullable params
-       ✔ No BYTEA binding
-       ✔ NULL & empty-safe
-    ========================================================= */
     @Query("""
         SELECT e FROM Employee e
         WHERE e.status = com.empmgmt.model.EmployeeStatus.ACTIVE
         AND (
             :search IS NULL OR
-            LOWER(e.firstName) LIKE CONCAT('%', LOWER(:search), '%') OR
-            LOWER(e.lastName)  LIKE CONCAT('%', LOWER(:search), '%') OR
-            LOWER(e.email)     LIKE CONCAT('%', LOWER(:search), '%')
+            e.firstName ILIKE CONCAT('%', :search, '%') OR
+            e.lastName  ILIKE CONCAT('%', :search, '%') OR
+            e.email     ILIKE CONCAT('%', :search, '%')
         )
         AND (:department IS NULL OR e.department = :department)
-    """)
+        """)
     Page<Employee> searchActiveEmployees(
             String search,
             String department,
             Pageable pageable
     );
+
+    Page<Employee> findByStatus(EmployeeStatus status, Pageable pageable);
 }
