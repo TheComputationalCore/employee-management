@@ -10,6 +10,7 @@ import com.empmgmt.model.EmployeeStatus;
 import com.empmgmt.repository.EmployeeRepository;
 import com.empmgmt.security.service.CustomUserDetails;
 import com.empmgmt.service.EmployeeService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,16 +26,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeMapper mapper;
 
     /* =========================================================
-       SAFE SORT PARSER (Prevents crashes & SQL injection)
-    ========================================================= */
+       SAFE SORT PARSER
+       ========================================================= */
     private Sort getSafeSort(String sortValue) {
-
         if (sortValue == null || !sortValue.contains(",")) {
             return Sort.by(Sort.Direction.ASC, "id");
         }
 
         String[] arr = sortValue.split(",");
-
         String field = arr[0].trim();
         String direction = arr.length > 1 ? arr[1].trim() : "asc";
 
@@ -45,8 +44,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /* =========================================================
-       CREATE EMPLOYEE
-    ========================================================= */
+       CREATE
+       ========================================================= */
     @Override
     public EmployeeDTO createEmployee(EmployeeDTO dto) {
 
@@ -61,8 +60,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /* =========================================================
-       UPDATE EMPLOYEE
-    ========================================================= */
+       UPDATE
+       ========================================================= */
     @Override
     public EmployeeDTO updateEmployee(Long id, EmployeeDTO dto) {
 
@@ -86,8 +85,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /* =========================================================
-       SOFT DELETE
-    ========================================================= */
+       SOFT DELETE / RESTORE
+       ========================================================= */
     @Override
     public void softDeleteEmployee(Long id) {
 
@@ -98,9 +97,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         repo.save(employee);
     }
 
-    /* =========================================================
-       RESTORE
-    ========================================================= */
     @Override
     public void restoreEmployee(Long id) {
 
@@ -112,8 +108,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /* =========================================================
-       GET SINGLE EMPLOYEE
-    ========================================================= */
+       GET ONE
+       ========================================================= */
     @Override
     public EmployeeDTO getEmployee(Long id) {
 
@@ -123,60 +119,72 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /* =========================================================
-       SEARCH + PAGINATION (POSTGRES / NEON SAFE)
-    ========================================================= */
+       SEARCH (NEON / POSTGRES SAFE)
+       ========================================================= */
     @Override
-public PaginatedResponse<EmployeeDTO> searchEmployees(EmployeeSearchRequest req) {
+    public PaginatedResponse<EmployeeDTO> searchEmployees(EmployeeSearchRequest req) {
 
-    Sort sort = getSafeSort(req.getSort());
-    Pageable pageable = PageRequest.of(req.getPage(), req.getSize(), sort);
-
-    String search = req.getSearch();
-    String department = req.getDepartment();
-
-    Page<Employee> page;
-
-    if (search != null && !search.isBlank()) {
-        page = repo.findByStatusAndFirstNameContainingIgnoreCaseOrStatusAndLastNameContainingIgnoreCaseOrStatusAndEmailContainingIgnoreCase(
-                EmployeeStatus.ACTIVE, search,
-                EmployeeStatus.ACTIVE, search,
-                EmployeeStatus.ACTIVE, search,
-                pageable
+        Pageable pageable = PageRequest.of(
+                req.getPage(),
+                req.getSize(),
+                getSafeSort(req.getSort())
         );
-    } else if (department != null && !department.isBlank()) {
-        page = repo.findByStatusAndDepartmentContainingIgnoreCaseAndFirstNameContainingIgnoreCase(
-                EmployeeStatus.ACTIVE,
-                department,
-                "",
-                pageable
-        );
-    } else {
-        page = repo.findByStatus(EmployeeStatus.ACTIVE, pageable);
+
+        Page<Employee> page;
+
+        if (req.getSearch() != null && !req.getSearch().isBlank()) {
+            page = repo.findByStatusAndFirstNameContainingIgnoreCaseOrStatusAndLastNameContainingIgnoreCaseOrStatusAndEmailContainingIgnoreCase(
+                    EmployeeStatus.ACTIVE, req.getSearch(),
+                    EmployeeStatus.ACTIVE, req.getSearch(),
+                    EmployeeStatus.ACTIVE, req.getSearch(),
+                    pageable
+            );
+        } else if (req.getDepartment() != null && !req.getDepartment().isBlank()) {
+            page = repo.findByStatusAndDepartmentContainingIgnoreCase(
+                    EmployeeStatus.ACTIVE,
+                    req.getDepartment(),
+                    pageable
+            );
+        } else {
+            page = repo.findByStatus(EmployeeStatus.ACTIVE, pageable);
+        }
+
+        return PaginatedResponse.<EmployeeDTO>builder()
+                .content(page.getContent().stream().map(mapper::toDTO).toList())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .build();
     }
 
-    return PaginatedResponse.<EmployeeDTO>builder()
-            .content(page.getContent().stream().map(mapper::toDTO).toList())
-            .page(page.getNumber())
-            .size(page.getSize())
-            .totalElements(page.getTotalElements())
-            .totalPages(page.getTotalPages())
-            .build();
-}
-
     /* =========================================================
-       GET ALL (ADMIN / INTERNAL USE)
-    ========================================================= */
+       GET ALL
+       ========================================================= */
     @Override
     public List<EmployeeDTO> getAllEmployees() {
 
-        return repo.findAll().stream()
+        return repo.findAll()
+                .stream()
                 .map(mapper::toDTO)
                 .toList();
     }
 
     /* =========================================================
-       AUTH → EMPLOYEE ID
-    ========================================================= */
+       EMAIL → EMPLOYEE (REQUIRED)
+       ========================================================= */
+    @Override
+    public Employee getByEmail(String email) {
+
+        return repo.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Employee not found for email: " + email)
+                );
+    }
+
+    /* =========================================================
+       AUTH → EMPLOYEE ID (FINAL FIX)
+       ========================================================= */
     @Override
     public Long getEmployeeIdFromAuth() {
 
