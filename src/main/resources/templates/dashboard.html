@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{/layout/main}">
 
-<main layout:fragment="content" class="dashboard px-4">
+<div layout:fragment="content" class="dashboard px-4">
 
     <h2 class="fw-semibold mb-4">Dashboard</h2>
 
@@ -15,7 +15,7 @@
                 <div class="d-flex justify-content-between">
                     <div>
                         <p class="text-muted small mb-1">Total Employees</p>
-                        <h3 th:text="${stats.totalEmployees}">0</h3>
+                        <h3 th:text="${stats.totalEmployees} ?: 0">0</h3>
                     </div>
                     <div class="card-icon"><i data-feather="users"></i></div>
                 </div>
@@ -27,7 +27,7 @@
                 <div class="d-flex justify-content-between">
                     <div>
                         <p class="text-muted small mb-1">Active Onboarding</p>
-                        <h3 th:text="${stats.onboardingActive}">0</h3>
+                        <h3 th:text="${stats.onboardingActive} ?: 0">0</h3>
                     </div>
                     <div class="card-icon"><i data-feather="layers"></i></div>
                 </div>
@@ -39,7 +39,7 @@
                 <div class="d-flex justify-content-between">
                     <div>
                         <p class="text-muted small mb-1">Pending Leaves</p>
-                        <h3 th:text="${stats.pendingLeaves}">0</h3>
+                        <h3 th:text="${stats.pendingLeaves} ?: 0">0</h3>
                     </div>
                     <div class="card-icon"><i data-feather="calendar"></i></div>
                 </div>
@@ -51,7 +51,7 @@
                 <div class="d-flex justify-content-between">
                     <div>
                         <p class="text-muted small mb-1">Open Positions</p>
-                        <h3 th:text="${stats.openJobs}">0</h3>
+                        <h3 th:text="${stats.openJobs} ?: 0">0</h3>
                     </div>
                     <div class="card-icon"><i data-feather="briefcase"></i></div>
                 </div>
@@ -89,19 +89,19 @@
                 <div class="pipeline d-flex justify-content-between text-center">
                     <div>
                         <small class="text-muted">Applied</small>
-                        <h4 th:text="${stats.appliedCount}">0</h4>
+                        <h4 th:text="${stats.appliedCount} ?: 0">0</h4>
                     </div>
                     <div>
                         <small class="text-muted">Screening</small>
-                        <h4 th:text="${stats.screeningCount}">0</h4>
+                        <h4 th:text="${stats.screeningCount} ?: 0">0</h4>
                     </div>
                     <div>
                         <small class="text-muted">Interview</small>
-                        <h4 th:text="${stats.interviewCount}">0</h4>
+                        <h4 th:text="${stats.interviewCount} ?: 0">0</h4>
                     </div>
                     <div>
                         <small class="text-muted">Offers</small>
-                        <h4 th:text="${stats.offerCount}">0</h4>
+                        <h4 th:text="${stats.offerCount} ?: 0">0</h4>
                     </div>
                 </div>
 
@@ -113,18 +113,9 @@
                 <h5 class="mb-3">Onboarding Summary</h5>
 
                 <div th:each="o : ${onboardingList}" class="mb-3 pb-3 border-bottom">
-
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong th:text="${o.employeeName}">Employee</strong>
-                            <small class="text-muted d-block"
-                                   th:text="${o.employeeEmail}">email</small>
-                        </div>
-                        <div style="width:70px;height:70px;">
-                            <canvas th:id="'donut-' + ${o.id}"></canvas>
-                        </div>
-                    </div>
-
+                    <strong th:text="${o.employeeName}">Employee</strong>
+                    <small class="text-muted d-block"
+                           th:text="${o.employeeEmail}">email</small>
                 </div>
 
                 <div th:if="${onboardingList == null or onboardingList.isEmpty()}"
@@ -137,11 +128,9 @@
 
     </div>
 
-</main>
+</div>
 
-<!-- PAGE SCRIPTS -->
 <div layout:fragment="scripts">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script th:inline="javascript">
@@ -175,7 +164,6 @@
             }
         });
     </script>
-
 </div>
 
 </html>
