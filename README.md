@@ -119,25 +119,40 @@ It supports:
 
 ---
 
-## 📐 Architecture
-
-### High‑Level Architecture (Mermaid)
+## 📐 System Architecture
 
 ```mermaid
-graph TD
-    Browser[Browser]
-    Browser -->|HTTP| SpringBoot[Spring Boot App]
-    SpringBoot --> PostgreSQL[(Neon PostgreSQL)]
-    SpringBoot --> FileStorage[File System]
-    SpringBoot --> PDF[PDF Generation]
+flowchart LR
+    Browser -->|HTTP| SpringBoot
+    SpringBoot --> Security
+    SpringBoot --> Services
+    Services --> JPA
+    JPA --> PostgreSQL
+    Services --> FileStorage
 ```
 
 ### Architecture Highlights
-- MVC architecture (Controller → Service → Repository)
-- Spring Security with form login & CSRF
+- MVC + Service + Repository
+- Spring Security (RBAC)
 - JPA + Hibernate
-- Environment‑based configuration
+- Flyway (Dev)
 - Dockerized runtime
+
+---
+
+## 🗄️ ER Diagram (Database Schema)
+
+```mermaid
+erDiagram
+    EMPLOYEE ||--o{ ATTENDANCE : has
+    EMPLOYEE ||--o{ PAYROLL : receives
+    EMPLOYEE ||--o{ PERFORMANCE_REVIEW : evaluated
+    EMPLOYEE ||--o{ LEAVE_REQUEST : requests
+    JOB ||--o{ APPLICATION : receives
+    APPLICATION ||--o{ INTERVIEW : schedules
+    APPLICATION ||--|| OFFER_LETTER : generates
+    USER ||--|| EMPLOYEE : maps
+```
 
 ---
 
