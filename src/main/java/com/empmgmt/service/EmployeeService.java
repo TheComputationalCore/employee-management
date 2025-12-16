@@ -9,6 +9,9 @@ import java.util.List;
 
 public interface EmployeeService {
 
+    /* ===========================
+       CRUD
+       =========================== */
     EmployeeDTO createEmployee(EmployeeDTO dto);
 
     EmployeeDTO updateEmployee(Long id, EmployeeDTO dto);
@@ -19,14 +22,25 @@ public interface EmployeeService {
 
     EmployeeDTO getEmployee(Long id);
 
+    /* ===========================
+       SEARCH & LISTING
+       =========================== */
     PaginatedResponse<EmployeeDTO> searchEmployees(EmployeeSearchRequest req);
 
     List<EmployeeDTO> getAllEmployees();
 
+    /* ===========================
+       🔥 SECURITY / AUTH SUPPORT
+       =========================== */
+
+    /**
+     * Used by controllers that receive email/username from Spring Security
+     */
     Employee getByEmail(String email);
 
-    /* ======================================================
-       AUTH → EMPLOYEE ID (SECURE)
-       ====================================================== */
+    /**
+     * Universal method for all `/my` pages
+     * Attendance, Leaves, Payroll, Performance, Onboarding
+     */
     Long getEmployeeIdFromAuth();
 }
