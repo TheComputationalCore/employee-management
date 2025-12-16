@@ -1,27 +1,32 @@
 
-# 🚀 Employee Management System (EMS) — Enterprise HR Platform
+# 🚀 Employee Management System (EMS) 
 
 ![Java](https://img.shields.io/badge/Java-17%2B-orange?logo=java)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?logo=springboot)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-blue?logo=postgresql)
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue?logo=docker)
+
 ![CI](https://github.com/TheComputationalCore/employee-management/actions/workflows/ci.yml/badge.svg)
 ![Build](https://img.shields.io/github/actions/workflow/status/TheComputationalCore/employee-management/ci.yml?branch=main)
 ![Tests](https://img.shields.io/badge/Tests-Passing-success)
+
 ![Architecture](https://img.shields.io/badge/Architecture-Modular%20Monolith-blueviolet)
 ![Design](https://img.shields.io/badge/Design-DDD%20%2B%20Clean%20Architecture-green)
 ![API](https://img.shields.io/badge/API-RESTful%20%2F%20OpenAPI%203-brightgreen)
 ![Database](https://img.shields.io/badge/Database-ER%20Diagram-orange)
+
 ![Docs](https://img.shields.io/badge/Docs-Comprehensive-blue)
 ![Quality](https://img.shields.io/badge/Code%20Quality-Production--Ready-blue)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-success?logo=render)](https://employee-management-qhfh.onrender.com)
 ![Security](https://img.shields.io/badge/Security-Spring%20Security-blue?logo=springsecurity)
+
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 
+An **Employee Management System (EMS)** built with **Spring Boot, Thymeleaf, Spring Security, and PostgreSQL (Neon)**, deployed on **Render**.
 
-A **Employee Management System** built with **Spring Boot, Thymeleaf, Spring Security, PostgreSQL (Neon)** and deployed on **Render**.  
-This system covers the **complete employee lifecycle** — from recruitment and onboarding to payroll, performance reviews, and analytics.
+The platform manages the **entire employee lifecycle** — recruitment, onboarding, attendance, leave management, payroll, performance reviews, and analytics — within a **secure, modular, production-ready architecture**.
+
 
 🌐 **Live Deployment**: https://employee-management-qhfh.onrender.com
 
