@@ -273,15 +273,9 @@ Workflow file:
 
 ## 📂 Monorepo‑Grade Docs Index
 
-```text
-
-docs/
-├── screenshots/     # UI screenshots
-├── api.md           # Extended API reference
-├── architecture.md  # System design
-├── database.md      # Schema notes
-
-```
+- [API Reference](./api.md)
+- [System Architecture](./architecture.md)
+- [Database Design](./database.md)
 
 ---
 
