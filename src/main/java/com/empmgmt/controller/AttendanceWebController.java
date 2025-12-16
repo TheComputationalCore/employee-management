@@ -1,7 +1,9 @@
 package com.empmgmt.controller;
 
 import com.empmgmt.model.Attendance;
+import com.empmgmt.model.Employee;
 import com.empmgmt.service.AttendanceService;
+import com.empmgmt.service.EmployeeService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -18,40 +20,55 @@ import java.util.List;
 public class AttendanceWebController {
 
     private final AttendanceService attendanceService;
+    private final EmployeeService employeeService;
 
-    /** EMPLOYEE VIEW */
+    /* ==========================================================
+       EMPLOYEE — MY ATTENDANCE
+       ========================================================== */
     @GetMapping("/my")
     public String myAttendance(Authentication auth, Model model) {
 
-        Long empId = Long.parseLong(auth.getName()); // username = employeeId
+        // username/email → Employee → employeeId
+        Employee emp = employeeService.getByEmail(auth.getName());
 
-        model.addAttribute("my", attendanceService.getEmployeeAttendance(empId));
+        List<Attendance> records =
+                attendanceService.getEmployeeAttendance(emp.getId());
+
+        model.addAttribute("employee", emp);
+        model.addAttribute("my", records);
         model.addAttribute("pageTitle", "My Attendance");
 
         return "attendance/my";
     }
 
+    /* ==========================================================
+       EMPLOYEE — CLOCK IN
+       ========================================================== */
     @PostMapping("/clock-in")
     public String clockIn(Authentication auth) {
 
-        Long empId = Long.parseLong(auth.getName());
-        attendanceService.clockIn(empId);
+        Employee emp = employeeService.getByEmail(auth.getName());
+        attendanceService.clockIn(emp.getId());
 
-        return "redirect:/web/attendance/my";
+        return "redirect:/web/attendance/my?clockedIn";
     }
 
+    /* ==========================================================
+       EMPLOYEE — CLOCK OUT
+       ========================================================== */
     @PostMapping("/clock-out")
     public String clockOut(Authentication auth) {
 
-        Long empId = Long.parseLong(auth.getName());
-        attendanceService.clockOut(empId);
+        Employee emp = employeeService.getByEmail(auth.getName());
+        attendanceService.clockOut(emp.getId());
 
-        return "redirect:/web/attendance/my";
+        return "redirect:/web/attendance/my?clockedOut";
     }
 
-
-    /** ADMIN / HR */
-    @GetMapping("")
+    /* ==========================================================
+       ADMIN / HR — VIEW ALL ATTENDANCE
+       ========================================================== */
+    @GetMapping
     public String list(@RequestParam(required = false) Long empId,
                        @RequestParam(required = false) LocalDate date,
                        Model model) {
