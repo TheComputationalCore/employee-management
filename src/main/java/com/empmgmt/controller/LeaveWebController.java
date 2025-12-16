@@ -2,11 +2,10 @@ package com.empmgmt.controller;
 
 import com.empmgmt.model.LeaveRequest;
 import com.empmgmt.model.LeaveType;
+import com.empmgmt.service.EmployeeService;
 import com.empmgmt.service.LeaveService;
 
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +18,7 @@ import java.util.*;
 public class LeaveWebController {
 
     private final LeaveService leaveService;
+    private final EmployeeService employeeService;
 
     /* -------------------------------
      * EMPLOYEE APPLY LEAVE
@@ -31,9 +31,9 @@ public class LeaveWebController {
     }
 
     @PostMapping("/apply")
-    public String applySubmit(@ModelAttribute LeaveRequest leave, Authentication auth) {
+    public String applySubmit(@ModelAttribute LeaveRequest leave) {
 
-        Long employeeId = Long.valueOf(auth.getName());
+        Long employeeId = employeeService.getEmployeeIdFromAuth();
         leave.setEmployeeId(employeeId);
 
         leaveService.applyLeave(leave);
@@ -44,9 +44,11 @@ public class LeaveWebController {
      * EMPLOYEE: LEAVE LIST
      * ------------------------------- */
     @GetMapping("/my")
-    public String myLeaves(Authentication auth, Model model) {
-        Long employeeId = Long.valueOf(auth.getName());
+    public String myLeaves(Model model) {
+
+        Long employeeId = employeeService.getEmployeeIdFromAuth();
         model.addAttribute("leaves", leaveService.getMyLeaves(employeeId));
+
         return "leave/my";
     }
 
@@ -54,22 +56,20 @@ public class LeaveWebController {
      * EMPLOYEE: LEAVE CALENDAR (MY VIEW)
      * --------------------------------------- */
     @GetMapping("/my/calendar")
-    public String myLeaveCalendar(Authentication auth, Model model) {
+    public String myLeaveCalendar(Model model) {
 
-        Long employeeId = Long.valueOf(auth.getName());
+        Long employeeId = employeeService.getEmployeeIdFromAuth();
         List<LeaveRequest> leaves = leaveService.getMyLeaves(employeeId);
 
         List<Map<String, Object>> events = new ArrayList<>();
 
         for (LeaveRequest leave : leaves) {
-
             Map<String, Object> event = new HashMap<>();
             event.put("title", leave.getType().name());
             event.put("start", leave.getStartDate().toString());
-            event.put("end", leave.getEndDate().plusDays(1).toString()); // FullCalendar exclusive end date
+            event.put("end", leave.getEndDate().plusDays(1).toString());
             event.put("status", leave.getStatus().name());
             event.put("leaveId", leave.getId());
-
             events.add(event);
         }
 
@@ -89,24 +89,21 @@ public class LeaveWebController {
     }
 
     /* ---------------------------------------
-     * ADMIN + HR: LEAVE CALENDAR (ALL LEAVES)
+     * ADMIN + HR: LEAVE CALENDAR (ALL)
      * --------------------------------------- */
     @GetMapping("/calendar")
     public String adminLeaveCalendar(Model model) {
 
         List<LeaveRequest> leaves = leaveService.getAllLeaves();
-
         List<Map<String, Object>> events = new ArrayList<>();
 
         for (LeaveRequest leave : leaves) {
-
             Map<String, Object> event = new HashMap<>();
             event.put("title", "Emp " + leave.getEmployeeId() + " - " + leave.getType().name());
             event.put("start", leave.getStartDate().toString());
             event.put("end", leave.getEndDate().plusDays(1).toString());
             event.put("status", leave.getStatus().name());
             event.put("leaveId", leave.getId());
-
             events.add(event);
         }
 
@@ -117,7 +114,7 @@ public class LeaveWebController {
     }
 
     /* -------------------------------
-     * APPROVAL ACTIONS
+     * APPROVAL ACTIONS (ADMIN / HR)
      * ------------------------------- */
     @GetMapping("/approve/{id}")
     public String approve(@PathVariable Long id) {
