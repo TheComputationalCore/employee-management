@@ -9,7 +9,7 @@ on:
 
 permissions:
   contents: read
-  checks: read
+  checks: write
   actions: read
 
 concurrency:
@@ -27,43 +27,40 @@ jobs:
         java: [ '17', '21' ]
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
-        # fetch-depth: 0   # uncomment if your build needs full git history
 
       - name: Set up JDK ${{ matrix.java }}
         uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java }}
-          distribution: 'temurin'
+          distribution: temurin
           cache: maven
 
-      - name: Build and run tests
-        run: mvn -B test package --file ./pom.xml
+      - name: Build & run tests
+        run: mvn -B clean verify
         env:
+          SPRING_PROFILES_ACTIVE: test
           MAVEN_OPTS: -Xmx1024m
 
-      - name: Upload build artifacts (success)
-        if: ${{ success() }}
+      - name: Upload JAR artifacts
+        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts
-          path: |
-            **/target/*.jar
-            target/*.jar
+          name: employee-management-jars
+          path: target/*.jar
 
-      - name: Upload test logs (failure)
-        if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-fail-logs
-          path: target/surefire-reports/**
-
-      - name: Upload test reports (JUnit annotation)
+      - name: Publish JUnit Test Report
         if: always()
         uses: dorny/test-reporter@v1
         with:
-          name: JUnit Reports
+          name: JUnit Tests (Java ${{ matrix.java }})
           path: target/surefire-reports/*.xml
-          # if you have surefire in module directories:
-          # path: '**/target/surefire-reports/*.xml'
+          reporter: java-junit
+
+      - name: Upload test logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-failure-logs
+          path: target/surefire-reports/
