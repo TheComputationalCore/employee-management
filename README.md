@@ -1,26 +1,22 @@
 
-# 🚀 Employee Management System (EMS)
+# 🚀 Employee Management System (EMS) — Enterprise HR Platform
 
 ![Java](https://img.shields.io/badge/Java-17%2B-orange?logo=java)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.x-brightgreen?logo=springboot)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?logo=springboot)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-blue?logo=postgresql)
-![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)
-![Render](https://img.shields.io/badge/Deployed%20on-Render-purple?logo=render)
+![Docker](https://img.shields.io/badge/Docker-Containerized-blue?logo=docker)
 ![CI](https://github.com/TheComputationalCore/employee-management/actions/workflows/ci.yml/badge.svg)
 ![Build](https://img.shields.io/github/actions/workflow/status/TheComputationalCore/employee-management/ci.yml?branch=main)
 ![Tests](https://img.shields.io/badge/Tests-Passing-success)
-![Code Quality](https://img.shields.io/badge/Code%20Quality-Enterprise--Grade-blue)
-![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-success)
-![REST](https://img.shields.io/badge/Architecture-RESTful-green)
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-success)](https://employee-management-qhfh.onrender.com)
-![Monolith](https://img.shields.io/badge/Architecture-Modular%20Monolith-blueviolet)
-![DDD](https://img.shields.io/badge/Design-Domain%20Driven-green)
-![Clean Code](https://img.shields.io/badge/Code-Clean%20Architecture-blue)
+![Architecture](https://img.shields.io/badge/Architecture-Modular%20Monolith-blueviolet)
+![Design](https://img.shields.io/badge/Design-DDD%20%2B%20Clean%20Architecture-green)
+![API](https://img.shields.io/badge/API-RESTful%20%2F%20OpenAPI%203-brightgreen)
+![Database](https://img.shields.io/badge/Database-ER%20Diagram-orange)
 ![Docs](https://img.shields.io/badge/Docs-Comprehensive-blue)
-![API Docs](https://img.shields.io/badge/API%20Docs-OpenAPI%203-brightgreen)
-![ER Diagram](https://img.shields.io/badge/DB-ER%20Diagram-orange)
-![Portfolio](https://img.shields.io/badge/Portfolio-Production%20Ready-success)
-![Enterprise](https://img.shields.io/badge/Level-Enterprise%20Grade-blue)
+![Quality](https://img.shields.io/badge/Code%20Quality-Production--Ready-blue)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-success?logo=render)](https://employee-management-qhfh.onrender.com)
+![Security](https://img.shields.io/badge/Security-Spring%20Security-blue?logo=springsecurity)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
 
 
