@@ -119,7 +119,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /* =========================================================
-       SEARCH (FINAL, SAFE, CORRECT LOGIC)
+       SEARCH (FINAL, SAFE, CORRECT)
        ========================================================= */
     @Override
     public PaginatedResponse<EmployeeDTO> searchEmployees(EmployeeSearchRequest req) {
@@ -157,12 +157,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         return PaginatedResponse.<EmployeeDTO>builder()
-                .content(
-                        page.getContent()
-                                .stream()
-                                .map(mapper::toDTO)
-                                .toList()
-                )
+                .content(page.getContent().stream().map(mapper::toDTO).toList())
                 .page(page.getNumber())
                 .size(page.getSize())
                 .totalElements(page.getTotalElements())
