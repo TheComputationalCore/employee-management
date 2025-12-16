@@ -1,41 +1,64 @@
-# ===== BUILD ARTIFACTS =====
+# =====================================================
+# BUILD ARTIFACTS (MAVEN / JAVA)
+# =====================================================
 target/
 *.jar
 *.war
 
-# ===== IDE FILES =====
+# =====================================================
+# IDE FILES
+# =====================================================
 .idea/
 *.iml
 .vscode/
-*.class
 
-# ===== OS FILES =====
+# =====================================================
+# OS FILES
+# =====================================================
 .DS_Store
 Thumbs.db
 
-# ===== LOGS / TEMP =====
+# =====================================================
+# LOGS / TEMP / RUNTIME
+# =====================================================
 *.log
 tmp/
 *.tmp
+logs/
+out/
 
-# ===== ENVIRONMENTS =====
+# =====================================================
+# ENVIRONMENT / SECRETS
+# =====================================================
 .env
 .env.local
 .env.*.local
 
-# ===== USER UPLOADS (CRITICAL) =====
+# =====================================================
+# USER UPLOADS (RUNTIME ONLY - DO NOT COMMIT)
+# =====================================================
 uploads/
 uploads/**
-*.pdf
-*.doc
-*.docx
-*.xls
-*.xlsx
 
-# ===== OTHER LARGE/BINARY FILES =====
+# Common uploaded file types
+uploads/**/*.pdf
+uploads/**/*.doc
+uploads/**/*.docx
+uploads/**/*.xls
+uploads/**/*.xlsx
+uploads/**/*.png
+uploads/**/*.jpg
+uploads/**/*.jpeg
+uploads/**/*.gif
+
+# =====================================================
+# OTHER LARGE / ARCHIVE FILES
+# =====================================================
 *.zip
 *.tar.gz
-*.png
-*.jpg
-*.jpeg
-*.gif
+
+# =====================================================
+# DO NOT IGNORE (IMPORTANT)
+# =====================================================
+# docs/            --> README screenshots & diagrams
+# docs/screenshots --> allowed and encouraged
