@@ -126,38 +126,42 @@ public class EmployeeServiceImpl implements EmployeeService {
        SEARCH + PAGINATION (POSTGRES / NEON SAFE)
     ========================================================= */
     @Override
-    public PaginatedResponse<EmployeeDTO> searchEmployees(EmployeeSearchRequest req) {
+public PaginatedResponse<EmployeeDTO> searchEmployees(EmployeeSearchRequest req) {
 
-        // 🔐 CRITICAL FIX: prevent LOWER(bytea)
-        String search = req.getSearch();
-        if (search != null && search.isBlank()) {
-            search = null;
-        }
+    Sort sort = getSafeSort(req.getSort());
+    Pageable pageable = PageRequest.of(req.getPage(), req.getSize(), sort);
 
-        Sort sort = getSafeSort(req.getSort());
-        Pageable pageable = PageRequest.of(req.getPage(), req.getSize(), sort);
+    String search = req.getSearch();
+    String department = req.getDepartment();
 
-        Page<Employee> page;
+    Page<Employee> page;
 
-        // 🔁 Status-aware search
-        if (req.getStatus() == EmployeeStatus.INACTIVE) {
-            page = repo.findByStatus(EmployeeStatus.INACTIVE, pageable);
-        } else {
-            page = repo.searchActiveEmployees(
-                    search,
-                    req.getDepartment(),
-                    pageable
-            );
-        }
-
-        return PaginatedResponse.<EmployeeDTO>builder()
-                .content(page.getContent().stream().map(mapper::toDTO).toList())
-                .page(page.getNumber())
-                .size(page.getSize())
-                .totalElements(page.getTotalElements())
-                .totalPages(page.getTotalPages())
-                .build();
+    if (search != null && !search.isBlank()) {
+        page = repo.findByStatusAndFirstNameContainingIgnoreCaseOrStatusAndLastNameContainingIgnoreCaseOrStatusAndEmailContainingIgnoreCase(
+                EmployeeStatus.ACTIVE, search,
+                EmployeeStatus.ACTIVE, search,
+                EmployeeStatus.ACTIVE, search,
+                pageable
+        );
+    } else if (department != null && !department.isBlank()) {
+        page = repo.findByStatusAndDepartmentContainingIgnoreCaseAndFirstNameContainingIgnoreCase(
+                EmployeeStatus.ACTIVE,
+                department,
+                "",
+                pageable
+        );
+    } else {
+        page = repo.findByStatus(EmployeeStatus.ACTIVE, pageable);
     }
+
+    return PaginatedResponse.<EmployeeDTO>builder()
+            .content(page.getContent().stream().map(mapper::toDTO).toList())
+            .page(page.getNumber())
+            .size(page.getSize())
+            .totalElements(page.getTotalElements())
+            .totalPages(page.getTotalPages())
+            .build();
+}
 
     /* =========================================================
        GET ALL (ADMIN / INTERNAL USE)
