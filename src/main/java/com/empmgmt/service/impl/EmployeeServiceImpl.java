@@ -119,7 +119,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /* =========================================================
-       SEARCH (NEON / POSTGRES SAFE)
+       SEARCH (FINAL, SAFE, CORRECT LOGIC)
        ========================================================= */
     @Override
     public PaginatedResponse<EmployeeDTO> searchEmployees(EmployeeSearchRequest req) {
@@ -133,24 +133,36 @@ public class EmployeeServiceImpl implements EmployeeService {
         Page<Employee> page;
 
         if (req.getSearch() != null && !req.getSearch().isBlank()) {
-            page = repo.findByStatusAndFirstNameContainingIgnoreCaseOrStatusAndLastNameContainingIgnoreCaseOrStatusAndEmailContainingIgnoreCase(
-                    EmployeeStatus.ACTIVE, req.getSearch(),
-                    EmployeeStatus.ACTIVE, req.getSearch(),
-                    EmployeeStatus.ACTIVE, req.getSearch(),
+
+            page = repo.searchByStatus(
+                    EmployeeStatus.ACTIVE,
+                    req.getSearch(),
                     pageable
             );
+
         } else if (req.getDepartment() != null && !req.getDepartment().isBlank()) {
+
             page = repo.findByStatusAndDepartmentContainingIgnoreCase(
                     EmployeeStatus.ACTIVE,
                     req.getDepartment(),
                     pageable
             );
+
         } else {
-            page = repo.findByStatus(EmployeeStatus.ACTIVE, pageable);
+
+            page = repo.findByStatus(
+                    EmployeeStatus.ACTIVE,
+                    pageable
+            );
         }
 
         return PaginatedResponse.<EmployeeDTO>builder()
-                .content(page.getContent().stream().map(mapper::toDTO).toList())
+                .content(
+                        page.getContent()
+                                .stream()
+                                .map(mapper::toDTO)
+                                .toList()
+                )
                 .page(page.getNumber())
                 .size(page.getSize())
                 .totalElements(page.getTotalElements())
@@ -171,19 +183,21 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /* =========================================================
-       EMAIL → EMPLOYEE (REQUIRED)
+       EMAIL → EMPLOYEE
        ========================================================= */
     @Override
     public Employee getByEmail(String email) {
 
         return repo.findByEmail(email)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Employee not found for email: " + email)
+                        new ResourceNotFoundException(
+                                "Employee not found for email: " + email
+                        )
                 );
     }
 
     /* =========================================================
-       AUTH → EMPLOYEE ID (FINAL FIX)
+       AUTH → EMPLOYEE ID
        ========================================================= */
     @Override
     public Long getEmployeeIdFromAuth() {
