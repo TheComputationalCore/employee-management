@@ -1,104 +1,108 @@
+
 # 🚀 Employee Management System (EMS)
 
-![Java](https://img.shields.io/badge/Java-17%20%7C%2021-orange)
+![Java](https://img.shields.io/badge/Java-17%2F21-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-blue)
 ![Docker](https://img.shields.io/badge/Docker-Ready-blue)
-![CI](https://github.com/TheComputationalCore/employee-management/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/<your-username>/employee-management/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-A **production-grade, AI-powered Employee Management System** built with **Spring Boot**, designed to handle the **entire employee lifecycle** — from recruitment and onboarding to payroll, attendance, performance reviews, and analytics.
+A **full‑stack, enterprise‑grade Employee Management System** built with **Spring Boot, Thymeleaf, Spring Security, PostgreSQL (Neon)** and deployed on **Render**.  
+This system covers the **complete employee lifecycle** — from recruitment and onboarding to payroll, performance reviews, and analytics.
 
-🌐 **Live Deployment**:  
-👉 https://employee-management-qhfh.onrender.com
+🌐 **Live Demo**: https://employee-management-qhfh.onrender.com
 
 ---
 
 ## 📌 Table of Contents
-- Overview
-- User Roles
-- Key Features
-- Screenshots
-- Architecture
-- Tech Stack
-- Project Structure
-- API Documentation
-- Docker & Deployment
-- CI/CD Pipeline
-- Security
-- License
+- [Overview](#overview)
+- [User Roles](#user-roles)
+- [Key Features](#key-features)
+- [Screenshots](#screenshots)
+- [Architecture](#architecture)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Security](#security)
+- [API Documentation](#api-documentation)
+- [Docker & Deployment](#docker--deployment)
+- [CI/CD Pipeline](#cicd-pipeline)
+- [Environment Configuration](#environment-configuration)
+- [Running Locally](#running-locally)
+- [License](#license)
 
 ---
 
 ## 🧠 Overview
 
-The Employee Management System (EMS) is a **full-stack enterprise HR platform** with:
-- AI-based resume parsing & scoring
-- End-to-end recruitment pipeline
-- Role-based access control
-- Analytics dashboards
-- Automated document generation (PDF, Excel)
-- Production-ready Docker & CI/CD setup
+The **Employee Management System (EMS)** is designed as a **real‑world HRMS platform**, not a demo project.
 
-It is suitable for **real-world corporate HR workflows**.
+It supports:
+- Secure role‑based access
+- AI‑assisted recruitment scoring
+- End‑to‑end employee lifecycle management
+- Real analytics dashboards
+- Production‑grade DevOps & CI/CD
+
+This repository is **portfolio‑ready**, **production‑ready**, and **scalable**.
 
 ---
 
 ## 👥 User Roles
 
-### 👑 Admin
-- Manage departments & employees
-- Assign roles
-- System-wide analytics
-- Payroll & KPI control
-
-### 🧑‍💼 HR
-- Post jobs & manage recruitment
-- AI resume scoring & shortlisting
-- Schedule interviews
-- Generate offer letters
-- Manage onboarding
-
-### 👨‍💻 Employee
-- Attendance check-in/out
-- Apply for leave
-- View payroll & performance reviews
-- Complete onboarding tasks
+| Role | Capabilities |
+|-----|-------------|
+| **Admin** | Full system access, users, departments, payroll, analytics |
+| **HR** | Recruitment, onboarding, attendance, performance, leave |
+| **Employee** | Self‑service: attendance, payroll, leave, performance |
 
 ---
 
 ## ✨ Key Features
 
-### 🔍 Recruitment & AI
-- Resume PDF parsing (Apache PDFBox)
-- AI skill extraction & experience detection
-- Resume-to-job matching score
-- Smart shortlisting dashboard
+### 🧑‍💼 Employee Management
+- Create, update, soft‑delete & restore employees
+- Department & role management
+- Search, filter & pagination
 
-### 📋 Employee Management
-- CRUD employees & departments
-- Active / inactive lifecycle
-- Secure role-based access
+### 🧠 Recruitment & AI Scoring
+- Job postings & public careers page
+- Resume upload & parsing (PDF)
+- AI resume scoring & missing skills detection
+- Smart shortlisting
+- Interview scheduling
+- Offer letter PDF generation
+- Convert hired candidates → employees
+- Automatic onboarding trigger
 
-### ⏱ Attendance & Leave
-- Daily attendance tracking
-- Leave balances & analytics
-- Excel & PDF exports
-
-### 📈 Performance & KPI
-- Self & manager reviews
-- KPI assignment & scoring
-- Review cycles (Q1, H1, Yearly)
+### 🧾 Attendance & Leave
+- Clock‑in / clock‑out
+- Attendance analytics
+- Leave application & approval workflow
+- Leave balance tracking
+- Calendar & reports (PDF / Excel)
 
 ### 💰 Payroll
 - Monthly payroll generation
-- Allowances & deductions
-- Export payroll reports
+- Salary breakdown
+- Mark payroll as paid
+- Employee self‑view
+
+### 📊 Performance Management
+- Review cycles (Q1, H1, Yearly)
+- Self review & manager review
+- Final score calculation
 
 ### 🚀 Onboarding
-- Template-based onboarding flows
-- Task assignments & document uploads
-- Completion tracking
+- Template‑based onboarding flows
+- Task assignment & tracking
+- File uploads
+
+### 📈 Dashboards & Analytics
+- Employee growth trends
+- Salary distribution
+- Department analytics
+- Recruitment funnel insights
 
 ---
 
@@ -106,172 +110,177 @@ It is suitable for **real-world corporate HR workflows**.
 
 > Screenshots are stored under `docs/screenshots/`
 
-### Dashboard
-![Dashboard](docs/screenshots/dashboard1.png)
-
-### Recruitment & AI Scoring
-![AI Score](docs/screenshots/ai_score_breakdown.png)
-
-### Job Openings
-![Jobs](docs/screenshots/job_openings.png)
-
-### Attendance
-![Attendance](docs/screenshots/attendance1.png)
-
-### Payroll
-![Payroll](docs/screenshots/employee_payroll.png)
-
-### Onboarding
-![Onboarding](docs/screenshots/onboarding_1.png)
+| Module | Preview |
+|------|--------|
+| Dashboard | ![](docs/screenshots/dashboard1.png) |
+| Recruitment | ![](docs/screenshots/applications_1.png) |
+| Candidate Profile | ![](docs/screenshots/candidate_1.png) |
+| Payroll | ![](docs/screenshots/payroll_records_1.png) |
+| Attendance | ![](docs/screenshots/attendance1.png) |
+| Performance Review | ![](docs/screenshots/performance_reviews_1.png) |
 
 ---
 
 ## 📐 Architecture
 
-### High-Level Architecture (Mermaid)
+### High‑Level Architecture (Mermaid)
 
 ```mermaid
 graph TD
-    Browser --> SpringBoot
-    SpringBoot --> PostgreSQL
-    SpringBoot --> FileSystem
-    SpringBoot --> AIResumeParser
+    Browser[Browser]
+    Browser -->|HTTP| SpringBoot[Spring Boot App]
+    SpringBoot --> PostgreSQL[(Neon PostgreSQL)]
+    SpringBoot --> FileStorage[File System]
+    SpringBoot --> PDF[PDF Generation]
 ```
 
-### Components
-- **Spring Boot MVC** – Controllers, Services, Repositories
-- **Spring Security** – Role-based authentication
-- **Neon PostgreSQL** – Cloud-native database
-- **Docker** – Containerized runtime
-- **GitHub Actions** – CI/CD
+### Architecture Highlights
+- MVC architecture (Controller → Service → Repository)
+- Spring Security with form login & CSRF
+- JPA + Hibernate
+- Environment‑based configuration
+- Dockerized runtime
 
 ---
 
-## 🛠 Tech Stack
+## 🛠 Technology Stack
 
 | Layer | Technology |
 |-----|-----------|
 | Backend | Java 17/21, Spring Boot |
-| Security | Spring Security |
-| Database | PostgreSQL (Neon) |
-| ORM | Hibernate / JPA |
-| Templating | Thymeleaf |
+| Security | Spring Security, BCrypt |
+| Frontend | Thymeleaf, HTML, CSS |
+| Database | PostgreSQL (Neon), H2 (dev) |
+| ORM | Spring Data JPA |
+| AI | Custom Resume Parsing & Scoring |
 | Build | Maven |
+| DevOps | Docker, Docker Compose |
 | CI/CD | GitHub Actions |
-| Container | Docker, Docker Compose |
-| Cloud | Render |
+| Hosting | Render |
 
 ---
 
-## 📂 Project Structure
+## 🗂 Project Structure
 
 ```text
-employee-management/
-├── src/main/java/com/empmgmt
-│   ├── model
-│   ├── repository
-│   ├── service
-│   ├── service/impl
-│   ├── security
-│   └── util
-├── src/main/resources
-│   ├── templates
-│   ├── static
-│   └── application-*.properties
-├── docs/screenshots
-├── Dockerfile
-├── docker-compose.yml
-├── docker-compose.prod.yml
-├── docker-compose.test.yml
-├── api.md
-└── README.md
+src/main/java/com/empmgmt
+├── controller
+├── service
+│   └── impl
+├── repository
+├── model
+├── security
+├── util
+└── config
 ```
 
----
-
-## 📡 API Documentation
-
-Complete REST API documentation is available here:  
-👉 **[api.md](api.md)**
-
-Includes:
-- Authentication
-- Recruitment APIs
-- Employee, Leave, Payroll endpoints
-- Admin & HR-only routes
-
----
-
-## 🐳 Docker & Deployment
-
-### Development
-```bash
-docker-compose up --build
-```
-
-### Production
-```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
-
-### Testing
-```bash
-docker-compose -f docker-compose.test.yml up --build
-```
-
----
-
-## 🔁 CI/CD Pipeline (GitHub Actions)
-
-This project includes a **robust CI pipeline**:
-
-- Triggered on:
-  - Push to `main`
-  - Pull Requests
-  - Manual dispatch
-
-- Matrix build:
-  - Java 17
-  - Java 21
-
-### CI Workflow Highlights
-- Maven dependency caching
-- Parallel Java builds
-- Test execution
-- Artifact uploads (JARs)
-- JUnit test reporting
-- Failure logs upload
-
-Workflow file:
+Resources:
 ```text
-.github/workflows/ci.yml
+src/main/resources
+├── templates
+├── static/css
+├── application.properties
+├── application-dev.properties
+└── application-prod.properties
 ```
 
 ---
 
 ## 🔐 Security
 
-- Spring Security with role-based authorization
-- BCrypt password hashing
-- Route-level access control
-- CSRF protection
+- Spring Security form‑based authentication
+- Role‑based authorization
+- CSRF protection (Cookie‑based)
+- Password hashing with BCrypt
 - Secure file uploads
+- Auditing (createdBy / updatedBy)
 
 ---
 
-## 📜 License
+## 📘 API Documentation
+
+- Swagger UI: `/swagger-ui.html`
+- OpenAPI JSON: `/v3/api-docs`
+- Detailed REST documentation: **[api.md](api.md)**
+
+---
+
+## 🐳 Docker & Deployment
+
+### Dockerfile
+Multi‑stage build:
+- Maven build stage
+- Lightweight JRE runtime stage
+
+### Docker Compose Files
+| File | Purpose |
+|----|--------|
+| docker-compose.yml | Local development |
+| docker-compose.prod.yml | Production |
+| docker-compose.test.yml | CI / testing |
+
+---
+
+## 🔁 CI/CD Pipeline
+
+GitHub Actions:
+- Java 17 & 21 matrix builds
+- Maven build & package
+- Artifact upload
+- Fully green & production‑safe
+
+Workflow file:
+```
+.github/workflows/ci.yml
+```
+
+---
+
+## ⚙️ Environment Configuration
+
+`.env.example`
+```env
+SPRING_DATASOURCE_URL=jdbc:postgresql://...
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=secret
+SPRING_PROFILES_ACTIVE=prod
+```
+
+---
+
+## ▶️ Running Locally
+
+### Option 1: Maven
+```bash
+mvn clean package
+java -jar target/employee-management-2.0.0.jar
+```
+
+### Option 2: Docker
+```bash
+docker-compose up --build
+```
+
+App runs at:
+```
+http://localhost:8080
+```
+
+---
+
+## 📄 License
 
 This project is licensed under the **MIT License**.  
-See the [LICENSE](LICENSE) file for details.
+You are free to use, modify, and distribute this project.
 
 ---
 
 ## ⭐ Final Note
 
-This project is **enterprise-grade**, production-ready, and showcases:
-- Clean architecture
-- Real-world HR workflows
-- AI integration
-- DevOps best practices
+This project is:
+- ✔ Production‑ready
+- ✔ Recruiter‑ready
+- ✔ Portfolio‑grade
+- ✔ Enterprise‑style architecture
 
-If you like this project, **give it a star ⭐**!
+If you like this project, please ⭐ the repository!
