@@ -8,7 +8,7 @@
 ![CI](https://github.com/TheComputationalCore/employee-management/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-A **full‑stack, enterprise‑grade Employee Management System** built with **Spring Boot, Thymeleaf, Spring Security, PostgreSQL (Neon)** and deployed on **Render**.  
+A ** Employee Management System** built with **Spring Boot, Thymeleaf, Spring Security, PostgreSQL (Neon)** and deployed on **Render**.  
 This system covers the **complete employee lifecycle** — from recruitment and onboarding to payroll, performance reviews, and analytics.
 
 🌐 **Live Deployment**: https://employee-management-qhfh.onrender.com
