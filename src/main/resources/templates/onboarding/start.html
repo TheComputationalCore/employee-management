@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Start Onboarding</title>
+</head>
+<body>
+
+<h2>Start New Onboarding</h2>
+
+<form th:action="@{/web/onboarding/start}" method="post">
+    <label>Select Employee</label>
+    <select name="employeeId" required>
+        <option value="">-- Select Employee --</option>
+        <option th:each="e : ${employees}"
+                th:value="${e.id}"
+                th:text="${e.firstName + ' ' + e.lastName + ' (' + e.department + ')'}">
+        </option>
+    </select>
+
+    <br><br>
+    <button type="submit">Start Onboarding</button>
+</form>
+
+</body>
+</html>
