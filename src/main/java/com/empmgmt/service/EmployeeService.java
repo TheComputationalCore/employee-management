@@ -3,6 +3,9 @@ package com.empmgmt.service;
 import com.empmgmt.dto.EmployeeDTO;
 import com.empmgmt.dto.EmployeeSearchRequest;
 import com.empmgmt.dto.PaginatedResponse;
+import com.empmgmt.model.Employee;
+
+import java.util.List;
 
 public interface EmployeeService {
 
@@ -18,7 +21,12 @@ public interface EmployeeService {
 
     PaginatedResponse<EmployeeDTO> searchEmployees(EmployeeSearchRequest req);
 
-    Object getAllEmployees();
+    List<EmployeeDTO> getAllEmployees();
 
+    Employee getByEmail(String email);
+
+    /* ======================================================
+       AUTH → EMPLOYEE ID (SECURE)
+       ====================================================== */
     Long getEmployeeIdFromAuth();
 }
