@@ -1,157 +1,184 @@
-# Employee Management System – API Documentation
+# 📘 Employee Management System – API Documentation
 
-## Overview
-This document describes the REST APIs exposed by the **Employee Management System (EMS)**.
-The application supports **Admin**, **HR**, and **Employee** roles and is deployed on **Render**
-with **Neon PostgreSQL**.
+This document provides **comprehensive, production-grade REST API documentation** for the **Employee Management System (EMS)**.
 
-- Base URL (Production): https://employee-management-qhfh.onrender.com
-- Authentication: Session-based (Spring Security form login)
-- API Docs (Swagger): `/swagger-ui.html`
-- OpenAPI JSON: `/v3/api-docs`
+The system is built using **Spring Boot**, secured with **Spring Security (Session + CSRF)**, and deployed on **Render** with **Neon PostgreSQL**.
 
 ---
 
-## Authentication
+## 🔐 Authentication & Security
 
-### Login
-**POST** `/do-login`
+- Authentication: **Form Login (Session-based)**
+- CSRF Protection: **Enabled (Cookie-based CSRF tokens)**
+- Roles:
+  - `ROLE_ADMIN`
+  - `ROLE_HR`
+  - `ROLE_EMPLOYEE`
 
-Form parameters:
-- `username`
-- `password`
-
-On success → redirects to `/web/dashboard`
-
-### Logout
-**POST** `/logout`
+> Most APIs require authentication and appropriate role access.
 
 ---
 
-## Roles
+## 🧑‍ Roles & Access Matrix
 
-| Role | Description |
-|----|----|
-| ROLE_ADMIN | Full system access |
-| ROLE_HR | HR, recruitment, payroll, onboarding |
-| ROLE_EMPLOYEE | Self-service (attendance, payroll, performance) |
+| Feature | Admin | HR | Employee |
+|------|------|------|----------|
+| Dashboard | ✅ | ✅ | ✅ |
+| Employee Management | ✅ | ✅ | ❌ |
+| Recruitment | ✅ | ✅ | ❌ |
+| Attendance | ✅ | ✅ | ✅ |
+| Payroll | ✅ | ✅ | Employee-only |
+| Performance Reviews | ✅ | ✅ | Self-review |
+| Leave Management | ✅ | ✅ | Apply |
+| Onboarding | ✅ | ✅ | Assigned tasks |
 
 ---
 
-## Dashboard
+## 🌐 Base URLs
+
+| Environment | Base URL |
+|-----------|---------|
+| Local | `http://localhost:8080` |
+| Production | `https://employee-management-qhfh.onrender.com` |
+
+---
+
+## 📊 Dashboard APIs
 
 ### Get Dashboard Summary
-**GET** `/web/dashboard`  
-Roles: ADMIN, HR
+**GET** `/web/dashboard`
 
-Returns dashboard statistics:
+Returns aggregated metrics:
 - Total employees
 - Departments
-- Payroll & onboarding summaries
+- Payroll stats
+- Onboarding overview
+
+_Response:_
+```json
+{
+  "totalEmployees": 42,
+  "totalDepartments": 6,
+  "averageSalary": 72000
+}
+```
 
 ---
 
-## Employee Management
+## 👤 Employee APIs
 
-### List Employees
+### List Employees (Admin / HR)
 **GET** `/web/employees`
 
-Query params:
+Query Params:
 - `page`
 - `size`
+- `sort`
 - `search`
 - `department`
-- `sort`
 
-Roles: ADMIN, HR
+### Create Employee
+**POST** `/web/employees/add`
 
-### Add Employee
-**POST** `/web/employees/add`  
-Roles: ADMIN, HR
-
-### Edit Employee
-**POST** `/web/employees/edit/{id}`  
-Roles: ADMIN, HR
+### Update Employee
+**POST** `/web/employees/edit/{id}`
 
 ### Soft Delete Employee
-**GET** `/web/employees/delete/{id}`  
-Roles: ADMIN, HR
+**GET** `/web/employees/delete/{id}`
 
 ### Restore Employee
-**GET** `/web/employees/restore/{id}`  
-Roles: ADMIN, HR
+**GET** `/web/employees/restore/{id}`
 
 ---
 
-## Attendance
-
-### My Attendance
-**GET** `/web/attendance/my`  
-Role: EMPLOYEE
+## ⏱ Attendance APIs
 
 ### Clock In
-**POST** `/web/attendance/clock-in`  
-Role: EMPLOYEE
+**POST** `/web/attendance/clock-in`
 
 ### Clock Out
-**POST** `/web/attendance/clock-out`  
-Role: EMPLOYEE
+**POST** `/web/attendance/clock-out`
 
-### View All Attendance
-**GET** `/web/attendance`  
-Roles: ADMIN, HR
+### My Attendance
+**GET** `/web/attendance/my`
+
+### All Attendance (Admin / HR)
+**GET** `/web/attendance`
 
 ---
 
-## Recruitment & Careers
+## 🏖 Leave Management APIs
 
-### Public Job Listings
+### Apply Leave
+**POST** `/web/leave/apply`
+
+### Approve / Reject Leave
+**POST** `/web/leave/update/{id}`
+
+### Leave Analytics
+**GET** `/web/leave/analytics`
+
+---
+
+## 💰 Payroll APIs
+
+### Generate Payroll (Admin / HR)
+**POST** `/web/payroll/generate`
+
+### My Payroll (Employee)
+**GET** `/web/payroll/my`
+
+### Mark Payroll as Paid
+**POST** `/web/payroll/mark-paid/{id}`
+
+---
+
+## ⭐ Performance Review APIs
+
+### Create Review Cycle
+**POST** `/web/performance/create`
+
+### Submit Self Review
+**POST** `/web/performance/self/{id}`
+
+### Manager Review
+**POST** `/web/performance/manager/{id}`
+
+### List Reviews
+**GET** `/web/performance`
+
+---
+
+## 🧠 Recruitment & AI APIs
+
+### List Jobs
 **GET** `/careers`
 
-### Job Details
-**GET** `/careers/job/{id}`
-
 ### Apply for Job
-**POST** `/careers/apply/{jobId}`  
-Multipart:
-- resume (PDF/DOC/DOCX)
+**POST** `/careers/apply/{jobId}`
 
-AI-powered resume parsing & scoring is triggered automatically.
+Accepts:
+- Resume (PDF/DOCX)
+- Candidate details
 
----
+AI Processing:
+- Skill extraction
+- Experience parsing
+- Education detection
+- AI match score (0–100)
+- Missing skill analysis
 
-## Recruitment (Internal)
-
-### Jobs
-- **GET** `/web/recruitment/jobs`
-- **POST** `/web/recruitment/jobs/add`
-- **POST** `/web/recruitment/jobs/edit/{id}`
-- **GET** `/web/recruitment/jobs/close/{id}`
-
-Roles: ADMIN, HR
-
-### Applications by Job
-**GET** `/web/recruitment/applications/{jobId}`
+### Smart Shortlist
+**GET** `/web/recruitment/smart-shortlist/{jobId}`
 
 ### Candidate Profile
 **GET** `/web/recruitment/candidate/{appId}`
 
-### Smart Shortlist (AI)
-**GET** `/web/recruitment/smart-shortlist/{jobId}`
-
 ---
 
-## Interviews
+## 📄 Offer Letter APIs
 
-### Schedule Interview
-**POST** `/web/recruitment/interview/schedule/{appId}`  
-Roles: ADMIN, HR
-
----
-
-## Offer Letters
-
-### Generate Offer
+### Generate Offer Letter
 **POST** `/web/recruitment/offer/{appId}`
 
 ### Download Offer PDF
@@ -159,71 +186,67 @@ Roles: ADMIN, HR
 
 ---
 
-## Onboarding
+## 🧾 Onboarding APIs
 
-### Start Onboarding (Auto on Hire)
-Triggered internally when application status = `Hired`
+### Start Onboarding
+**POST** `/web/onboarding/start/{employeeId}`
 
-### View Onboarding Dashboard
-**GET** `/web/onboarding`
+### My Onboarding Tasks
+**GET** `/web/onboarding/my`
 
----
-
-## Payroll
-
-### My Payroll
-**GET** `/web/payroll/my`  
-Role: EMPLOYEE
-
-### All Payrolls
-**GET** `/web/payroll`  
-Roles: ADMIN, HR
-
-### Generate Payroll
-**POST** `/web/payroll/generate`  
-Roles: ADMIN, HR
+### Complete Task
+**POST** `/web/onboarding/task/{id}/complete`
 
 ---
 
-## Performance Reviews
+## 📂 File Handling
 
-### List Reviews
-**GET** `/web/performance`  
-Roles: ADMIN, HR
+| File Type | Location |
+|---------|----------|
+| Resumes | `uploads/resumes/` |
+| Offer Letters | `uploads/offers/` |
+| Onboarding Docs | `uploads/onboarding/` |
 
-### My Reviews
-**GET** `/web/performance/my`  
-Role: EMPLOYEE
-
-### Submit Self Review
-**POST** `/web/performance/self/{id}`  
-Role: EMPLOYEE
-
-### Manager Review
-**POST** `/web/performance/manager/{id}`  
-Roles: ADMIN, HR
+> Uploads directory is excluded from Git and generated at runtime.
 
 ---
 
-## File Downloads
+## 📖 Swagger / OpenAPI
 
-### Resume Download
-**GET** `/web/recruitment/resume/{appId}`
+Available when application is running:
 
----
-
-## Error Handling
-
-- 401 → Unauthorized
-- 403 → Forbidden
-- 404 → Resource not found
-- 500 → Internal server error
+- Swagger UI: `/swagger-ui.html`
+- OpenAPI JSON: `/v3/api-docs`
 
 ---
 
-## Notes
+## ⚙️ Error Handling
 
-- CSRF protection enabled (Cookie-based)
-- File uploads stored outside Git tracking
-- AI resume scoring is deterministic & rule-based
-- Flyway enabled in DEV, disabled in PROD
+Standard HTTP Status Codes:
+- `200 OK`
+- `400 Bad Request`
+- `401 Unauthorized`
+- `403 Forbidden`
+- `404 Not Found`
+- `500 Internal Server Error`
+
+---
+
+## 🧪 Testing & CI
+
+- Unit & Integration tests via **Spring Boot Test**
+- CI via **GitHub Actions**
+- Dockerized builds
+
+---
+
+## 🏁 Notes
+
+- APIs are **UI-backed (Thymeleaf)** and **REST-backed**
+- Security enforced via **Spring Security**
+- Database: **Neon PostgreSQL**
+- Production-ready architecture
+
+---
+
+📌 _This API documentation reflects the actual implementation and is maintained alongside the codebase._
