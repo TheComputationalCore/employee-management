@@ -261,6 +261,15 @@ SPRING_PROFILES_ACTIVE=prod
 
 ---
 
+## ⚙️ Environment Profiles
+
+| Profile | DB | Usage |
+|------|----|------|
+| dev | H2 | Local |
+| prod | Neon PostgreSQL | Render |
+
+---
+
 ## ▶️ Running Locally
 
 ### Option 1: Maven
