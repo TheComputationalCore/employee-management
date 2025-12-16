@@ -198,6 +198,22 @@ public class OnboardingController {
         return "redirect:/web/onboarding";
     }
 
+    @GetMapping("/start")
+public String startForm(Model model) {
+    model.addAttribute("employees", employeeService.getAllEmployees());
+    return "onboarding/start";
+}
+
+    @PostMapping("/start")
+public String startOnboarding(@RequestParam Long employeeId,
+                              RedirectAttributes ra) {
+
+    onboardingService.startOnboarding(employeeId);
+    ra.addFlashAttribute("success", "Onboarding started successfully!");
+    return "redirect:/web/onboarding";
+}
+
+
     // DTOs
     record DashboardStats(long active, long completed, long overdue, long pending) {}
     record OnboardingDashboardDTO(
