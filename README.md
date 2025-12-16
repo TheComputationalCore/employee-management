@@ -176,6 +176,7 @@ erDiagram
 ## 🗂 Project Structure
 
 ```text
+
 src/main/java/com/empmgmt
 ├── controller
 ├── service
@@ -185,16 +186,20 @@ src/main/java/com/empmgmt
 ├── security
 ├── util
 └── config
+
 ```
 
 Resources:
+
 ```text
+
 src/main/resources
 ├── templates
 ├── static/css
 ├── application.properties
 ├── application-dev.properties
 └── application-prod.properties
+
 ```
 
 ---
@@ -249,6 +254,20 @@ Workflow file:
 
 ---
 
+## 📂 Monorepo‑Grade Docs Index
+
+```text
+
+docs/
+├── screenshots/     # UI screenshots
+├── api.md           # Extended API reference
+├── architecture.md  # System design
+├── database.md      # Schema notes
+
+```
+
+---
+
 ## ⚙️ Environment Configuration
 
 `.env.example`
@@ -258,8 +277,6 @@ SPRING_DATASOURCE_USERNAME=postgres
 SPRING_DATASOURCE_PASSWORD=secret
 SPRING_PROFILES_ACTIVE=prod
 ```
-
----
 
 ## ⚙️ Environment Profiles
 
@@ -273,17 +290,20 @@ SPRING_PROFILES_ACTIVE=prod
 ## ▶️ Running Locally
 
 ### Option 1: Maven
+
 ```bash
 mvn clean package
 java -jar target/employee-management-2.0.0.jar
 ```
 
 ### Option 2: Docker
+
 ```bash
 docker-compose up --build
 ```
 
 App runs at:
+
 ```
 http://localhost:8080
 ```
@@ -292,8 +312,7 @@ http://localhost:8080
 
 ## 📄 License
 
-This project is licensed under the **MIT License**.  
-You are free to use, modify, and distribute this project.
+MIT License © 2025 
 
 ---
 
