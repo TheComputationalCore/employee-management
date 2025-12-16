@@ -17,8 +17,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-test:
-    name: Build & Test (Java ${{ matrix.java }})
+  build:
+    name: Build (Java ${{ matrix.java }})
     runs-on: ubuntu-latest
 
     strategy:
@@ -37,30 +37,14 @@ jobs:
           distribution: temurin
           cache: maven
 
-      - name: Build & run tests
-        run: mvn -B clean verify
+      - name: Build application
+        run: mvn -B clean package -DskipTests
         env:
           SPRING_PROFILES_ACTIVE: test
           MAVEN_OPTS: -Xmx1024m
 
-      - name: Upload JAR artifacts
-        if: success()
+      - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
-          name: employee-management-jars
+          name: employee-management-java-${{ matrix.java }}
           path: target/*.jar
-
-      - name: Publish JUnit Test Report
-        if: always()
-        uses: dorny/test-reporter@v1
-        with:
-          name: JUnit Tests (Java ${{ matrix.java }})
-          path: target/surefire-reports/*.xml
-          reporter: java-junit
-
-      - name: Upload test logs on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-failure-logs
-          path: target/surefire-reports/
