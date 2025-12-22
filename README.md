@@ -1,4 +1,6 @@
-
+<p align="center">
+  <img src="assets/banner.png" alt="Employee Management System">
+</p>
 # 🚀 Employee Management System (EMS) 
 
 ![Java](https://img.shields.io/badge/Java-17%2B-orange?logo=java)
