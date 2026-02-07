@@ -31,7 +31,7 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <flyway.version>11.20.2</flyway.version>
 
-        <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
+        <maven.compiler.plugin.version>3.15.0</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
 
         <project.build.finalName>${project.artifactId}-${project.version}</project.build.finalName>
