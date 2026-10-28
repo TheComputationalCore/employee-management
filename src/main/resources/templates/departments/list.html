@@ -45,12 +45,9 @@
                         </a>
 
                         <!-- DELETE -->
-                        <a th:href="@{'/web/departments/delete/' + ${d.id}}"
-                           onclick="return confirm('Delete this department?')"
-                           class="btn btn-sm btn-danger d-flex align-items-center">
-                            <i data-feather="trash-2" class="me-1"></i>
-                            Delete
-                        </a>
+                        <form method="post" th:action="@{'/web/departments/delete/' + ${d.id}}" onsubmit="return confirm('Delete this department?');">
+                            <button type="submit" class="btn btn-sm btn-danger d-flex align-items-center"><i data-feather="trash-2" class="me-1"></i>Delete</button>
+                        </form>
 
                     </div>
                 </td>

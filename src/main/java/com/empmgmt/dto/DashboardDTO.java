@@ -31,5 +31,5 @@ public class DashboardDTO {
     private long leavesRejected;
 
     // Onboarding Summary
-    private List<?> onboardingList;
+    private List<OnboardingSummaryDTO> onboardingList;
 }

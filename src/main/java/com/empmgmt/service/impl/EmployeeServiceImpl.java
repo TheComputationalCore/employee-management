@@ -7,14 +7,20 @@ import com.empmgmt.exception.ResourceNotFoundException;
 import com.empmgmt.mapper.EmployeeMapper;
 import com.empmgmt.model.Employee;
 import com.empmgmt.model.EmployeeStatus;
+import com.empmgmt.model.Role;
 import com.empmgmt.repository.EmployeeRepository;
+import com.empmgmt.security.model.User;
+import com.empmgmt.security.repository.UserRepository;
 import com.empmgmt.security.service.CustomUserDetails;
+import com.empmgmt.security.service.PasswordSetupService;
 import com.empmgmt.service.EmployeeService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,6 +30,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository repo;
     private final EmployeeMapper mapper;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /* =========================================================
        SAFE SORT PARSER
@@ -47,6 +55,7 @@ public class EmployeeServiceImpl implements EmployeeService {
        CREATE
        ========================================================= */
     @Override
+    @Transactional
     public EmployeeDTO createEmployee(EmployeeDTO dto) {
 
         if (repo.existsByEmail(dto.getEmail())) {
@@ -55,8 +64,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee employee = mapper.toEntity(dto);
         employee.setStatus(EmployeeStatus.ACTIVE);
+        Employee savedEmployee = repo.save(employee);
 
-        return mapper.toDTO(repo.save(employee));
+        userRepository.save(User.builder()
+                .username(savedEmployee.getId().toString())
+                .password(passwordEncoder.encode(PasswordSetupService.randomSecret()))
+                .role(Role.ROLE_EMPLOYEE)
+                .employee(savedEmployee)
+                .build());
+
+        return mapper.toDTO(savedEmployee);
     }
 
     /* =========================================================

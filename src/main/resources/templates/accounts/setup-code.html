@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<main layout:fragment="content" class="container py-4" style="max-width: 760px">
+    <section class="card shadow-sm">
+        <div class="card-body p-4">
+            <h1 class="h4">Employee account setup</h1>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+            <div th:if="${setupCode}" class="alert alert-warning" role="alert">
+                <strong>Show this code once to the employee using a private channel.</strong>
+                <p class="mb-2">It expires in 24 hours. Generating another code will invalidate this one and reset the account password.</p>
+                <div class="input-group">
+                    <input id="setupCode" class="form-control font-monospace" readonly th:value="${setupCode}">
+                    <button class="btn btn-outline-secondary" type="button" onclick="navigator.clipboard.writeText(document.getElementById('setupCode').value)">Copy</button>
+                </div>
+                <p class="mt-3 mb-0">Employee username: <code th:text="${username}"></code></p>
+                <p class="mt-3 mb-0">Employee setup page: <a th:href="@{/account/setup}" th:text="${setupUrl}"></a></p>
+                <p class="small text-danger mt-3 mb-0">This code is not emailed or saved in the database in readable form. Do not include it in notes or messages.</p>
+            </div>
+            <a class="btn btn-outline-primary" th:href="@{/web/employees}">Back to employees</a>
+        </div>
+    </section>
+</main>
+</html>

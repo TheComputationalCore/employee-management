@@ -25,6 +25,7 @@ public class OnboardingFlow {
 
     private LocalDate completedAt;
 
+    @Builder.Default
     private boolean completed = false;
 
     @OneToMany(mappedBy = "flow", cascade = CascadeType.ALL, orphanRemoval = true)

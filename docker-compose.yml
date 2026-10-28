@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   employee-management:
     container_name: employee-management-app
@@ -14,14 +12,11 @@ services:
       # SPRING CONFIG
       # ===============================
       SPRING_PROFILES_ACTIVE: dev
+      APP_UPLOAD_DIR: /app/uploads
 
       # ===============================
-      # DATABASE (Neon PostgreSQL)
+      # DATABASE (in-memory H2 from the dev profile)
       # ===============================
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-
       # ===============================
       # JVM TUNING (Container Safe)
       # ===============================
@@ -35,7 +30,7 @@ services:
       # ===============================
       # FILE STORAGE (IMPORTANT)
       # ===============================
-      - ./uploads:/app/uploads
+      - uploads-data:/app/uploads
 
     restart: unless-stopped
 
@@ -54,3 +49,6 @@ services:
 networks:
   employee-net:
     driver: bridge
+
+volumes:
+  uploads-data:

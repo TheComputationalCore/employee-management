@@ -41,10 +41,9 @@
             Applications for: <span th:text="${job.title}"></span>
         </h2>
 
-        <a class="btn btn-success"
-           th:href="@{'/web/recruitment/smart-shortlist/' + ${job.id}}">
-            ⭐ Smart Shortlist
-        </a>
+        <form method="post" th:action="@{'/web/recruitment/smart-shortlist/' + ${job.id}}">
+            <button class="btn btn-success" type="submit">⭐ Smart Shortlist</button>
+        </form>
     </div>
 
     <div class="card shadow-sm p-3" style="border-radius: 16px;">

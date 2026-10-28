@@ -188,7 +188,15 @@
                 Logged out successfully
             </div>
 
+            <div th:if="${setupComplete}" class="alert alert-success mt-3 text-center">
+                Password set. You can now sign in.
+            </div>
+
         </form>
+
+        <div class="text-center mt-3">
+            <a th:href="@{/account/setup}">Set up an employee account</a>
+        </div>
 
         <div class="footer-text">
             © 2025 Employee Management System

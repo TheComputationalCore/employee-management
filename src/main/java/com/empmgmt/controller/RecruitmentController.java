@@ -71,13 +71,13 @@ public class RecruitmentController {
         return "redirect:/web/recruitment/jobs?updated";
     }
 
-    @GetMapping("/jobs/close/{id}")
+    @PostMapping("/jobs/close/{id}")
     public String closeJob(@PathVariable Long id) {
         jobService.close(id);
         return "redirect:/web/recruitment/jobs?closed";
     }
 
-    @GetMapping("/jobs/delete/{id}")
+    @PostMapping("/jobs/delete/{id}")
     public String deleteJob(@PathVariable Long id) {
         jobService.delete(id);
         return "redirect:/web/recruitment/jobs?deleted";
@@ -121,9 +121,6 @@ public class RecruitmentController {
             return "redirect:/web/recruitment/jobs";
         }
 
-        app = resumeParsingService.parseResume(app, job);
-        appService.save(app);
-
         model.addAttribute("app", app);
         model.addAttribute("job", job);
         model.addAttribute("score", scoreRepo.findByApplicationId(appId).orElse(null));
@@ -146,7 +143,7 @@ public class RecruitmentController {
     }
 
     // RECALCULATE SCORE
-    @GetMapping("/candidate/{appId}/recalculate")
+    @PostMapping("/candidate/{appId}/recalculate")
     public String recalculateScore(@PathVariable Long appId, RedirectAttributes ra) {
         if (appId == null) {
             ra.addFlashAttribute("error", "Invalid application");
@@ -170,7 +167,7 @@ public class RecruitmentController {
     }
 
     // INITIAL SCORING
-    @GetMapping("/score/{appId}/{jobId}")
+    @PostMapping("/score/{appId}/{jobId}")
     public String scoreOne(@PathVariable Long appId, @PathVariable Long jobId, RedirectAttributes ra) {
         if (appId == null || jobId == null) {
             ra.addFlashAttribute("error", "Invalid request");
@@ -180,7 +177,7 @@ public class RecruitmentController {
         return "redirect:/web/recruitment/applications/" + jobId + "?scored";
     }
 
-    @GetMapping("/smart-shortlist/{jobId}")
+    @PostMapping("/smart-shortlist/{jobId}")
     public String smartShortlist(@PathVariable Long jobId) {
         scoringService.autoShortlist(jobId);
         return "redirect:/web/recruitment/applications/" + jobId + "?smartShortlist";

@@ -63,10 +63,16 @@
                             <i data-feather="edit-3" style="width:16px;"></i>
                         </a>
 
-                        <button class="btn btn-sm btn-outline-danger rounded-3"
-                                th:onclick="'confirmDelete(' + ${emp.id} + ')'">
-                            <i data-feather="trash-2" style="width:16px;"></i>
-                        </button>
+                        <form method="post" th:action="@{'/web/accounts/setup-code/' + ${emp.id}}"
+                              onsubmit="return confirm('This resets the employee login password and invalidates any previous setup code. Continue?');">
+                            <button class="btn btn-sm btn-outline-secondary rounded-3" type="submit" title="Issue one-time account setup code">
+                                <i data-feather="key" style="width:16px;"></i>
+                            </button>
+                        </form>
+
+                        <form method="post" th:action="@{'/web/employees/delete/' + ${emp.id}}" onsubmit="return confirm('Delete this employee?');">
+                            <button class="btn btn-sm btn-outline-danger rounded-3" type="submit"><i data-feather="trash-2" style="width:16px;"></i></button>
+                        </form>
                     </div>
                 </td>
             </tr>
@@ -94,20 +100,6 @@
             });
         });
 
-        function confirmDelete(id) {
-            Swal.fire({
-                title: "Delete Employee?",
-                text: "This cannot be undone.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                confirmButtonText: "Delete"
-            }).then(res => {
-                if (res.isConfirmed) {
-                    window.location.href = "/web/employees/delete/" + id;
-                }
-            });
-        }
     </script>
 
 </main>

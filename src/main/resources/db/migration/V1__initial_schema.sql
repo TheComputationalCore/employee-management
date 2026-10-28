@@ -46,7 +46,7 @@ CREATE TABLE users (
     employee_id BIGINT UNIQUE,
 
     CONSTRAINT chk_users_role
-        CHECK (role IN ('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE')),
+        CHECK (role IN ('ROLE_ADMIN', 'ROLE_HR', 'EMPLOYEE', 'ROLE_EMPLOYEE')),
 
     CONSTRAINT fk_users_employee
         FOREIGN KEY (employee_id)

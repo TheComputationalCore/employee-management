@@ -9,6 +9,7 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "attendance",
         uniqueConstraints = @UniqueConstraint(columnNames = {"employeeId", "date"}))
+@EqualsAndHashCode(callSuper = false)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,5 +31,6 @@ public class Attendance extends BaseEntity {
     private Double totalHours;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private AttendanceStatus status = AttendanceStatus.PRESENT;
 }

@@ -6,6 +6,8 @@ import com.empmgmt.service.EmployeeService;
 import com.empmgmt.service.LeaveService;
 
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +33,15 @@ public class LeaveWebController {
     }
 
     @PostMapping("/apply")
-    public String applySubmit(@ModelAttribute LeaveRequest leave) {
-
+    public String applySubmit(@Valid @ModelAttribute("leave") LeaveRequest leave, BindingResult bindingResult, Model model) {
+        if (leave.getStartDate() != null && leave.getEndDate() != null
+                && leave.getEndDate().isBefore(leave.getStartDate())) {
+            bindingResult.rejectValue("endDate", "leave.endDate.invalid", "End date must be on or after start date");
+        }
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("types", LeaveType.values());
+            return "leave/apply";
+        }
         Long employeeId = employeeService.getEmployeeIdFromAuth();
         leave.setEmployeeId(employeeId);
 
@@ -116,13 +125,13 @@ public class LeaveWebController {
     /* -------------------------------
      * APPROVAL ACTIONS (ADMIN / HR)
      * ------------------------------- */
-    @GetMapping("/approve/{id}")
+    @PostMapping("/approve/{id}")
     public String approve(@PathVariable Long id) {
         leaveService.approveLeave(id);
         return "redirect:/web/leave?approved";
     }
 
-    @GetMapping("/reject/{id}")
+    @PostMapping("/reject/{id}")
     public String reject(@PathVariable Long id) {
         leaveService.rejectLeave(id);
         return "redirect:/web/leave?rejected";

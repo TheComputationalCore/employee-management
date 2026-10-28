@@ -47,10 +47,9 @@
                 <span th:text="${t.required} ? 'Yes' : 'No'"></span>
             </td>
             <td>
-                <a class="btn btn-danger btn-sm"
-                   th:href="@{'/web/onboarding/templates/delete/' + ${t.id}}">
-                    Delete
-                </a>
+                <form method="post" th:action="@{'/web/onboarding/templates/delete/' + ${t.id}}">
+                    <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                </form>
             </td>
         </tr>
         </tbody>

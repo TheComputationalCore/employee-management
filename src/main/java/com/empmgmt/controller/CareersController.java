@@ -4,9 +4,9 @@ import com.empmgmt.model.Application;
 import com.empmgmt.model.Job;
 import com.empmgmt.repository.ApplicationRepository;
 import com.empmgmt.repository.JobRepository;
-import com.empmgmt.service.impl.AIResumeScoringService;
-import com.empmgmt.util.ResumeParser;
+import com.empmgmt.service.ResumeParsingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +15,10 @@ import org.springframework.util.StringUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.util.Set;
+import java.nio.file.StandardCopyOption;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,7 +27,10 @@ public class CareersController {
 
     private final JobRepository jobRepo;
     private final ApplicationRepository appRepo;
-    private final AIResumeScoringService aiScoringService;
+    private final ResumeParsingService resumeParsingService;
+
+    @Value("${app.upload-dir:uploads}")
+    private String uploadDirectory;
 
     /* ---------------------------------------------------
      * PUBLIC JOB LISTING PAGE
@@ -69,122 +71,57 @@ public class CareersController {
             @RequestParam MultipartFile resume,
             Model model
     ) throws Exception {
+        Job job = jobRepo.findById(jobId)
+                .filter(candidateJob -> Boolean.TRUE.equals(candidateJob.getActive()))
+                .orElseThrow(() -> new IllegalArgumentException("Job is not available"));
 
-        /* --------------------------
-           1. SAVE RESUME TO DISK (SAFE)
-        -------------------------- */
-        String uploadDir = "uploads/resumes/";
-        Files.createDirectories(Path.of(uploadDir));
-
-        // basic emptiness check
         if (resume == null || resume.isEmpty()) {
             throw new IllegalArgumentException("No file uploaded");
         }
-
-        // Normalize the original filename (defense in depth)
-        String originalFilename = StringUtils.cleanPath(resume.getOriginalFilename());
-        if (originalFilename == null || originalFilename.isBlank()) {
-            throw new IllegalArgumentException("Invalid uploaded file: missing filename");
+        if (resume.getSize() > 5L * 1024 * 1024) {
+            throw new IllegalArgumentException("Resume must be 5 MB or smaller");
         }
 
-        // Reject path traversal / separators (must be a single filename)
-        if (originalFilename.contains("..") || originalFilename.contains("/") || originalFilename.contains("\\")) {
-            throw new IllegalArgumentException("Invalid filename: path sequences are forbidden");
+        String originalFilename = StringUtils.cleanPath(resume.getOriginalFilename() == null ? "" : resume.getOriginalFilename());
+        if (originalFilename.isBlank() || originalFilename.contains("..")
+                || originalFilename.contains("/") || originalFilename.contains("\\")
+                || !originalFilename.toLowerCase().endsWith(".pdf")) {
+            throw new IllegalArgumentException("Only PDF resumes with a valid filename are accepted");
         }
 
-        // Extract and sanitize extension
-        String safeExtension = "";
-        int extDot = originalFilename.lastIndexOf('.');
-        if (extDot != -1 && extDot < originalFilename.length() - 1) {
-            safeExtension = originalFilename.substring(extDot).replaceAll("[^\\.a-zA-Z0-9]", "");
-        }
-
-        // Optionally restrict allowed file extensions for greater safety
-        // Adjust allowed set as required for your app
-        String extLower = safeExtension.toLowerCase();
-        if (!extLower.isEmpty()) {
-            if (!extLower.equals(".pdf") && !extLower.equals(".doc") && !extLower.equals(".docx") && !extLower.equals(".txt")) {
-                throw new IllegalArgumentException("Unsupported file type: " + safeExtension);
-            }
-        } else {
-            // If no extension, optionally reject
-            throw new IllegalArgumentException("Uploaded file must have an extension (e.g. .pdf, .docx)");
-        }
-
-        // Build a safe, unique stored filename — use UUID so attacker-controlled name isn't used directly
-        String storedFilename = System.currentTimeMillis() + "-" + UUID.randomUUID() + safeExtension;
-
-        // Resolve upload directory and destination path robustly
-        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-        Path destination = uploadPath.resolve(storedFilename).normalize();
-
-        // Ensure the destination is inside the designated upload directory (defense-in-depth)
+        Path uploadPath = Path.of(uploadDirectory).toAbsolutePath().normalize().resolve("resumes").normalize();
+        Files.createDirectories(uploadPath);
+        Path destination = uploadPath.resolve(UUID.randomUUID() + ".pdf").normalize();
         if (!destination.startsWith(uploadPath)) {
             throw new IllegalArgumentException("Invalid destination path");
         }
 
-        // Write file
-        Files.write(destination, resume.getBytes());
+        try (InputStream input = resume.getInputStream()) {
+            byte[] signature = input.readNBytes(5);
+            if (!new String(signature, StandardCharsets.US_ASCII).equals("%PDF-")) {
+                throw new IllegalArgumentException("Uploaded file is not a valid PDF");
+            }
+        }
+        try (InputStream input = resume.getInputStream()) {
+            Files.copy(input, destination, StandardCopyOption.REPLACE_EXISTING);
+        }
 
-        String filePath = destination.toString();
-
-        /* --------------------------
-           2. PARSE RESUME TEXT
-        -------------------------- */
-        String text = ResumeParser.extractText(filePath);
-
-        Set<String> parsedSkills = ResumeParser.extractSkills(text);
-        int expYears = ResumeParser.extractExperienceYears(text);
-        String education = ResumeParser.extractEducation(text);
-
-        /* --------------------------
-           3. CREATE BASE APPLICATION
-        -------------------------- */
         Application app = new Application();
         app.setJobId(jobId);
         app.setFullName(name);
         app.setEmail(email);
         app.setPhone(phone);
-        app.setResumePath(filePath);
+        app.setResumePath(destination.toString());
 
         app.setStatus("Applied");
-        app.setCreatedAt(LocalDate.now());
-        app.setStatusUpdatedAt(LocalDate.now());
-
-        app.setParsedSkills(parsedSkills.stream().collect(Collectors.joining(", ")));
-        app.setExperienceYears(expYears);
-        app.setEducation(education);
-
-        /* --------------------------
-           4. JOB REQUIREMENTS
-        -------------------------- */
-        Job job = jobRepo.findById(jobId).orElseThrow();
-        Set<String> requiredSkills = ResumeParser.splitCsvSkills(job.getRequiredSkills());
-
-        /* --------------------------
-           5. AI SCORING
-        -------------------------- */
-        int aiScore = aiScoringService.score(app, job);
-        app.setAiScore(aiScore);
-
-        /* --------------------------
-           6. MISSING SKILLS DETECTION
-        -------------------------- */
-        Set<String> missing = ResumeParser.detectMissingSkills(parsedSkills, requiredSkills);
-        app.setMissingSkills(String.join(", ", missing));
-
-        /* --------------------------
-           7. AI SUMMARY GENERATION
-        -------------------------- */
-        String summary = aiScoringService.summarizeCandidate(
-                name, parsedSkills, expYears, education, aiScore
-        );
-        app.setAiSummary(summary);
-
-        /* --------------------------
-           8. SAVE APPLICATION
-        -------------------------- */
-        Application saved = appRepo.save(app);
+        Application saved;
+        try {
+            resumeParsingService.parseResume(app, job);
+            saved = appRepo.save(app);
+        } catch (RuntimeException | Error failure) {
+            Files.deleteIfExists(destination);
+            throw failure;
+        }
 
         /* --------------------------
            9. SEND TRACKING ID TO PAGE

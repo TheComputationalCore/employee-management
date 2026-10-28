@@ -46,7 +46,7 @@ public class DepartmentWebController {
         return "redirect:/web/departments?updated";
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         service.delete(id);
         return "redirect:/web/departments?deleted";

@@ -33,6 +33,12 @@ public class User {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
+    @Column(name = "setup_token_hash", length = 64)
+    private String setupTokenHash;
+
+    @Column(name = "setup_token_expires_at")
+    private java.time.LocalDateTime setupTokenExpiresAt;
+
     public Long getEmployeeId() {
         return (employee != null) ? employee.getId() : null;
     }

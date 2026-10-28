@@ -100,11 +100,7 @@
                                 </li>
 
                                 <li>
-                                    <a class="dropdown-item text-danger"
-                                       href="javascript:void(0)"
-                                       th:onclick="'confirmDeleteJob(' + ${job.id} + ')'">
-                                        <i data-feather="trash-2" class="me-2"></i> Delete
-                                    </a>
+                                    <form method="post" th:action="@{'/web/recruitment/jobs/delete/' + ${job.id}}" onsubmit="return confirm('Delete this job posting?');"><button class="dropdown-item text-danger" type="submit"><i data-feather="trash-2" class="me-2"></i> Delete</button></form>
                                 </li>
 
                             </ul>
@@ -128,20 +124,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        function confirmDeleteJob(id) {
-            Swal.fire({
-                title: "Delete Job Posting?",
-                text: "This action cannot be undone.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                confirmButtonText: "Delete"
-            }).then(result => {
-                if (result.isConfirmed) {
-                    window.location.href = "/web/recruitment/jobs/delete/" + id;
-                }
-            });
-        }
 
         document.addEventListener("DOMContentLoaded", () => {
 

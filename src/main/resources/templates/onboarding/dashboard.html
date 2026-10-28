@@ -162,7 +162,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script th:inline="javascript">
-        /*[[${onboardings}]]*/[].forEach(o => {
+        const onboardings = /*[[${onboardings}]]*/ [];
+        onboardings.forEach(o => {
             const canvas = document.getElementById('chart-' + o.id);
             if (!canvas) return;
 

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.AccessDeniedException;
 
 @Controller
 @RequiredArgsConstructor
@@ -76,6 +77,7 @@ public class KPIWebController {
 
     @PostMapping("/self/{id}")
     public String selfScore(@PathVariable Long id, @RequestParam Double achieved) {
+        requireOwnKpi(id);
         empKpiService.submitSelfScore(id, achieved);
         return "redirect:/web/kpi?selfSubmitted";
     }
@@ -84,6 +86,15 @@ public class KPIWebController {
     public String managerScore(@PathVariable Long id, @RequestParam Double achieved) {
         empKpiService.managerScore(id, achieved);
         return "redirect:/web/kpi?managerSubmitted";
+    }
+
+    private void requireOwnKpi(Long id) {
+        Long employeeId = employeeService.getEmployeeIdFromAuth();
+        boolean ownsKpi = empKpiService.getEmployeeKPIs(employeeId).stream()
+                .anyMatch(kpi -> id.equals(kpi.getId()));
+        if (!ownsKpi) {
+            throw new AccessDeniedException("You can only update your own KPI self-score");
+        }
     }
 
     @GetMapping("/analytics")

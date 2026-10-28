@@ -56,20 +56,16 @@
                     <p><strong>Experience:</strong> <span th:text="${score.experienceScore}"></span>/30</p>
                     <p><strong>Resume:</strong> <span th:text="${score.resumeScore}"></span>/20</p>
 
-                    <a th:href="@{|/web/recruitment/candidate/${app.id}/recalculate|}"
-                       class="btn btn-outline-primary btn-sm mt-3"
-                       th:onclick="|this.innerHTML='<i data-feather=\'loader\' class=\'spin\'></i> Recalculating...'; feather.replace();|">
-                        <i data-feather="refresh-cw"></i> Recalculate Score
-                    </a>
+                    <form method="post" th:action="@{|/web/recruitment/candidate/${app.id}/recalculate|}" class="mt-3">
+                        <button class="btn btn-outline-primary btn-sm" type="submit"><i data-feather="refresh-cw"></i> Recalculate Score</button>
+                    </form>
                 </div>
 
                 <div th:if="${score == null}">
                     <p class="text-muted">Not scored yet.</p>
-                    <a th:href="@{|/web/recruitment/score/${app.id}/${app.jobId}|}"
-                       th:if="${app.jobId != null}"
-                       class="btn btn-primary btn-sm">
-                        <i data-feather="zap"></i> Run Initial Scoring
-                    </a>
+                    <form th:if="${app.jobId != null}" method="post" th:action="@{|/web/recruitment/score/${app.id}/${app.jobId}|}">
+                        <button class="btn btn-primary btn-sm" type="submit"><i data-feather="zap"></i> Run Initial Scoring</button>
+                    </form>
                     <span th:unless="${app.jobId != null}" class="text-danger">Job link missing</span>
                 </div>
             </div>
