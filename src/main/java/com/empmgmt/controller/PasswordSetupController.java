@@ -62,9 +62,10 @@ public class PasswordSetupController {
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         try {
-            model.addAttribute("setupCode", passwordSetupService.issueSetupCode(employeeId));
+            PasswordSetupService.SetupCode setupCode = passwordSetupService.issueSetupCode(employeeId);
+            model.addAttribute("setupCode", setupCode.code());
             model.addAttribute("employeeId", employeeId);
-            model.addAttribute("username", employeeId.toString());
+            model.addAttribute("username", setupCode.username());
             model.addAttribute("setupUrl", request.getContextPath() + "/account/setup");
         } catch (IllegalArgumentException ex) {
             model.addAttribute("error", ex.getMessage());
