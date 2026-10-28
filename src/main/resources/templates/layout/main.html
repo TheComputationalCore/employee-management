@@ -40,9 +40,9 @@
 
         <!-- DASHBOARD -->
         <li class="nav-item">
-            <a th:href="@{/web/dashboard}" class="nav-link">
+            <a th:href="${#authorization.expression('hasRole(''EMPLOYEE'')') ? '/web/attendance/my' : '/web/dashboard'}" class="nav-link">
                 <i data-feather="grid"></i>
-                <span>Dashboard</span>
+                <span th:text="${#authorization.expression('hasRole(''EMPLOYEE'')') ? 'My Workspace' : 'Dashboard'}">Dashboard</span>
             </a>
         </li>
 

@@ -5,6 +5,7 @@ import com.empmgmt.model.OnboardingTask;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.nio.file.Path;
 import java.util.List;
 
 public interface OnboardingService {
@@ -26,6 +27,7 @@ public interface OnboardingService {
     // UPLOADS
     void uploadDocument(Long taskId, String filePath);
     void uploadFile(Long taskId, MultipartFile file);
+    Path getDocumentPath(Long taskId);
 
     // PROGRESS
     int getProgress(Long employeeId);

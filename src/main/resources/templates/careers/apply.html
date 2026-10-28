@@ -48,23 +48,25 @@
 
     <div class="apply-wrapper">
 
+        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
         <form th:action="@{'/careers/apply/' + ${job.id}}"
               method="post"
               enctype="multipart/form-data">
 
             <div class="mb-3">
                 <label class="section-label">Full Name</label>
-                <input name="name" class="form-control" placeholder="John Doe" required>
+                <input name="name" class="form-control" placeholder="John Doe" th:value="${name}" required>
             </div>
 
             <div class="mb-3">
                 <label class="section-label">Email</label>
-                <input name="email" type="email" class="form-control" placeholder="john@example.com" required>
+                <input name="email" type="email" class="form-control" placeholder="john@example.com" th:value="${email}" required>
             </div>
 
             <div class="mb-3">
                 <label class="section-label">Phone</label>
-                <input name="phone" class="form-control" placeholder="+91 98765 43210" required>
+                <input name="phone" class="form-control" placeholder="+91 98765 43210" th:value="${phone}" required>
             </div>
 
             <div class="mb-3">

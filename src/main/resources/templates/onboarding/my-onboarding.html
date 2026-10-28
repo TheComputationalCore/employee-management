@@ -13,6 +13,8 @@
 
     <h2 class="mb-4">My Onboarding</h2>
 
+    <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
     <!-- Progress Card -->
     <div class="card shadow-sm p-4 mb-4">
         <h5>Your Onboarding Progress</h5>
@@ -82,8 +84,7 @@
 
                 <!-- Show Uploaded File -->
                 <div th:if="${t.filePath != null}" class="mt-3">
-                    <a th:href="@{'/' + ${t.filePath}}"
-                       target="_blank"
+                    <a th:href="@{'/web/onboarding/task/file/' + ${t.id}}"
                        class="btn btn-outline-secondary">
                         View Uploaded Document
                     </a>

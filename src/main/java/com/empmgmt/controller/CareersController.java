@@ -2,6 +2,7 @@ package com.empmgmt.controller;
 
 import com.empmgmt.model.Application;
 import com.empmgmt.model.Job;
+import com.empmgmt.exception.ResourceNotFoundException;
 import com.empmgmt.repository.ApplicationRepository;
 import com.empmgmt.repository.JobRepository;
 import com.empmgmt.service.ResumeParsingService;
@@ -46,7 +47,8 @@ public class CareersController {
      * --------------------------------------------------- */
     @GetMapping("/job/{id}")
     public String details(@PathVariable Long id, Model model) {
-        model.addAttribute("job", jobRepo.findById(id).orElseThrow());
+        model.addAttribute("job", jobRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found")));
         return "careers/details";
     }
 
@@ -55,7 +57,9 @@ public class CareersController {
      * --------------------------------------------------- */
     @GetMapping("/apply/{jobId}")
     public String applyForm(@PathVariable Long jobId, Model model) {
-        model.addAttribute("job", jobRepo.findById(jobId).orElseThrow());
+        model.addAttribute("job", jobRepo.findById(jobId)
+                .filter(job -> Boolean.TRUE.equals(job.getActive()))
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found")));
         return "careers/apply";
     }
 
@@ -73,20 +77,28 @@ public class CareersController {
     ) throws Exception {
         Job job = jobRepo.findById(jobId)
                 .filter(candidateJob -> Boolean.TRUE.equals(candidateJob.getActive()))
-                .orElseThrow(() -> new IllegalArgumentException("Job is not available"));
+                .orElse(null);
+        if (job == null) {
+            return "redirect:/careers?jobUnavailable";
+        }
 
+        if (name == null || name.isBlank() || name.length() > 160
+                || email == null || !email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$") || email.length() > 254
+                || phone == null || phone.isBlank() || phone.length() > 40) {
+            return redisplayApplicationForm(job, name, email, phone, "Enter a valid name, email address, and phone number.", model);
+        }
         if (resume == null || resume.isEmpty()) {
-            throw new IllegalArgumentException("No file uploaded");
+            return redisplayApplicationForm(job, name, email, phone, "Choose a PDF resume to upload.", model);
         }
         if (resume.getSize() > 5L * 1024 * 1024) {
-            throw new IllegalArgumentException("Resume must be 5 MB or smaller");
+            return redisplayApplicationForm(job, name, email, phone, "Resume must be 5 MB or smaller.", model);
         }
 
         String originalFilename = StringUtils.cleanPath(resume.getOriginalFilename() == null ? "" : resume.getOriginalFilename());
         if (originalFilename.isBlank() || originalFilename.contains("..")
                 || originalFilename.contains("/") || originalFilename.contains("\\")
                 || !originalFilename.toLowerCase().endsWith(".pdf")) {
-            throw new IllegalArgumentException("Only PDF resumes with a valid filename are accepted");
+            return redisplayApplicationForm(job, name, email, phone, "Only PDF resumes with a valid filename are accepted.", model);
         }
 
         Path uploadPath = Path.of(uploadDirectory).toAbsolutePath().normalize().resolve("resumes").normalize();
@@ -99,7 +111,7 @@ public class CareersController {
         try (InputStream input = resume.getInputStream()) {
             byte[] signature = input.readNBytes(5);
             if (!new String(signature, StandardCharsets.US_ASCII).equals("%PDF-")) {
-                throw new IllegalArgumentException("Uploaded file is not a valid PDF");
+                return redisplayApplicationForm(job, name, email, phone, "The selected file is not a valid PDF.", model);
             }
         }
         try (InputStream input = resume.getInputStream()) {
@@ -129,5 +141,15 @@ public class CareersController {
         model.addAttribute("trackingId", saved.getId());
 
         return "careers/submitted";
+    }
+
+    private String redisplayApplicationForm(Job job, String name, String email, String phone,
+                                            String error, Model model) {
+        model.addAttribute("job", job);
+        model.addAttribute("name", name);
+        model.addAttribute("email", email);
+        model.addAttribute("phone", phone);
+        model.addAttribute("error", error);
+        return "careers/apply";
     }
 }
