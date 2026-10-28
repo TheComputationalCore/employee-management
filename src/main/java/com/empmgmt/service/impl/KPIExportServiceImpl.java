@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.util.List;
 
 // ====== OPENPDF ======
-import org.openpdf.text.*;
-import org.openpdf.text.pdf.*;
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.*;
 
 // ====== APACHE POI (EXCEL) ======
 import org.apache.poi.ss.usermodel.Row;

@@ -11,12 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 
-import org.openpdf.text.Document;
-import org.openpdf.text.Element;
-import org.openpdf.text.Font;
-import org.openpdf.text.PageSize;
-import org.openpdf.text.Paragraph;
-import org.openpdf.text.pdf.PdfWriter;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfWriter;
 
 import java.io.File;
 import java.io.FileOutputStream;

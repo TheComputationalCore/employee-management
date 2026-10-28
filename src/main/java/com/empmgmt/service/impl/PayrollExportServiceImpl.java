@@ -6,7 +6,7 @@ import com.empmgmt.repository.EmployeeRepository;
 import com.empmgmt.repository.PayrollRepository;
 import com.empmgmt.service.PayrollExportService;
 
-import org.openpdf.text.Font;
+import com.lowagie.text.Font;
 import lombok.RequiredArgsConstructor;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.util.List;
 
 // ==== OpenPDF ====
-import org.openpdf.text.*;
-import org.openpdf.text.pdf.*;
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.*;
 
 import java.awt.Color;
 
