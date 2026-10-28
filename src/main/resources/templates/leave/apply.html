@@ -61,7 +61,7 @@
 
         <div th:each="b : ${balances}" class="balance-item">
             <i data-feather="pie-chart" class="me-2" style="width:15px;"></i>
-            <span th:text="${b.type + ': ' + b.remainingDays + ' days remaining'}"></span>
+            <span th:text="${b.type + ': ' + b.remaining + ' days remaining'}"></span>
         </div>
         <p th:if="${#lists.isEmpty(balances)}" class="text-muted mb-0">
             No leave balances are configured for your account. Please contact HR before applying.

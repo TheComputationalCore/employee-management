@@ -40,6 +40,8 @@ public class SecurityConfig {
                     "/web/onboarding/task/file/**",
                     "/web/kpi/self/**"
                 ).hasAnyRole("ADMIN", "HR", "EMPLOYEE")
+                // The controller verifies that employee users only access their own payslips.
+                .requestMatchers("/web/export/payroll/pdf/**").hasAnyRole("ADMIN", "HR", "EMPLOYEE")
                 .requestMatchers("/web/**", "/api/v1/**").hasAnyRole("ADMIN", "HR")
                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").hasAnyRole("ADMIN", "HR")
                 .anyRequest().authenticated()
