@@ -1,6 +1,8 @@
 package com.empmgmt.security.service;
 
 import com.empmgmt.security.model.User;
+import com.empmgmt.model.EmployeeStatus;
+import com.empmgmt.model.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,9 +20,10 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // ENUM → String
+        // Normalize legacy records that stored EMPLOYEE without the ROLE_ prefix.
+        String authority = user.getRole() == Role.EMPLOYEE ? "ROLE_EMPLOYEE" : user.getRole().name();
         return List.of(
-                new SimpleGrantedAuthority(user.getRole().name())
+                new SimpleGrantedAuthority(authority)
         );
     }
 
@@ -29,7 +32,13 @@ public class CustomUserDetails implements UserDetails {
     @Override public boolean isAccountNonExpired() { return true; }
     @Override public boolean isAccountNonLocked() { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }
-    @Override public boolean isEnabled() { return true; }
+    @Override public boolean isEnabled() {
+        if (user.getRole() != Role.EMPLOYEE && user.getRole() != Role.ROLE_EMPLOYEE) {
+            return true;
+        }
+        return user.getEmployee() != null
+                && user.getEmployee().getStatus() == EmployeeStatus.ACTIVE;
+    }
 
     public Long getEmployeeId() {
         return user.getEmployeeId();

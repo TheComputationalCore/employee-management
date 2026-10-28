@@ -64,8 +64,8 @@
                         </a>
 
                         <form method="post" th:action="@{'/web/accounts/setup-code/' + ${emp.id}}"
-                              onsubmit="return confirm('This resets the employee login password and invalidates any previous setup code. Continue?');">
-                            <button class="btn btn-sm btn-outline-secondary rounded-3" type="submit" title="Issue one-time account setup code">
+                              onsubmit="return confirm('This creates or resets the employee login password and invalidates any previous setup code. Continue?');">
+                            <button class="btn btn-sm btn-outline-secondary rounded-3" type="submit" title="Create or reset employee login access">
                                 <i data-feather="key" style="width:16px;"></i>
                             </button>
                         </form>

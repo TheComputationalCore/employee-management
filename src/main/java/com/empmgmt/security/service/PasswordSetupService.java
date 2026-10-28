@@ -1,6 +1,10 @@
 package com.empmgmt.security.service;
 
 import com.empmgmt.security.model.User;
+import com.empmgmt.model.Employee;
+import com.empmgmt.model.EmployeeStatus;
+import com.empmgmt.model.Role;
+import com.empmgmt.repository.EmployeeRepository;
 import com.empmgmt.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,19 +27,42 @@ public class PasswordSetupService {
     private static final int TOKEN_LIFETIME_HOURS = 24;
 
     private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public record SetupCode(String code, String username) {}
+
     @Transactional
-    public String issueSetupCode(Long employeeId) {
-        User user = userRepository.findByEmployee_Id(employeeId)
-                .orElseThrow(() -> new IllegalArgumentException("No login account exists for this employee"));
+    public SetupCode issueSetupCode(Long employeeId) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+        if (employee.getStatus() != EmployeeStatus.ACTIVE) {
+            throw new IllegalArgumentException("Restore this employee before setting up login access");
+        }
+
+        User user = userRepository.findByEmployee_Id(employeeId).orElseGet(() -> {
+            String username = employeeId.toString();
+            if (userRepository.existsByUsername(username)) {
+                throw new IllegalArgumentException("The employee ID is already used by another login account");
+            }
+            return User.builder()
+                    .username(username)
+                    .role(Role.ROLE_EMPLOYEE)
+                    .employee(employee)
+                    .build();
+        });
+        if (user.getRole() == Role.EMPLOYEE) {
+            user.setRole(Role.ROLE_EMPLOYEE);
+        } else if (user.getRole() != Role.ROLE_EMPLOYEE) {
+            throw new IllegalArgumentException("This employee record is linked to a non-employee login account");
+        }
 
         String setupCode = randomSecret();
         user.setPassword(passwordEncoder.encode(randomSecret()));
         user.setSetupTokenHash(hash(setupCode));
         user.setSetupTokenExpiresAt(LocalDateTime.now().plusHours(TOKEN_LIFETIME_HOURS));
         userRepository.save(user);
-        return setupCode;
+        return new SetupCode(setupCode, user.getUsername());
     }
 
     @Transactional
