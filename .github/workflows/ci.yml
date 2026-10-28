@@ -38,9 +38,9 @@ jobs:
           cache: maven
 
       - name: Build application
-        run: mvn -B clean package -DskipTests
+        run: mvn -B clean verify
         env:
-          SPRING_PROFILES_ACTIVE: test
+          SPRING_PROFILES_ACTIVE: dev
           MAVEN_OPTS: -Xmx1024m
 
       - name: Upload JAR artifact

@@ -111,18 +111,14 @@
                 <td th:if="${#authorization.expression('hasAnyRole(''ADMIN'',''HR'')')}">
 
                     <!-- APPROVE -->
-                    <a th:if="${l.status.name() == 'PENDING'}"
-                       class="btn btn-sm btn-success action-btn"
-                       th:href="@{'/web/leave/approve/' + ${l.id}}">
-                        <i data-feather="check"></i>
-                    </a>
+                    <form th:if="${l.status.name() == 'PENDING'}" method="post" th:action="@{'/web/leave/approve/' + ${l.id}}" class="d-inline">
+                        <button class="btn btn-sm btn-success action-btn" type="submit"><i data-feather="check"></i></button>
+                    </form>
 
                     <!-- REJECT -->
-                    <a th:if="${l.status.name() == 'PENDING'}"
-                       class="btn btn-sm btn-danger action-btn ms-1"
-                       th:href="@{'/web/leave/reject/' + ${l.id}}">
-                        <i data-feather="x"></i>
-                    </a>
+                    <form th:if="${l.status.name() == 'PENDING'}" method="post" th:action="@{'/web/leave/reject/' + ${l.id}}" class="d-inline">
+                        <button class="btn btn-sm btn-danger action-btn ms-1" type="submit"><i data-feather="x"></i></button>
+                    </form>
 
                     <!-- DOWNLOAD SUMMARY -->
                     <a class="btn btn-sm btn-info action-btn ms-1"

@@ -1,7 +1,6 @@
 package com.empmgmt.controller;
 
 import com.empmgmt.model.Attendance;
-import com.empmgmt.model.Employee;
 import com.empmgmt.service.AttendanceService;
 import com.empmgmt.service.EmployeeService;
 
@@ -26,15 +25,14 @@ public class AttendanceWebController {
        EMPLOYEE — MY ATTENDANCE
        ========================================================== */
     @GetMapping("/my")
-    public String myAttendance(Authentication auth, Model model) {
+    public String myAttendance(Model model) {
 
         // username/email → Employee → employeeId
-        Employee emp = employeeService.getByEmail(auth.getName());
+        Long employeeId = employeeService.getEmployeeIdFromAuth();
 
         List<Attendance> records =
-                attendanceService.getEmployeeAttendance(emp.getId());
+                attendanceService.getEmployeeAttendance(employeeId);
 
-        model.addAttribute("employee", emp);
         model.addAttribute("my", records);
         model.addAttribute("pageTitle", "My Attendance");
 
@@ -45,10 +43,9 @@ public class AttendanceWebController {
        EMPLOYEE — CLOCK IN
        ========================================================== */
     @PostMapping("/clock-in")
-    public String clockIn(Authentication auth) {
+    public String clockIn() {
 
-        Employee emp = employeeService.getByEmail(auth.getName());
-        attendanceService.clockIn(emp.getId());
+        attendanceService.clockIn(employeeService.getEmployeeIdFromAuth());
 
         return "redirect:/web/attendance/my?clockedIn";
     }
@@ -57,10 +54,9 @@ public class AttendanceWebController {
        EMPLOYEE — CLOCK OUT
        ========================================================== */
     @PostMapping("/clock-out")
-    public String clockOut(Authentication auth) {
+    public String clockOut() {
 
-        Employee emp = employeeService.getByEmail(auth.getName());
-        attendanceService.clockOut(emp.getId());
+        attendanceService.clockOut(employeeService.getEmployeeIdFromAuth());
 
         return "redirect:/web/attendance/my?clockedOut";
     }

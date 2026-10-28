@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   postgres-test:
     image: postgres:16
@@ -29,6 +27,7 @@ services:
 
     environment:
       SPRING_PROFILES_ACTIVE: test
+      APP_UPLOAD_DIR: /app/uploads
 
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-test:5432/employee_test
       SPRING_DATASOURCE_USERNAME: test_user
@@ -40,7 +39,7 @@ services:
         -XX:+UseG1GC
 
     volumes:
-      - ./uploads:/app/uploads
+      - uploads-data:/app/uploads
 
     command: ["java", "-jar", "/app/app.jar"]
 
@@ -50,3 +49,6 @@ services:
 networks:
   employee-test-net:
     driver: bridge
+
+volumes:
+  uploads-data:

@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -96,6 +98,7 @@ public class OnboardingController {
                              @RequestParam MultipartFile file,
                              Principal principal,
                              RedirectAttributes ra) {
+        requireTaskAccess(taskId, principal);
         onboardingService.uploadFile(taskId, file);
         ra.addFlashAttribute("success", "Document uploaded successfully!");
         return "redirect:/web/onboarding/my?uploaded";
@@ -106,6 +109,8 @@ public class OnboardingController {
     public String completeTask(@PathVariable Long taskId,
                                Principal principal,
                                RedirectAttributes ra) {
+
+        requireTaskAccess(taskId, principal);
 
         Long employeeId = onboardingService.completeTask(taskId);  // this returns employeeId
         ra.addFlashAttribute("success", "Task marked as completed!");
@@ -154,7 +159,7 @@ public class OnboardingController {
     }
 
     // DELETE TASK
-    @GetMapping("/task/delete/{taskId}")
+    @PostMapping("/task/delete/{taskId}")
     public String deleteTask(@PathVariable Long taskId, RedirectAttributes ra) {
         Long employeeId = onboardingService.deleteTask(taskId);
         ra.addFlashAttribute("success", "Task deleted successfully!");
@@ -179,7 +184,7 @@ public class OnboardingController {
         return "redirect:/web/onboarding/templates";
     }
 
-    @GetMapping("/templates/delete/{id}")
+    @PostMapping("/templates/delete/{id}")
     public String deleteTemplate(@PathVariable Long id, RedirectAttributes ra) {
         templateService.delete(id);
         ra.addFlashAttribute("success", "Template deleted!");
@@ -187,7 +192,7 @@ public class OnboardingController {
     }
 
     // RESET ONBOARDING
-    @GetMapping("/reset/{employeeId}")
+    @PostMapping("/reset/{employeeId}")
     public String reset(@PathVariable Long employeeId, RedirectAttributes ra) {
         onboardingService.getTasks(employeeId)
                 .forEach(t -> onboardingService.deleteTask(t.getId()));
@@ -220,4 +225,18 @@ public String startOnboarding(@RequestParam Long employeeId,
             Long id, Long employeeId, String employeeName, String employeeEmail,
             String department, String position, boolean completed,
             boolean overdue, int progress) {}
+
+    private void requireTaskAccess(Long taskId, Principal principal) {
+        var task = onboardingService.getTask(taskId);
+        if (principal instanceof Authentication authentication
+                && authentication.getAuthorities().stream().anyMatch(authority ->
+                authority.getAuthority().equals("ROLE_ADMIN") || authority.getAuthority().equals("ROLE_HR"))) {
+            return;
+        }
+
+        Long employeeId = onboardingService.getEmployeeIdFromPrincipal(principal);
+        if (!task.getEmployeeId().equals(employeeId)) {
+            throw new AccessDeniedException("You can only access your own onboarding tasks");
+        }
+    }
 }

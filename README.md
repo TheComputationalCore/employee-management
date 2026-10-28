@@ -5,13 +5,12 @@
 # 🚀 Employee Management System (EMS) 
 
 ![Java](https://img.shields.io/badge/Java-17%2B-orange?logo=java)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?logo=springboot)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.x-brightgreen?logo=springboot)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-blue?logo=postgresql)
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue?logo=docker)
 
 ![CI](https://github.com/TheComputationalCore/employee-management/actions/workflows/ci.yml/badge.svg)
 ![Build](https://img.shields.io/github/actions/workflow/status/TheComputationalCore/employee-management/ci.yml?branch=main)
-![Tests](https://img.shields.io/badge/Tests-Passing-success)
 
 ![Architecture](https://img.shields.io/badge/Architecture-Modular%20Monolith-blueviolet)
 ![Design](https://img.shields.io/badge/Design-DDD%20%2B%20Clean%20Architecture-green)
@@ -19,7 +18,6 @@
 ![Database](https://img.shields.io/badge/Database-ER%20Diagram-orange)
 
 ![Docs](https://img.shields.io/badge/Docs-Comprehensive-blue)
-![Quality](https://img.shields.io/badge/Code%20Quality-Production--Ready-blue)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-success?logo=render)](https://employee-management-qhfh.onrender.com)
 ![Security](https://img.shields.io/badge/Security-Spring%20Security-blue?logo=springsecurity)
 
@@ -28,7 +26,7 @@
 
 An **Employee Management System (EMS)** built with **Spring Boot, Thymeleaf, Spring Security, and PostgreSQL (Neon)**, deployed on **Render**.
 
-The platform manages the **entire employee lifecycle** — recruitment, onboarding, attendance, leave management, payroll, performance reviews, and analytics — within a **secure, modular, production-ready architecture**.
+The platform demonstrates employee lifecycle workflows — recruitment, onboarding, attendance, leave management, payroll, performance reviews, and analytics — in a modular Spring application. It is a portfolio/demo project and has not yet been independently security- or production-validated.
 
 
 🌐 **Live Deployment**: https://employee-management-qhfh.onrender.com
@@ -62,7 +60,7 @@ It supports:
 - AI‑assisted recruitment scoring
 - End‑to‑end employee lifecycle management
 - Real analytics dashboards
-- Production‑grade DevOps & CI/CD
+- Docker and GitHub Actions build workflow
 
 ---
 
@@ -83,10 +81,10 @@ It supports:
 - Department & role management
 - Search, filter & pagination
 
-### 🧠 Recruitment & AI Scoring
+### 🧠 Recruitment & Resume Heuristics
 - Job postings & public careers page
 - Resume upload & parsing (PDF)
-- AI resume scoring & missing skills detection
+- Heuristic resume scoring & missing skills detection (not an AI model)
 - Smart shortlisting
 - Interview scheduling
 - Offer letter PDF generation
@@ -185,7 +183,7 @@ erDiagram
 | Frontend | Thymeleaf, HTML, CSS |
 | Database | PostgreSQL (Neon), H2 (dev) |
 | ORM | Spring Data JPA |
-| AI | Custom Resume Parsing & Scoring |
+| Resume processing | PDF text extraction and rule-based scoring |
 | Build | Maven |
 | DevOps | Docker, Docker Compose |
 | CI/CD | GitHub Actions |
@@ -230,6 +228,7 @@ src/main/resources
 - Role‑based authorization
 - CSRF protection (Cookie‑based)
 - Password hashing with BCrypt
+- No-email employee password setup using an HR-issued, single-use code
 - Secure file uploads
 - Auditing (createdBy / updatedBy)
 
@@ -257,15 +256,21 @@ Multi‑stage build:
 | docker-compose.prod.yml | Production |
 | docker-compose.test.yml | CI / testing |
 
+Compose keeps uploaded files in a named volume. Render Free web services have ephemeral filesystems, so uploaded resumes and onboarding files can disappear on restart or redeploy. This demo does not provision paid persistent storage or an external object-storage service.
+
+Employee account setup does not send email: HR generates a one-time code in the employee list and gives it to the employee directly. The code expires after 24 hours and is stored only as a hash. Keep the code private.
+
+Automatic production schema changes remain disabled for both Hibernate and Flyway. The live Neon schema has no Flyway history and differs from `V1__initial_schema.sql`. The two nullable account-setup columns from V2 were applied manually to the existing Neon `users` table on 2026-10-28. Do not enable Flyway until a baseline and migration plan are prepared for the existing database.
+
 ---
 
 ## 🔁 CI/CD Pipeline
 
 GitHub Actions:
 - Java 17 & 21 matrix builds
-- Maven build & package
-- Artifact upload
-- Fully green & production‑safe
+- Maven verification lifecycle and artifact upload
+
+The repository currently has no automated test sources. CI builds the project but does not provide behavioral test coverage.
 
 Workflow file:
 ```
@@ -296,8 +301,8 @@ SPRING_PROFILES_ACTIVE=prod
 
 | Profile | DB | Usage |
 |------|----|------|
-| dev | H2 | Local |
-| prod | Neon PostgreSQL | Render |
+| dev | In-memory H2; Hibernate creates the local demo schema | Local |
+| prod | Neon PostgreSQL; schema changes disabled pending a reviewed migration plan | Render |
 
 ---
 
@@ -306,8 +311,8 @@ SPRING_PROFILES_ACTIVE=prod
 ### Option 1: Maven
 
 ```bash
-mvn clean package
-java -jar target/employee-management-2.0.0.jar
+SPRING_PROFILES_ACTIVE=dev mvn clean package
+SPRING_PROFILES_ACTIVE=dev java -jar target/employee-management-2.0.0.jar
 ```
 
 ### Option 2: Docker

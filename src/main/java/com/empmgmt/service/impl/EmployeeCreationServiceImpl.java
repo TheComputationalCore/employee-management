@@ -3,6 +3,7 @@ package com.empmgmt.service.impl;
 import com.empmgmt.model.*;
 import com.empmgmt.repository.EmployeeRepository;
 import com.empmgmt.security.model.User;
+import com.empmgmt.security.service.PasswordSetupService;
 import com.empmgmt.security.repository.UserRepository;
 import com.empmgmt.service.EmployeeCreationService;
 import com.empmgmt.service.JobService;
@@ -81,8 +82,9 @@ public class EmployeeCreationServiceImpl implements EmployeeCreationService {
             // ---------------------------
             User user = User.builder()
                     .username(saved.getId().toString())          // ✔ EMPLOYEE ID for login
-                    .password(encoder.encode("employee123"))     // ✔ Default password
+                    .password(encoder.encode(PasswordSetupService.randomSecret()))
                     .role(Role.ROLE_EMPLOYEE)
+                    .employee(saved)
                     .build();
 
             userRepo.save(user);

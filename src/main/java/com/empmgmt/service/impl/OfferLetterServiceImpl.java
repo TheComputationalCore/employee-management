@@ -9,6 +9,7 @@ import com.empmgmt.service.OfferLetterService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
@@ -19,6 +20,7 @@ import com.lowagie.text.pdf.PdfWriter;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Path;
 import java.time.LocalDate;
 
 @Service
@@ -28,6 +30,9 @@ public class OfferLetterServiceImpl implements OfferLetterService {
     private final ApplicationRepository appRepo;
     private final OfferLetterRepository offerRepo;
 
+    @Value("${app.upload-dir:uploads}")
+    private String uploadDirectory;
+
     @Override
     public OfferLetter generateOffer(Long appId, String position, Double salary, String joiningDate) {
 
@@ -35,7 +40,7 @@ public class OfferLetterServiceImpl implements OfferLetterService {
                 .orElseThrow(() -> new RuntimeException("Application not found"));
 
         // Ensure folder exists
-        String folder = "uploads/offers/";
+        String folder = Path.of(uploadDirectory).toAbsolutePath().normalize().resolve("offers").toString();
         File dir = new File(folder);
         if (!dir.exists()) dir.mkdirs();
 

@@ -26,8 +26,10 @@ public class OnboardingTask {
 
     private LocalDate dueDate;
 
+    @Builder.Default
     private boolean required = true;
 
+    @Builder.Default
     private boolean completed = false;
 
     private String filePath;

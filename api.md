@@ -1,6 +1,6 @@
 # 📘 Employee Management System – API Documentation
 
-This document provides **comprehensive, production-grade REST API documentation** for the **Employee Management System (EMS)**.
+This document summarizes the application's current browser routes. It is a portfolio/demo project and has not been independently security- or production-validated.
 
 The system is built using **Spring Boot**, secured with **Spring Security (Session + CSRF)**, and deployed on **Render** with **Neon PostgreSQL**.
 
@@ -16,6 +16,8 @@ The system is built using **Spring Boot**, secured with **Spring Security (Sessi
   - `ROLE_EMPLOYEE`
 
 > Most APIs require authentication and appropriate role access.
+
+Employee account setup uses a single-use code issued by HR at `POST /web/accounts/setup-code/{employeeId}` and entered at `POST /account/setup`. No email is sent; the code expires after 24 hours.
 
 ---
 
@@ -158,18 +160,18 @@ Query Params:
 **POST** `/careers/apply/{jobId}`
 
 Accepts:
-- Resume (PDF/DOCX)
+- Resume (PDF only, up to 5 MiB)
 - Candidate details
 
-AI Processing:
+Resume processing (deterministic heuristics; no AI model):
 - Skill extraction
 - Experience parsing
 - Education detection
-- AI match score (0–100)
+- Match score (0–100)
 - Missing skill analysis
 
 ### Smart Shortlist
-**GET** `/web/recruitment/smart-shortlist/{jobId}`
+**POST** `/web/recruitment/smart-shortlist/{jobId}`
 
 ### Candidate Profile
 **GET** `/web/recruitment/candidate/{appId}`
@@ -207,7 +209,7 @@ AI Processing:
 | Offer Letters | `uploads/offers/` |
 | Onboarding Docs | `uploads/onboarding/` |
 
-> Uploads directory is excluded from Git and generated at runtime.
+> Uploads directory is excluded from Git and generated at runtime. Configure `APP_UPLOAD_DIR` to point to durable storage in deployments that need files to survive restarts.
 
 ---
 
@@ -234,9 +236,10 @@ Standard HTTP Status Codes:
 
 ## 🧪 Testing & CI
 
-- Unit & Integration tests via **Spring Boot Test**
-- CI via **GitHub Actions**
+- CI via **GitHub Actions** (Maven verification and CodeQL)
 - Dockerized builds
+
+The repository currently has no automated test sources, so CI does not provide behavioral test coverage yet.
 
 ---
 
@@ -245,8 +248,8 @@ Standard HTTP Status Codes:
 - APIs are **UI-backed (Thymeleaf)** and **REST-backed**
 - Security enforced via **Spring Security**
 - Database: **Neon PostgreSQL**
-- Production-ready architecture
+- Portfolio/demo architecture; production readiness has not been independently validated
 
 ---
 
-📌 _This API documentation reflects the actual implementation and is maintained alongside the codebase._
+📌 _This document describes the intended route surface. Confirm individual paths and response types against the controllers before integrating; `/web/**` routes generally render Thymeleaf views, while JSON endpoints are under `/api/v1/**`._

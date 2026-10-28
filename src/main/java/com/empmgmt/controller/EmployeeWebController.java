@@ -7,6 +7,8 @@ import com.empmgmt.model.EmployeeStatus;
 import com.empmgmt.repository.DepartmentRepository;
 import com.empmgmt.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -72,7 +74,11 @@ public class EmployeeWebController {
     }
 
     @PostMapping("/add")
-    public String addEmployee(@ModelAttribute("employee") EmployeeDTO employee) {
+    public String addEmployee(@Valid @ModelAttribute("employee") EmployeeDTO employee, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("departments", departmentRepository.findAll());
+            return "employees/add";
+        }
         service.createEmployee(employee);
         return "redirect:/web/employees?added";
     }
@@ -95,9 +101,15 @@ public class EmployeeWebController {
     @PostMapping("/edit/{id}")
     public String updateEmployee(
             @PathVariable Long id,
-            @ModelAttribute("employee") EmployeeDTO employee
+            @Valid @ModelAttribute("employee") EmployeeDTO employee,
+            BindingResult bindingResult,
+            Model model
     ) {
-
+        if (bindingResult.hasErrors()) {
+            employee.setId(id);
+            model.addAttribute("departments", departmentRepository.findAll());
+            return "employees/edit";
+        }
         service.updateEmployee(id, employee);
         return "redirect:/web/employees?updated";
     }
@@ -131,13 +143,13 @@ public class EmployeeWebController {
     /* =============================================================
                         DELETE & RESTORE
     ============================================================= */
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String softDelete(@PathVariable Long id) {
         service.softDeleteEmployee(id);
         return "redirect:/web/employees?deleted";
     }
 
-    @GetMapping("/restore/{id}")
+    @PostMapping("/restore/{id}")
     public String restore(@PathVariable Long id) {
         service.restoreEmployee(id);
         return "redirect:/web/employees/inactive?restored";

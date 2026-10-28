@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   employee-management:
     container_name: employee-management-prod
@@ -15,6 +13,7 @@ services:
       # SPRING PROFILE
       # ===============================
       SPRING_PROFILES_ACTIVE: prod
+      APP_UPLOAD_DIR: /app/uploads
 
       # ===============================
       # DATABASE (Neon PostgreSQL)
@@ -35,7 +34,7 @@ services:
 
     volumes:
       # Persistent storage for resumes, offers, onboarding docs
-      - ./uploads:/app/uploads
+      - uploads-data:/app/uploads
 
     restart: always
 
@@ -51,3 +50,6 @@ services:
 networks:
   employee-prod-net:
     driver: bridge
+
+volumes:
+  uploads-data:

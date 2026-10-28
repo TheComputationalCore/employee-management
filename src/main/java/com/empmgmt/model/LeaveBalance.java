@@ -21,9 +21,11 @@ public class LeaveBalance {
     private LeaveType type;
 
     // ⭐ REQUIRED BY LeaveBalanceServiceImpl
+    @Builder.Default
     private Integer totalDays = 0;
 
     // ⭐ REQUIRED BY LeaveBalanceServiceImpl
+    @Builder.Default
     private Integer usedDays = 0;
 
     // Convenience method

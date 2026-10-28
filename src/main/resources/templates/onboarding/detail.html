@@ -83,11 +83,9 @@
                     </a>
 
                     <!-- Delete (with confirmation) -->
-                    <a th:href="@{'/web/onboarding/task/delete/' + ${t.id}}"
-                       class="btn btn-sm btn-danger"
-                       onclick="return confirm('Are you sure you want to delete this task?');">
-                        <i data-feather="trash-2" class="feather-14"></i> Delete
-                    </a>
+                    <form method="post" th:action="@{'/web/onboarding/task/delete/' + ${t.id}}" onsubmit="return confirm('Are you sure you want to delete this task?');">
+                        <button class="btn btn-sm btn-danger" type="submit"><i data-feather="trash-2" class="feather-14"></i> Delete</button>
+                    </form>
 
                     <!-- Mark as Done (only if not completed) -->
                     <form th:if="${!t.completed}"

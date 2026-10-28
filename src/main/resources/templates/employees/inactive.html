@@ -45,11 +45,7 @@
                 <td th:text="${emp.position}"></td>
 
                 <td>
-                    <a class="btn btn-success btn-sm px-3 py-1"
-                       th:href="@{'/web/employees/restore/' + ${emp.id}}"
-                       style="border-radius:10px;font-weight:600;">
-                        Restore
-                    </a>
+                    <form method="post" th:action="@{'/web/employees/restore/' + ${emp.id}}"><button class="btn btn-success btn-sm px-3 py-1" type="submit" style="border-radius:10px;font-weight:600;">Restore</button></form>
                 </td>
 
             </tr>

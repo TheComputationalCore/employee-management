@@ -5,6 +5,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "departments")
+@EqualsAndHashCode(callSuper = false)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
