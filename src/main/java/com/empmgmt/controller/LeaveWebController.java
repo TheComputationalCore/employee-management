@@ -3,6 +3,7 @@ package com.empmgmt.controller;
 import com.empmgmt.model.LeaveRequest;
 import com.empmgmt.model.LeaveType;
 import com.empmgmt.service.EmployeeService;
+import com.empmgmt.service.LeaveBalanceService;
 import com.empmgmt.service.LeaveService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,14 +22,14 @@ public class LeaveWebController {
 
     private final LeaveService leaveService;
     private final EmployeeService employeeService;
+    private final LeaveBalanceService leaveBalanceService;
 
     /* -------------------------------
      * EMPLOYEE APPLY LEAVE
      * ------------------------------- */
     @GetMapping("/apply")
     public String applyForm(Model model) {
-        model.addAttribute("types", LeaveType.values());
-        model.addAttribute("leave", new LeaveRequest());
+        populateApplyForm(model, new LeaveRequest());
         return "leave/apply";
     }
 
@@ -39,7 +40,7 @@ public class LeaveWebController {
             bindingResult.rejectValue("endDate", "leave.endDate.invalid", "End date must be on or after start date");
         }
         if (bindingResult.hasErrors()) {
-            model.addAttribute("types", LeaveType.values());
+            populateApplyForm(model, leave);
             return "leave/apply";
         }
         Long employeeId = employeeService.getEmployeeIdFromAuth();
@@ -47,6 +48,13 @@ public class LeaveWebController {
 
         leaveService.applyLeave(leave);
         return "redirect:/web/leave/my?applied";
+    }
+
+    private void populateApplyForm(Model model, LeaveRequest leave) {
+        Long employeeId = employeeService.getEmployeeIdFromAuth();
+        model.addAttribute("types", LeaveType.values());
+        model.addAttribute("leave", leave);
+        model.addAttribute("balances", leaveBalanceService.getBalancesForEmployee(employeeId));
     }
 
     /* -------------------------------
