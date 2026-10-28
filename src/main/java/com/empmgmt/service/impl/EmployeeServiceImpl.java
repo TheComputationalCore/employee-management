@@ -23,10 +23,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
+
+    private static final Set<String> SORTABLE_FIELDS = Set.of(
+            "id", "firstName", "lastName", "email", "department", "position", "salary"
+    );
+    private static final int DEFAULT_PAGE_SIZE = 10;
+    private static final int MAX_PAGE_SIZE = 100;
 
     private final EmployeeRepository repo;
     private final EmployeeMapper mapper;
@@ -37,13 +44,17 @@ public class EmployeeServiceImpl implements EmployeeService {
        SAFE SORT PARSER
        ========================================================= */
     private Sort getSafeSort(String sortValue) {
-        if (sortValue == null || !sortValue.contains(",")) {
+        if (sortValue == null || sortValue.isBlank()) {
             return Sort.by(Sort.Direction.ASC, "id");
         }
 
         String[] arr = sortValue.split(",");
         String field = arr[0].trim();
         String direction = arr.length > 1 ? arr[1].trim() : "asc";
+
+        if (arr.length > 2 || !SORTABLE_FIELDS.contains(field)) {
+            return Sort.by(Sort.Direction.ASC, "id");
+        }
 
         return Sort.by(
                 Sort.Direction.fromOptionalString(direction).orElse(Sort.Direction.ASC),
@@ -141,18 +152,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public PaginatedResponse<EmployeeDTO> searchEmployees(EmployeeSearchRequest req) {
 
-        Pageable pageable = PageRequest.of(
-                req.getPage(),
-                req.getSize(),
-                getSafeSort(req.getSort())
-        );
+        int pageNumber = req.getPage() == null ? 0 : Math.max(0, req.getPage());
+        int pageSize = req.getSize() == null || req.getSize() < 1
+                ? DEFAULT_PAGE_SIZE
+                : Math.min(req.getSize(), MAX_PAGE_SIZE);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, getSafeSort(req.getSort()));
 
         Page<Employee> page;
+        EmployeeStatus status = req.getStatus() == null ? EmployeeStatus.ACTIVE : req.getStatus();
 
         if (req.getSearch() != null && !req.getSearch().isBlank()) {
 
             page = repo.searchByStatus(
-                    EmployeeStatus.ACTIVE,
+                    status,
                     req.getSearch(),
                     pageable
             );
@@ -160,7 +172,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         } else if (req.getDepartment() != null && !req.getDepartment().isBlank()) {
 
             page = repo.findByStatusAndDepartmentContainingIgnoreCase(
-                    EmployeeStatus.ACTIVE,
+                    status,
                     req.getDepartment(),
                     pageable
             );
@@ -168,7 +180,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         } else {
 
             page = repo.findByStatus(
-                    EmployeeStatus.ACTIVE,
+                    status,
                     pageable
             );
         }

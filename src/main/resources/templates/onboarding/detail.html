@@ -73,6 +73,10 @@
 
                 <p class="mt-2 mb-3" th:text="${t.description}">Please upload a clear copy of your Aadhaar card.</p>
 
+                <a th:if="${t.filePath != null}"
+                   th:href="@{'/web/onboarding/task/file/' + ${t.id}}"
+                   class="btn btn-outline-secondary mb-3">Download uploaded document</a>
+
                 <!-- Action Buttons -->
                 <div class="task-actions d-flex gap-2 flex-wrap">
 

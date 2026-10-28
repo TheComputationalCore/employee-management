@@ -37,6 +37,7 @@ public class SecurityConfig {
                     "/web/leave/apply", "/web/leave/my", "/web/leave/my/**",
                     "/web/payroll/my", "/web/performance/my", "/web/performance/self/**",
                     "/web/onboarding/my", "/web/onboarding/task/upload/**", "/web/onboarding/task/complete/**",
+                    "/web/onboarding/task/file/**",
                     "/web/kpi/self/**"
                 ).hasAnyRole("ADMIN", "HR", "EMPLOYEE")
                 .requestMatchers("/web/**", "/api/v1/**").hasAnyRole("ADMIN", "HR")
@@ -47,7 +48,12 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/do-login")
-                .defaultSuccessUrl("/web/dashboard", true)
+                .successHandler((request, response, authentication) -> {
+                    boolean employee = authentication.getAuthorities().stream()
+                            .anyMatch(authority -> "ROLE_EMPLOYEE".equals(authority.getAuthority()));
+                    String destination = employee ? "/web/attendance/my" : "/web/dashboard";
+                    response.sendRedirect(request.getContextPath() + destination);
+                })
                 .failureUrl("/login?error=true")
                 .permitAll()
             )

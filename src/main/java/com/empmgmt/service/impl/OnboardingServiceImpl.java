@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.security.Principal;
 import org.springframework.security.core.Authentication;
@@ -145,36 +147,61 @@ public class OnboardingServiceImpl implements OnboardingService {
      */
     @Override
     public void uploadFile(Long taskId, MultipartFile file) {
-        try {
-            if (file == null || file.isEmpty() || file.getSize() > 5L * 1024 * 1024) {
-                throw new IllegalArgumentException("File must be non-empty and 5 MB or smaller");
-            }
-
-            String originalFilename = file.getOriginalFilename();
-            if (originalFilename == null || originalFilename.isBlank()
-                    || originalFilename.contains("..")
-                    || originalFilename.contains("/") || originalFilename.contains("\\")) {
-                throw new IllegalArgumentException("Invalid file name");
-            }
-
-            String lowerName = originalFilename.toLowerCase(Locale.ROOT);
-            String extension = lowerName.substring(lowerName.lastIndexOf('.') + 1);
-            if (!List.of("pdf", "doc", "docx", "txt").contains(extension)) {
-                throw new IllegalArgumentException("Only PDF, DOC, DOCX, or TXT files are supported");
-            }
-
-            Path folder = Path.of(uploadDirectory).toAbsolutePath().normalize().resolve("onboarding").normalize();
-            Files.createDirectories(folder);
-            Path filePath = folder.resolve(UUID.randomUUID() + "." + extension).normalize();
-            if (!filePath.startsWith(folder)) {
-                throw new IllegalArgumentException("Invalid destination path");
-            }
-            Files.copy(file.getInputStream(), filePath);
-
-            uploadDocument(taskId, filePath.toString());
-        } catch (Exception e) {
-            throw new RuntimeException("File upload failed", e);
+        if (file == null || file.isEmpty() || file.getSize() > 5L * 1024 * 1024) {
+            throw new IllegalArgumentException("File must be non-empty and 5 MB or smaller");
         }
+
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || originalFilename.isBlank()
+                || originalFilename.contains("..")
+                || originalFilename.contains("/") || originalFilename.contains("\\")) {
+            throw new IllegalArgumentException("Invalid file name");
+        }
+
+        String lowerName = originalFilename.toLowerCase(Locale.ROOT);
+        String extension = lowerName.substring(lowerName.lastIndexOf('.') + 1);
+        if (!List.of("pdf", "doc", "docx", "txt").contains(extension)) {
+            throw new IllegalArgumentException("Only PDF, DOC, DOCX, or TXT files are supported");
+        }
+
+        Path folder = Path.of(uploadDirectory).toAbsolutePath().normalize().resolve("onboarding").normalize();
+        Path filePath = folder.resolve(UUID.randomUUID() + "." + extension).normalize();
+        if (!filePath.startsWith(folder)) {
+            throw new IllegalArgumentException("Invalid destination path");
+        }
+
+        try {
+            Files.createDirectories(folder);
+            try (InputStream input = file.getInputStream()) {
+                Files.copy(input, filePath);
+            }
+            uploadDocument(taskId, filePath.toString());
+        } catch (IOException | RuntimeException failure) {
+            try {
+                Files.deleteIfExists(filePath);
+            } catch (IOException cleanupFailure) {
+                failure.addSuppressed(cleanupFailure);
+            }
+            if (failure instanceof RuntimeException runtimeFailure) {
+                throw runtimeFailure;
+            }
+            throw new IllegalStateException("File upload failed", failure);
+        }
+    }
+
+    @Override
+    public Path getDocumentPath(Long taskId) {
+        OnboardingTask task = getTask(taskId);
+        if (task.getFilePath() == null || task.getFilePath().isBlank()) {
+            throw new ResourceNotFoundException("Document not found");
+        }
+
+        Path folder = Path.of(uploadDirectory).toAbsolutePath().normalize().resolve("onboarding").normalize();
+        Path file = Path.of(task.getFilePath()).toAbsolutePath().normalize();
+        if (!file.startsWith(folder) || !Files.isRegularFile(file)) {
+            throw new ResourceNotFoundException("Document not found");
+        }
+        return file;
     }
 
     @Override

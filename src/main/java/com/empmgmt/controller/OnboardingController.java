@@ -13,9 +13,16 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.nio.file.Path;
 import java.util.List;
 
 @Controller
@@ -99,9 +106,26 @@ public class OnboardingController {
                              Principal principal,
                              RedirectAttributes ra) {
         requireTaskAccess(taskId, principal);
-        onboardingService.uploadFile(taskId, file);
+        try {
+            onboardingService.uploadFile(taskId, file);
+        } catch (IllegalArgumentException invalidFile) {
+            ra.addFlashAttribute("error", invalidFile.getMessage());
+            return "redirect:/web/onboarding/my";
+        }
         ra.addFlashAttribute("success", "Document uploaded successfully!");
         return "redirect:/web/onboarding/my?uploaded";
+    }
+
+    @GetMapping("/task/file/{taskId}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable Long taskId, Principal principal) {
+        requireTaskAccess(taskId, principal);
+        Path file = onboardingService.getDocumentPath(taskId);
+        Resource resource = new FileSystemResource(file);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment().filename(file.getFileName().toString()).build().toString())
+                .body(resource);
     }
 
     // MARK TASK AS COMPLETE - WORKS FOR BOTH HR AND EMPLOYEE

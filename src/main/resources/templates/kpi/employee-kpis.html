@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/main}">
 
 <body>
 
-<div th:insert="layout/main :: content">
+<main layout:fragment="content" class="p-4">
 
     <div class="d-flex justify-content-between mb-3">
         <h2>Employee KPI Overview</h2>
@@ -63,7 +63,7 @@
         </tbody>
     </table>
 
-</div>
+</main>
 
 
 <!-- Self Score Modal -->
