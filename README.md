@@ -26,7 +26,7 @@
 
 An **Employee Management System (EMS)** built with **Spring Boot, Thymeleaf, Spring Security, and PostgreSQL (Neon)**, deployed on **Render**.
 
-The platform demonstrates employee lifecycle workflows — recruitment, onboarding, attendance, leave management, payroll, performance reviews, and analytics — in a modular Spring application. It is a portfolio/demo project and has not yet been independently security- or production-validated.
+The platform demonstrates employee lifecycle workflows — recruitment, onboarding, attendance, leave management, payroll, performance reviews, and analytics — in a modular Spring application. 
 
 
 🌐 **Live Deployment**: https://employee-management-4yjm.onrender.com
