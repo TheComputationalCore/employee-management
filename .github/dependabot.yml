@@ -5,6 +5,12 @@ updates:
     schedule:
       interval: "weekly"  # "daily", "weekly", or "monthly"
     open-pull-requests-limit: 5
+    ignore:
+      # OpenPDF 2.1+ / 3.x are compiled for Java 21 and 3.x also renames the
+      # com.lowagie.* API, so they break the Java 17 build. Revisit this when
+      # the project moves its baseline to Java 21.
+      - dependency-name: "com.github.librepdf:openpdf"
+        versions: [ ">= 2.1.0" ]
     # Optionally: allow auto-merge for low-risk updates (if you want)
     # automerged_updates:
     #   - match:

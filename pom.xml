@@ -128,10 +128,13 @@
         <!-- ========================= -->
         <!-- DOCUMENT GENERATION -->
         <!-- ========================= -->
+        <!-- OpenPDF 2.1+ (and 3.x) is compiled for Java 21 only, so 2.0.5 is
+             the newest release that keeps the Java 17 / 21 build matrix working.
+             Also note 3.x moved its API from com.lowagie.* to org.openpdf.*. -->
         <dependency>
             <groupId>com.github.librepdf</groupId>
             <artifactId>openpdf</artifactId>
-            <version>3.0.5</version>
+            <version>2.0.5</version>
        </dependency>
 
 
